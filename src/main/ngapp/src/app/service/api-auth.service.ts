@@ -56,7 +56,6 @@ export class ApiAuthService {
 
   private createUser(userJson: any): User {
     let user = new User();
-    console.log("USER: " + JSON.stringify(userJson));
     user.authenticated = userJson.authenticated;
     user.loginTime = new Date();
     return user;

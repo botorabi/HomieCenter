@@ -5,22 +5,28 @@
     <mat-card-content>
       <div *ngIf="appInfo.user === null">
         <p>
-          Please login with your FRITZ!Box credentials. <a mat-button color="primary" routerLink="authentication" routerLinkActive="active"><span>Login</span></a>
+          Please login with your FRITZ!Box credentials.
         </p>
+        <br>
+        <a mat-raised-button color="primary" routerLink="authentication" routerLinkActive="active">Login</a>
       </div>
     </mat-card-content>
   </mat-card>
   <div *ngIf="appInfo.user">
     <mat-expansion-panel>
       <mat-expansion-panel-header>
-        <mat-panel-title>Switch Devices <span *ngIf="appInfo.countSwitchDevices > 0">({{appInfo.countSwitchDevices}})</span></mat-panel-title>
+        <mat-panel-title>Switch Devices
+          <span *ngIf="appInfo.countSwitchDevices > 0" class="device-count">({{appInfo.countSwitchDevices}})</span>
+        </mat-panel-title>
         <mat-panel-description></mat-panel-description>
       </mat-expansion-panel-header>
       <app-view-switch-devices></app-view-switch-devices>
     </mat-expansion-panel>
     <mat-expansion-panel>
       <mat-expansion-panel-header>
-        <mat-panel-title>IP Cameras <span *ngIf="appInfo.countCameras > 0">({{appInfo.countCameras}})</span></mat-panel-title>
+        <mat-panel-title>IP Cameras
+          <span *ngIf="appInfo.countCameras > 0" class="device-count">({{appInfo.countCameras}})</span>
+        </mat-panel-title>
         <mat-panel-description></mat-panel-description>
       </mat-expansion-panel-header>
       <app-view-camera></app-view-camera>

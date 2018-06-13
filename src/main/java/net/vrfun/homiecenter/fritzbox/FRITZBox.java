@@ -33,8 +33,9 @@ public class FRITZBox {
     private final Logger LOGGER = LoggerFactory.getLogger(this.getClass());
 
     private final static String DEFAULT_FRITZBOX_URL = "http://fritz.box";
-    private static String fritzBoxUrl;
+    private final static String ENV_NAME_FRITZBOX_URL = "homiecenter_fritzbox_url";
 
+    private String fritzBoxUrl;
     private Authentication authentication;
     private ResponseHandlerDeviceList handlerDeviceList ;
     private Requests requests;
@@ -171,14 +172,14 @@ public class FRITZBox {
         if (fritzBoxUrl != null) {
             return fritzBoxUrl;
         }
-        LOGGER.info("Checking for environment 'homiecenter.fritzbox.url'...");
-        String url = environment.getProperty("homiecenter.fritzbox.url");
+        LOGGER.info("Checking for environment '{}'...", ENV_NAME_FRITZBOX_URL);
+        String url = environment.getProperty(ENV_NAME_FRITZBOX_URL);
         if (url != null) {
-            LOGGER.info("  Found 'homiecenter.fritzbox.url', using URL '{}'", url);
+            LOGGER.info("  Found '{}', using URL '{}'", ENV_NAME_FRITZBOX_URL, url);
             fritzBoxUrl = url;
         }
         else {
-            LOGGER.info("  Did not find 'homiecenter.fritzbox.url', using default URL '{}'", DEFAULT_FRITZBOX_URL);
+            LOGGER.info("  Did not find '{}', using default URL '{}'", ENV_NAME_FRITZBOX_URL, DEFAULT_FRITZBOX_URL);
             fritzBoxUrl = DEFAULT_FRITZBOX_URL;
         }
 

@@ -1,7 +1,7 @@
 @import "~@angular/material/prebuilt-themes/indigo-pink.css";
 
 .main-div{
-  min-height: 200px;
+  min-height: 100px;
   justify-content: center;
   align-items: center;
   display: block;
