@@ -1,0 +1,32 @@
+<mat-toolbar color="primary">
+  <mat-toolbar-row>
+    <a mat-button routerLink="" routerLinkActive="active"><img src="/favicon.ico" height="48" width="48">
+      <span style="margin-left: 20px">Homie Center</span>
+    </a>
+    <span style="flex: 1 1 auto;"></span>
+    <mat-menu #appMenu="matMenu">
+      <button mat-menu-item routerLink="" routerLinkActive="active">Home</button>
+      <button mat-menu-item *ngIf="appInfo.user" (click)="logout()">Logout</button>
+      <button mat-menu-item *ngIf="!appInfo.user" routerLink="authentication" routerLinkActive="active">Login</button>
+      <button mat-menu-item *ngIf="appInfo.user" (click)="onCreateCamera()">Add IP Camera</button>
+      <button mat-menu-item routerLink="about" routerLinkActive="active">About</button>
+    </mat-menu>
+    <button mat-icon-button [matMenuTriggerFor]="appMenu">
+      <mat-icon>more_vert</mat-icon>
+    </button>
+
+  </mat-toolbar-row>
+</mat-toolbar>
+
+<br>
+
+<router-outlet></router-outlet>
+
+<br>
+
+<footer>
+  <mat-toolbar color="primary">
+    <span class="mat-small">Homie Center v{{appInfo.version}}, Copyright 2018 </span>
+    <div class="mat-small footer-username"><span *ngIf="appInfo.user">Timeout in {{appInfo.logoutTime}} </span></div>
+  </mat-toolbar>
+</footer>

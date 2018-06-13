@@ -1,0 +1,14 @@
+<div class="main-div">
+  <mat-card>
+    <mat-card-title>
+      <a mat-mini-fab routerLink="" routerLinkActive="active"><mat-icon>arrow_back</mat-icon></a>  {{camera?.name}}
+      <span class="camera-url">URL: <a href="{{camera?.url}}" target="blank">{{camera?.url}}</a></span></mat-card-title>
+    <mat-card-subtitle>
+    </mat-card-subtitle>
+    <br>
+    <mat-card-content>
+      <iframe width="100%" height="840" [src]="camera?.url | safe"></iframe>
+    </mat-card-content>
+  </mat-card>
+</div>
+<div class="warn-text" *ngIf="error">An error occurred! Error code: {{error}}</div>

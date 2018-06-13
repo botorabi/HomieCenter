@@ -1,0 +1,169 @@
+/*
+ * Copyright (c) 2017-2018 by Botorabi. All rights reserved.
+ * https://github.com/botorabi/HomieCenter
+ *
+ * License: MIT License (MIT), read the LICENSE text in
+ *          main directory for more details.
+ */
+package net.vrfun.homiecenter.fritzbox;
+
+import org.slf4j.*;
+import org.springframework.http.*;
+import org.springframework.web.client.RestTemplate;
+
+import javax.validation.constraints.NotNull;
+import java.security.*;
+import java.util.*;
+
+/**
+ * This class performs a user authentication on a FRITZ!Box.
+ *
+ * @author          boto
+ * Creation Date    6th June 2018
+ */
+public class Authentication {
+
+    private final Logger LOGGER = LoggerFactory.getLogger(this.getClass());
+
+    private String lastSID = "";
+    private String fritzBoxAddress;
+
+    private ResponseHandlerAuthStatus responseHandlerAuthStatus;
+    private Requests requests;
+
+
+    public Authentication(@NotNull final String fritzBoxAddress) {
+        this.fritzBoxAddress = fritzBoxAddress;
+        responseHandlerAuthStatus = new ResponseHandlerAuthStatus();
+        requests = new Requests();
+    }
+
+    @NotNull
+    public AuthStatus getAuthStatus() throws Exception {
+        ResponseEntity<String> response = getConnectionState();
+        if (response.getStatusCode() == HttpStatus.FORBIDDEN) {
+            lastSID = "";
+        }
+        else if (response.getStatusCode() != HttpStatus.OK) {
+            lastSID = "";
+            throw new Exception("Requesting FRITZ!Box failed with status: {}" + response.getStatusCode());
+        }
+        AuthStatus authStatus = new AuthStatus();
+        responseHandlerAuthStatus.read(response.getBody(), authStatus);
+        return authStatus;
+    }
+
+    @NotNull
+    public AuthStatus login(@NotNull final String userName, @NotNull final String password) throws Exception {
+        AuthStatus authStatus = getAuthStatus();
+        if (authStatus.isAuthenticated()) {
+            return authStatus;
+        }
+
+        return authenticate(authStatus.getChallenge(), userName, password);
+    }
+
+    public void logout() throws Exception {
+        AuthStatus authStatus = getAuthStatus();
+        if (!authStatus.isAuthenticated()) {
+            return;
+        }
+
+        try {
+            String url = fritzBoxAddress + "/login_sid.lua";
+
+            Map<String, String> parameters = new HashMap<>();
+            parameters.put("sid", authStatus.getSID());
+            parameters.put("logout", "");
+
+            requests.post(url, parameters);
+        }
+        catch (Throwable throwable) {
+            throw new Exception("Could not logout user, reason: " + throwable.getMessage());
+        }
+    }
+
+    private AuthStatus authenticate(@NotNull final String challenge,
+                                    @NotNull final String userName,
+                                    @NotNull final String password) throws Exception {
+
+        String url = fritzBoxAddress + "/login_sid.lua";
+        Map<String, String> params = new HashMap<>();
+        params.put("username", userName);
+        params.put("response", createResponse(challenge, password));
+
+        try {
+            ResponseEntity<String> response = requests.get(url, params);
+            if (response.getStatusCode() == HttpStatus.OK) {
+                AuthStatus status = new AuthStatus();
+                responseHandlerAuthStatus.read(response.getBody(), status);
+                if (!status.hasValidSID()) {
+                    LOGGER.warn("Could not get a SID!");
+                }
+                lastSID = status.getSID();
+                return status;
+            }
+            else {
+                lastSID = "";
+                throw new Exception("Requesting FRITZ!Box failed with status: {}" + response.getStatusCode());
+            }
+        }
+        catch(Throwable throwable) {
+            LOGGER.warn("Could not login into FRITZ!Box, reason: {}", throwable.getMessage());
+            throw new Exception("Could not login into FRITZ!Box");
+        }
+    }
+
+    private ResponseEntity<String> getConnectionState() throws Exception {
+        RestTemplate request = new RestTemplate();
+        ResponseEntity<String> response;
+        String url = fritzBoxAddress + "/login_sid.lua";
+
+        if (!lastSID.isEmpty()) {
+            url += "?sid=" + lastSID;
+        }
+
+        try {
+            response = request.getForEntity(url, String.class);
+        }
+        catch(Throwable throwable) {
+            LOGGER.warn("Could not connect FRITZ!Box, reason: {}", throwable.getMessage());
+            throw new Exception("Could not connect FRITZ!Box with address: " + url);
+        }
+
+        return response;
+    }
+
+    @NotNull
+    private String createResponse(@NotNull final String challenge, @NotNull final String password) throws Exception {
+        return challenge + "-" + createMD5((challenge + "-" + preparePassword(password)).getBytes("UTF-16LE"));
+    }
+
+    private String preparePassword(@NotNull final String password) {
+        //! NOTE all non-ascii chars have to be replaced by dots
+        String dotPassword = password.replaceAll("[^\\x00-\\x7F]", ".");
+        return dotPassword;
+    }
+
+    @NotNull
+    private String createMD5(@NotNull final byte[] content) throws Exception {
+        try {
+            MessageDigest digest = MessageDigest.getInstance("MD5");
+            digest.update(content);
+            byte data[] = digest.digest();
+            StringBuilder hexString = new StringBuilder();
+            for (int i = 0; i < data.length; i++) {
+                String hex = Integer.toHexString(0xff & data[i]);
+                if (hex.length() == 1) {
+                    hexString.append('0');
+                }
+                hexString.append(hex);
+            }
+            return hexString.toString();
+        }
+        catch (NoSuchAlgorithmException ex) {
+            LOGGER.error("Problem occurred while creating an MD5 hash, reason: {}", ex.getMessage());
+            throw new Exception(ex.getMessage());
+        }
+    }
+}

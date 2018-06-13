@@ -1,0 +1,25 @@
+.switch-card {
+  width: 100%;
+}
+.device-info {
+  width: 100%;
+}
+.device-info td {
+  text-align: right;
+  padding: 5px;
+}
+.device-info td + td {
+  text-align: left;
+  padding: 5px;
+  font-weight: bold;
+}
+.dummy-left-element {
+  float: left;
+}
+.device-state-present {
+  float: right;
+}
+.device-state-not-present {
+  float: right;
+  color: red;
+}

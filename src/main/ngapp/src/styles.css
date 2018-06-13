@@ -1,0 +1,83 @@
+@import "~@angular/material/prebuilt-themes/indigo-pink.css";
+
+.main-div{
+  min-height: 200px;
+  justify-content: center;
+  align-items: center;
+  display: block;
+  width: 100%;
+  margin: auto;
+}
+
+.center{
+  margin: 10px auto;
+  text-align: center;
+}
+
+.mat-mini-fab {
+  background-color: #3f51b5 !important;
+}
+
+.footer-username {
+  width: 100%;
+  text-align: right;
+}
+
+.audit-card {
+  margin: auto;
+  width: 90%;
+}
+
+.warn-text {
+  font-size: larger;
+  font-weight: bold;
+  color: red;
+}
+
+.cat-table {
+  width: 100%;
+}
+.cat-name {
+  font-weight: normal;
+  width: 25%;
+}
+.cat-value {
+  width: 75%;
+}
+.cat-comment {
+  width: 100%;
+}
+.cat-comment textarea {
+  width: 100%;
+  border: 1px solid lightgray;
+  height: 1.4em;
+}
+.cat-apply-btn {
+  text-align: right;
+  padding-top: 2em;
+}
+
+.input-form {
+  width: 300px;
+  margin: auto;
+}
+.input-form-buttons {
+  text-align: right;
+}
+.mat-form-field {
+  width:300px !important;
+  text-align: left;
+}
+.input-form-buttons > button {
+  margin-right: 5px;
+  margin-left: 5px;
+}
+
+.device-container {
+  display: flex;
+  flex-flow: row wrap;
+}
+.device-item {
+  flex-shrink: 1;
+  margin: 10px;
+}

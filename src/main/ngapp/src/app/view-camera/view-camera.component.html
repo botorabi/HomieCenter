@@ -1,0 +1,22 @@
+<div *ngIf="cameras?.length">
+  <div class="main-div device-container">
+    <div *ngFor="let camera of cameras">
+      <mat-card class="device-item">
+        <mat-card-title>
+          <a mat-icon-button class="title-name" color="primary" (click)="onDetails(camera)">{{camera.name}}</a>
+          <a mat-icon-button class="title-button" title="Details" (click)="onDetails(camera)"><mat-icon>visibility</mat-icon></a>
+          <a mat-icon-button class="title-button" title="Edit" (click)="onEdit(camera)"><mat-icon>edit</mat-icon></a>
+          <a mat-icon-button class="title-button" title="Enlarge" (click)="onToggleIFrameSize(camera.id)"><mat-icon>aspect_ratio</mat-icon></a>
+        </mat-card-title>
+        <mat-card-subtitle>
+        </mat-card-subtitle>
+        <br>
+        <mat-card-content>
+          <iframe id="camera-iframe-{{camera.id}}" height="200" width="200" [src]="camera.previewUrl | safe"></iframe>
+        </mat-card-content>
+      </mat-card>
+    </div>
+  </div>
+  <div class="warn-text" *ngIf="error">An error occurred! Error code: {{error}}</div>
+</div>
+

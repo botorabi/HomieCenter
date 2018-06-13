@@ -1,0 +1,34 @@
+<mat-card class="center">
+  <mat-card-title>Edit an IP Camera</mat-card-title>
+  <mat-card-subtitle>
+    Please enter the information about accessing your IP Camera.
+  </mat-card-subtitle>
+  <br>
+  <mat-card-content>
+    <form class="input-form">
+      <div>
+        <mat-form-field>
+          <input matInput autofocus placeholder="Name" name="name" [(ngModel)]="camera.name">
+        </mat-form-field>
+      </div>
+      <div>
+        <mat-form-field>
+          <input matInput placeholder="Camera URL" name="url" [(ngModel)]="camera.url">
+        </mat-form-field>
+      </div>
+      <div>
+        <mat-form-field>
+          <input matInput placeholder="Camera Preview URL" name="previewurl" [(ngModel)]="camera.previewUrl">
+        </mat-form-field>
+      </div>
+      <br>
+      <div class="input-form-buttons">
+        <button *ngIf="camera.id" mat-raised-button title="Delete the camera" color="secondary" (click)="onDelete()">Delete!</button>
+        <button mat-raised-button color="primary" routerLink="" routerLinkActive="active">Cancel</button>
+        <button mat-raised-button type="submit" color="primary" (click)="onApply()">Apply</button>
+      </div>
+    </form>
+    <br>
+    <div class="warn-text" *ngIf="error">An error occurred! Error code: {{error}}</div>
+  </mat-card-content>
+</mat-card>
