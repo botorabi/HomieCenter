@@ -222,5 +222,6 @@ $RECYCLE.BIN/
 
 # End of https://www.gitignore.io/api/java,macos,linux,maven,windows,eclipse,netbeans,intellij
 
+src/main/resources/static
 src/main/ngapp/node_modules
 

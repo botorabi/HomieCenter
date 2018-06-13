@@ -9,8 +9,6 @@ package net.vrfun.homiecenter;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.*;
-import org.springframework.boot.context.event.ApplicationReadyEvent;
-import org.springframework.context.event.EventListener;
 
 
 /**
@@ -25,12 +23,5 @@ public class Application {
 
     public static void main(String[] args) {
         SpringApplication.run(Application.class, args);
-    }
-
-    /**
-     * Start-up code
-     */
-    @EventListener(ApplicationReadyEvent.class)
-    public void startup() {
     }
 }
