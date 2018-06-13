@@ -171,14 +171,14 @@ public class FRITZBox {
         if (fritzBoxUrl != null) {
             return fritzBoxUrl;
         }
-        LOGGER.info("Checking for environment 'homecenter.fritzbox.url'...");
-        String url = environment.getProperty("homecenter.fritzbox.url");
+        LOGGER.info("Checking for environment 'homiecenter.fritzbox.url'...");
+        String url = environment.getProperty("homiecenter.fritzbox.url");
         if (url != null) {
-            LOGGER.info("  Found 'homecenter.fritzbox.url', using URL '{}'", url);
+            LOGGER.info("  Found 'homiecenter.fritzbox.url', using URL '{}'", url);
             fritzBoxUrl = url;
         }
         else {
-            LOGGER.info("  Did not find 'homecenter.fritzbox.url', using default URL '{}'", DEFAULT_FRITZBOX_URL);
+            LOGGER.info("  Did not find 'homiecenter.fritzbox.url', using default URL '{}'", DEFAULT_FRITZBOX_URL);
             fritzBoxUrl = DEFAULT_FRITZBOX_URL;
         }
 
