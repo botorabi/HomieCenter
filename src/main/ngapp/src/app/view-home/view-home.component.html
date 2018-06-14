@@ -13,19 +13,19 @@
     </mat-card-content>
   </mat-card>
   <div *ngIf="appInfo.user">
-    <mat-expansion-panel>
+    <mat-expansion-panel [(expanded)]="appInfo.camerasExpanded">
       <mat-expansion-panel-header>
         <mat-panel-title>Switch Devices
-          <span *ngIf="appInfo.countSwitchDevices > 0" class="device-count">({{appInfo.countSwitchDevices}})</span>
+          <span *ngIf="appInfo.switchDeviceCount > 0" class="device-count">({{appInfo.switchDeviceCount}})</span>
         </mat-panel-title>
         <mat-panel-description></mat-panel-description>
       </mat-expansion-panel-header>
       <app-view-switch-devices></app-view-switch-devices>
     </mat-expansion-panel>
-    <mat-expansion-panel>
+    <mat-expansion-panel [(expanded)]="appInfo.switchDevicesExpanded">
       <mat-expansion-panel-header>
         <mat-panel-title>IP Cameras
-          <span *ngIf="appInfo.countCameras > 0" class="device-count">({{appInfo.countCameras}})</span>
+          <span *ngIf="appInfo.cameraCount > 0" class="device-count">({{appInfo.cameraCount}})</span>
         </mat-panel-title>
         <mat-panel-description></mat-panel-description>
       </mat-expansion-panel-header>

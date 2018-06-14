@@ -19,15 +19,15 @@ import java.util.*;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @RunWith(SpringRunner.class)
-public class ResponseHandlerDeviceListTest {
+public class ResponseHandlerSwitchDeviceListTest {
 
-    private ResponseHandlerDeviceList responseHandlerDeviceList;
+    private ResponseHandlerSwitchDeviceList responseHandlerSwitchDeviceList;
 
     private static final String XML_INPUT_TWO_DEVICES =
                     "<devicelist version=\"1\">" +
                     "  <device identifier=\"08761 0475688\" id=\"16\" functionbitmask=\"2944\" fwversion=\"04.06\" manufacturer=\"AVM\" productname=\"FRITZ!DECT 200\">" +
                     "    <present>1</present>" +
-                    "    <name>FRITZ!DECT 200 #1</name>" +
+                    "    <name>Küche</name>" +
                     "    <switch>" +
                     "      <state>1</state>" +
                     "      <mode>manuell</mode>" +
@@ -48,9 +48,9 @@ public class ResponseHandlerDeviceListTest {
                     "    <present>1</present>" +
                     "    <name>FRITZ!DECT 200 #2</name>" +
                     "    <switch>" +
-                    "      <state>0</state>" +
+                    "      <state></state>" +
                     "      <mode>manuell</mode>" +
-                    "      <lock>0</lock>" +
+                    "      <lock></lock>" +
                     "      <devicelock>0</devicelock>" +
                     "    </switch>" +
                     "    <powermeter>" +
@@ -67,12 +67,12 @@ public class ResponseHandlerDeviceListTest {
 
     @Before
     public void setup() {
-        responseHandlerDeviceList = new ResponseHandlerDeviceList();
+        responseHandlerSwitchDeviceList = new ResponseHandlerSwitchDeviceList();
     }
 
     private Document createDocument(final String content) {
         try {
-            return responseHandlerDeviceList.parseResponse(content);
+            return responseHandlerSwitchDeviceList.parseResponse(content);
         }
         catch(Throwable throwable) {
         }
@@ -95,7 +95,7 @@ public class ResponseHandlerDeviceListTest {
         assertThat(deviceInfo1.isOn()).isEqualTo(true);
         assertThat(deviceInfo1.getAIN()).isEqualTo("08761 0475688");
         assertThat(deviceInfo1.getId()).isEqualTo("16");
-        assertThat(deviceInfo1.getName()).isEqualTo("FRITZ!DECT 200 #1");
+        assertThat(deviceInfo1.getName()).isEqualTo("Küche");
         assertThat(deviceInfo1.getProductName()).isEqualTo("FRITZ!DECT 200");
         assertThat(deviceInfo1.getFirmware()).isEqualTo("04.06");
         assertThat(deviceInfo1.getEnergy()).isEqualTo(20);
@@ -120,8 +120,8 @@ public class ResponseHandlerDeviceListTest {
 
     private List<DeviceInfo> readInput(final boolean caseSensitive, @NotNull final String inputString) throws Exception {
         List<DeviceInfo> deviceInfoList = new ArrayList<>();
-        responseHandlerDeviceList.setUseCaseSensitiveNames(caseSensitive);
-        responseHandlerDeviceList.read(inputString, deviceInfoList);
+        responseHandlerSwitchDeviceList.setUseCaseSensitiveNames(caseSensitive);
+        responseHandlerSwitchDeviceList.read(inputString, deviceInfoList);
         return deviceInfoList;
     }
 }

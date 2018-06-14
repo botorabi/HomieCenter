@@ -34,3 +34,4 @@ The application will try to connect to your FRITZ!Box via the URL **http : // fr
 It is also possible to define a custom URL by using the environment variable **homiecenter_fritzbox_url**. Here is an example for a custom URL:
 
   export  homiecenter_fritzbox_url=http://< my custom FRITZ!Box IP >:< my custom port >
+

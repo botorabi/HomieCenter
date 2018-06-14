@@ -225,4 +225,4 @@ $RECYCLE.BIN/
 HomieCenter.mv.db
 src/main/resources/static
 src/main/ngapp/node_modules
-
+HomieCenter\.trace\.db

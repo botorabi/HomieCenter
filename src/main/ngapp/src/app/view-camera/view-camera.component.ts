@@ -23,7 +23,7 @@ export class ViewCameraComponent implements OnInit {
     this.apiDeviceService.cameraList((cameras: Array<Camera>, error: string) => {
       this.cameras = cameras;
       if (this.cameras) {
-        this.appInfo.setCountCameras(this.cameras.length);
+        this.appInfo.setCameraCount(this.cameras.length);
       }
     });
   }

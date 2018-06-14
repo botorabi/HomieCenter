@@ -37,7 +37,7 @@ export class ViewSwitchDevicesComponent implements OnInit {
       }
       else {
         this.devices = devices;
-        this.appInfo.setCountSwitchDevices(this.devices.length);
+        this.appInfo.setSwitchDeviceCount(this.devices.length);
       }
     });
   }

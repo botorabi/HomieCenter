@@ -37,7 +37,7 @@ public class FRITZBox {
 
     private String fritzBoxUrl;
     private Authentication authentication;
-    private ResponseHandlerDeviceList handlerDeviceList ;
+    private ResponseHandlerSwitchDeviceList handlerDeviceList ;
     private Requests requests;
 
     @Autowired
@@ -50,7 +50,7 @@ public class FRITZBox {
     public FRITZBox fritzBox() {
         FRITZBox fritzBox = new FRITZBox();
         fritzBox.authentication = new Authentication(getFritzBoxURL());
-        fritzBox.handlerDeviceList = new ResponseHandlerDeviceList();
+        fritzBox.handlerDeviceList = new ResponseHandlerSwitchDeviceList();
         fritzBox.requests = new Requests();
 
         LOGGER.info("Using FRITZ!Box URL: {}", getFritzBoxURL());

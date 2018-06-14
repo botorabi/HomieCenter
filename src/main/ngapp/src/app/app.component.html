@@ -27,6 +27,6 @@
 <footer>
   <mat-toolbar color="primary">
     <span class="mat-small">Homie Center v{{appInfo.version}}, Copyright 2018 </span>
-    <div class="mat-small footer-username"><span *ngIf="appInfo.user">Timeout in {{appInfo.logoutTime}} </span></div>
+    <div class="mat-small footer-username"><span *ngIf="appInfo.user">User: {{appInfo.user.name}}, Timeout in {{appInfo.logoutTime}} </span></div>
   </mat-toolbar>
 </footer>

@@ -1,26 +1,20 @@
-import {Inject, Injectable} from '@angular/core';
+import {Injectable} from '@angular/core';
 import {HttpClient, HttpHeaders} from "@angular/common/http";
-import {DOCUMENT} from "@angular/common";
 import {User} from "./user";
 
 @Injectable()
 export class ApiAuthService {
-
-  readonly location;
-  readonly port = 8080;
 
   httpOptions = {
     headers: new HttpHeaders({'Content-Type': 'application/json', 'withCredentials': 'true'})
   };
 
   constructor(
-    private http: HttpClient,
-    @Inject(DOCUMENT) private document) {
-    this.location = document.location.protocol + '//' + this.document.location.hostname + ':' + this.port;
+    private http: HttpClient) {
   }
 
   public authenticate(credentials: any, callback: any) {
-    this.http.post(this.location + '/user/login', JSON.stringify(credentials), this.httpOptions)
+    this.http.post('/user/login', JSON.stringify(credentials), this.httpOptions)
       .subscribe(
         response => {
           let user = this.createUser(response);
@@ -36,7 +30,7 @@ export class ApiAuthService {
   }
 
   public logout(callback: any) {
-    this.http.get(this.location + '/user/logout')
+    this.http.get('/user/logout')
       .subscribe(response => {
         if (callback) {
           callback();
@@ -45,7 +39,7 @@ export class ApiAuthService {
   }
 
   public getStatus(callback: any) {
-    this.http.get(this.location + '/user/status')
+    this.http.get('/user/status')
       .subscribe(response => {
         let user = this.createUser(response);
         if (callback) {
@@ -56,6 +50,7 @@ export class ApiAuthService {
 
   private createUser(userJson: any): User {
     let user = new User();
+    user.name = userJson.name;
     user.authenticated = userJson.authenticated;
     user.loginTime = new Date();
     return user;

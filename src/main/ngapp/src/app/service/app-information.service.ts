@@ -12,8 +12,10 @@ export class AppInformationService {
   user: User;
   logoutTime: string;
   selectedCamera: Camera;
-  countCameras = 0;
-  countSwitchDevices = 0;
+  switchDeviceCount = 0;
+  cameraCount = 0;
+  camerasExpanded = true;
+  switchDevicesExpanded = true;
 
   private LogoutTimeoutSec = 30 * 60;
 
@@ -38,12 +40,12 @@ export class AppInformationService {
     this.selectedCamera = camera;
   }
 
-  public setCountCameras(count: number) {
-    this.countCameras = count;
+  public setCameraCount(count: number) {
+    this.cameraCount = count;
   }
 
-  public setCountSwitchDevices(count: number) {
-    this.countSwitchDevices = count;
+  public setSwitchDeviceCount(count: number) {
+    this.switchDeviceCount = count;
   }
 
   private refreshLogoutTimer() {
@@ -64,7 +66,7 @@ export class AppInformationService {
           this.logoutTime = this.formatTime(timeRemaining);
           this.updateLogoutTimer(this.user);
         }
-      }, 1000);
+      }, 10000);
     }
   }
 
