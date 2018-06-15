@@ -7,10 +7,15 @@
  */
 package net.vrfun.homiecenter;
 
-
 import org.springframework.context.annotation.*;
 import org.springframework.web.servlet.config.annotation.*;
 
+/**
+ * Configure the MVC.
+ *
+ * @author          boto
+ * Creation Date    7th June 2018
+ */
 @Configuration
 public class WebMvcConfig implements WebMvcConfigurer {
 

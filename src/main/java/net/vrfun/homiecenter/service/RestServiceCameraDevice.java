@@ -30,14 +30,14 @@ public class RestServiceCameraDevice {
     @Autowired
     private CameraInfoRepository cameraInfoRepository;
 
-    @GetMapping("/cameradevice")
+    @GetMapping("/api/cameradevice")
     public ResponseEntity<List<CameraInfo>> getCameras() {
         List<CameraInfo> cameras = new ArrayList<>();
         cameraInfoRepository.findAll().forEach(camera -> cameras.add(camera));
         return new ResponseEntity<>(cameras, HttpStatus.OK);
     }
 
-    @PostMapping("/cameradevice/createOrUpdate")
+    @PostMapping("/api/cameradevice/createOrUpdate")
     public ResponseEntity<CameraInfo> createOrUpdateCamera(@RequestBody CameraInfo reqCreateCamera) {
         if (reqCreateCamera.getId() != null) {
             Optional<CameraInfo> existingCamera = cameraInfoRepository.findById(reqCreateCamera.getId());
@@ -67,7 +67,7 @@ public class RestServiceCameraDevice {
         return new ResponseEntity<>(reqCreateCamera, HttpStatus.OK);
     }
 
-    @PostMapping("/cameradevice/delete/{id}")
+    @PostMapping("/api/cameradevice/delete/{id}")
     public ResponseEntity<Void> deleteCamera(@PathVariable Long id) {
         Optional<CameraInfo> existingCamera = cameraInfoRepository.findById(id);
         if (!existingCamera.isPresent()) {

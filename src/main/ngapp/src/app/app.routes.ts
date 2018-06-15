@@ -7,7 +7,7 @@ import {ViewCameraEditComponent} from "./view-camera-edit/view-camera-edit.compo
 
 export const appRoutes: Routes = [
   { path: 'about', component: ViewAboutComponent },
-  { path: 'authentication', component: ViewAuthenticationComponent },
+  { path: 'login', component: ViewAuthenticationComponent },
   { path: 'camera-edit', component: ViewCameraEditComponent },
   { path: 'camera-details', component: ViewCameraDetailsComponent },
   { path: '', component: ViewHomeComponent }

@@ -15,7 +15,7 @@ export class ApiDeviceService {
   }
 
   public deviceList(callback: any) {
-    this.http.get('/switchdevice')
+    this.http.get('/api/switchdevice')
       .subscribe(
         (response: Device[]) => {
           let devices = <Array<Device>>(response);
@@ -31,7 +31,7 @@ export class ApiDeviceService {
   }
 
   public deviceSwitch(deviceId: number, on: boolean, callback: any) {
-    this.http.get('/switchdevice/' + deviceId + "/" + (on ? "on" : "off"))
+    this.http.get('/api/switchdevice/' + deviceId + "/" + (on ? "on" : "off"))
       .subscribe(response => {
         if (callback) {
           callback();
@@ -40,7 +40,7 @@ export class ApiDeviceService {
   }
 
   public cameraList(callback: any) {
-    this.http.get('/cameradevice')
+    this.http.get('/api/cameradevice')
       .subscribe(
         (response: Camera[]) => {
           let cameras = <Array<Camera>>(response);
@@ -56,7 +56,7 @@ export class ApiDeviceService {
   }
 
   public cameraCreateOrUpdate(camera: Camera, callback: any) {
-    this.http.post('/cameradevice/createOrUpdate', JSON.stringify(camera), this.httpOptions).
+    this.http.post('/api/cameradevice/createOrUpdate', JSON.stringify(camera), this.httpOptions).
       subscribe(
         (response: Camera) => {
         if (callback) {
@@ -71,7 +71,7 @@ export class ApiDeviceService {
   }
 
   public cameraDelete(camera: Camera, callback: any) {
-    this.http.post('/cameradevice/delete/' + camera.id, this.httpOptions).
+    this.http.post('/api/cameradevice/delete/' + camera.id, this.httpOptions).
     subscribe(
       response => {
         if (callback) {

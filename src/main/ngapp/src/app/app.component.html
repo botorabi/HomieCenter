@@ -5,16 +5,15 @@
     </a>
     <span style="flex: 1 1 auto;"></span>
     <mat-menu #appMenu="matMenu">
-      <button mat-menu-item routerLink="" routerLinkActive="active">Home</button>
-      <button mat-menu-item *ngIf="appInfo.user" (click)="logout()">Logout</button>
-      <button mat-menu-item *ngIf="!appInfo.user" routerLink="authentication" routerLinkActive="active">Login</button>
+      <button mat-menu-item (click)="onHome()">Home</button>
+      <button mat-menu-item *ngIf="appInfo.user" (click)="onLogout()">Logout</button>
+      <button mat-menu-item *ngIf="!appInfo.user" (click)="onLogin()">Login</button>
       <button mat-menu-item *ngIf="appInfo.user" (click)="onCreateCamera()">Add IP Camera</button>
-      <button mat-menu-item routerLink="about" routerLinkActive="active">About</button>
+      <button mat-menu-item (click)="onAbout()">About</button>
     </mat-menu>
     <button mat-icon-button [matMenuTriggerFor]="appMenu">
       <mat-icon>more_vert</mat-icon>
     </button>
-
   </mat-toolbar-row>
 </mat-toolbar>
 

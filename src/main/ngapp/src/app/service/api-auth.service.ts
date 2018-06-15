@@ -14,7 +14,7 @@ export class ApiAuthService {
   }
 
   public authenticate(credentials: any, callback: any) {
-    this.http.post('/user/login', JSON.stringify(credentials), this.httpOptions)
+    this.http.post('/api/user/login', JSON.stringify(credentials), this.httpOptions)
       .subscribe(
         response => {
           let user = this.createUser(response);
@@ -30,7 +30,7 @@ export class ApiAuthService {
   }
 
   public logout(callback: any) {
-    this.http.get('/user/logout')
+    this.http.get('/api/user/logout')
       .subscribe(response => {
         if (callback) {
           callback();
@@ -39,7 +39,7 @@ export class ApiAuthService {
   }
 
   public getStatus(callback: any) {
-    this.http.get('/user/status')
+    this.http.get('/api/user/status')
       .subscribe(response => {
         let user = this.createUser(response);
         if (callback) {

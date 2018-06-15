@@ -15,7 +15,17 @@ export class AppComponent {
               private router: Router) {
   }
 
-  logout() {
+  onHome() {
+    this.appInfo.setSelectedCamera(null);
+    window.location.href = "/";
+  }
+
+  onLogin() {
+    this.appInfo.setSelectedCamera(null);
+    this.router.navigate(["login"]);
+  }
+
+  onLogout() {
     this.apiAuthService.logout(() => {
       window.location.href = "/";
     });
@@ -24,5 +34,9 @@ export class AppComponent {
   onCreateCamera() {
     this.appInfo.setSelectedCamera(null);
     this.router.navigate(["camera-edit"]);
+  }
+
+  onAbout() {
+    this.router.navigate(["about"]);
   }
 }

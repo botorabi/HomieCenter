@@ -31,7 +31,7 @@ public class RestServiceSwitchDevice {
     @Autowired
     FRITZBox fritzBox;
 
-    @GetMapping("/switchdevice")
+    @GetMapping("/api/switchdevice")
     public ResponseEntity<List<DeviceInfo>> getDevices() {
         try {
             return new ResponseEntity<>(fritzBox.getDevices(), HttpStatus.OK);
@@ -42,7 +42,7 @@ public class RestServiceSwitchDevice {
         }
     }
 
-    @GetMapping("/switchdevice/{id}")
+    @GetMapping("/api/switchdevice/{id}")
     public ResponseEntity<DeviceInfo> getDevice(@PathVariable Long id) {
         try {
             return new ResponseEntity<>(fritzBox.getDevice(id), HttpStatus.OK);
@@ -52,7 +52,7 @@ public class RestServiceSwitchDevice {
         }
     }
 
-    @GetMapping("/switchdevice/{id}/{command}")
+    @GetMapping("/api/switchdevice/{id}/{command}")
     public ResponseEntity<Void> executeCommand(@PathVariable Long id, @PathVariable String command) {
         try {
             fritzBox.handleDeviceCommand(id, command);

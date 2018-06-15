@@ -40,15 +40,12 @@ export class HttpXSRFInterceptor implements HttpInterceptor {
   }
 
   intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
-    //console.log("INTERCEPT HEADER: " + JSON.stringify(req));
     const headerName = 'XSRF-TOKEN';
     const respHeaderName = 'X-XSRF-TOKEN';
     let token = this.tokenExtractor.getToken() as string;
-    //console.log("     ---> TOKEN: " + token);
     if (token !== null && !req.headers.has(headerName)) {
       req = req.clone({ headers: req.headers.set(respHeaderName, token) });
     }
-    //console.log("     ---> INTERCEPT HEADER AFTER: " + JSON.stringify(req));
     return next.handle(req);
   }
 }
@@ -66,7 +63,7 @@ export class HttpXSRFInterceptor implements HttpInterceptor {
     SafePipe
   ],
   imports: [
-    RouterModule.forRoot(appRoutes),
+    RouterModule.forRoot(appRoutes, {onSameUrlNavigation:"reload"}),
     BrowserModule,
     BrowserAnimationsModule,
     HttpClientModule,

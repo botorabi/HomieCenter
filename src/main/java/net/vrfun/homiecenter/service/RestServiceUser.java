@@ -43,7 +43,7 @@ public class RestServiceUser {
     @Autowired
     FRITZBox fritzBox;
 
-    @PostMapping("/user/login")
+    @PostMapping("/api/user/login")
     public ResponseEntity<AuthStatus> loginUser(@RequestBody ReqLogin reqLogin) throws Exception {
         if (fritzBox.getAuthStatus().isAuthenticated()) {
             logoutUser();
@@ -62,14 +62,14 @@ public class RestServiceUser {
         return new ResponseEntity<>(HttpStatus.FORBIDDEN);
     }
 
-    @GetMapping("/user/logout")
+    @GetMapping("/api/user/logout")
     public ResponseEntity<AuthStatus> logoutUser() throws Exception {
         deauthorizeUser();
         fritzBox.logout();
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @GetMapping("/user/status")
+    @GetMapping("/api/user/status")
     public ResponseEntity<RespUser> status() throws Exception {
         boolean isAuthenticated = false;
         String userName = "";
