@@ -54,8 +54,8 @@ export class ViewSwitchDevicesComponent implements OnInit {
     return (device.temperature + device.temperatureOffset) / 10;
   }
 
-  public toggleState(device: Device) {
-    if (!device.present) {
+  public onToggleState(device: Device) {
+    if (!device.present || !device.unlocked) {
       return;
     }
     this.apiDeviceService.deviceSwitch(device.id, !device.on, () => {
@@ -63,5 +63,9 @@ export class ViewSwitchDevicesComponent implements OnInit {
         this.updateDevices();
       }, 1000);
     });
+  }
+
+  public onToggleLock(device: Device) {
+    device.unlocked = !device.unlocked;
   }
 }
