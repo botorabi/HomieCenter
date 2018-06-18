@@ -5,13 +5,13 @@ import {MaterialModule} from "./material.module";
 
 import {AppComponent} from './app.component';
 import {
-    HTTP_INTERCEPTORS,
-    HttpClientModule,
-    HttpEvent,
-    HttpHandler,
-    HttpInterceptor,
-    HttpRequest,
-    HttpXsrfTokenExtractor
+  HTTP_INTERCEPTORS,
+  HttpClientModule,
+  HttpEvent,
+  HttpHandler,
+  HttpInterceptor,
+  HttpRequest,
+  HttpXsrfTokenExtractor
 } from "@angular/common/http";
 import {FormsModule} from "@angular/forms";
 import {appRoutes} from "./app.routes";
@@ -40,16 +40,12 @@ export class HttpXSRFInterceptor implements HttpInterceptor {
   }
 
   intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
-console.log("INTERCEPT HEADER: " + JSON.stringify(req));
     const headerName = 'XSRF-TOKEN';
     const respHeaderName = 'X-XSRF-TOKEN';
     let token = this.tokenExtractor.getToken() as string;
-console.log("     ---> TOKEN: " + token);
-
     if (token !== null && !req.headers.has(headerName)) {
       req = req.clone({ headers: req.headers.set(respHeaderName, token) });
     }
-console.log("     ---> INTERCEPT HEADER AFTER: " + JSON.stringify(req));
     return next.handle(req);
   }
 }
@@ -67,7 +63,7 @@ console.log("     ---> INTERCEPT HEADER AFTER: " + JSON.stringify(req));
     SafePipe
   ],
   imports: [
-    RouterModule.forRoot(appRoutes),
+    RouterModule.forRoot(appRoutes, {onSameUrlNavigation:"reload"}),
     BrowserModule,
     BrowserAnimationsModule,
     HttpClientModule,

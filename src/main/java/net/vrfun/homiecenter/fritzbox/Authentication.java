@@ -9,7 +9,6 @@ package net.vrfun.homiecenter.fritzbox;
 
 import org.slf4j.*;
 import org.springframework.http.*;
-import org.springframework.web.client.RestTemplate;
 
 import javax.validation.constraints.NotNull;
 import java.security.*;
@@ -115,7 +114,6 @@ public class Authentication {
     }
 
     private ResponseEntity<String> getConnectionState() throws Exception {
-        RestTemplate request = new RestTemplate();
         ResponseEntity<String> response;
         String url = fritzBoxAddress + "/login_sid.lua";
 
@@ -124,7 +122,7 @@ public class Authentication {
         }
 
         try {
-            response = request.getForEntity(url, String.class);
+            response = requests.get(url, null);
         }
         catch(Throwable throwable) {
             LOGGER.warn("Could not connect FRITZ!Box, reason: {}", throwable.getMessage());

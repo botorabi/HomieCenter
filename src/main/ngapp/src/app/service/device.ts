@@ -10,4 +10,6 @@ export class Device {
   energy: number
   temperature: number;
   temperatureOffset: number;
+
+  unlocked: boolean;
 }

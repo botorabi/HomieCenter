@@ -5,8 +5,9 @@
       <mat-card-title>
         <mat-icon class="dummy-left-element"></mat-icon>
         <span>{{device.name}}</span>
-        <mat-icon *ngIf="device.present" class="device-state-present" title="Available">link</mat-icon>
         <mat-icon *ngIf="!device.present" class="device-state-not-present" title="Not available!">link_off</mat-icon>
+        <mat-icon *ngIf="device.present && !device.unlocked" color="primary" class="device-lock" title="Unlock" (click)="onToggleLock(device)">lock</mat-icon>
+        <mat-icon *ngIf="device.present && device.unlocked" color="primary" class="device-lock" title="Lock" (click)="onToggleLock(device)">lock_open</mat-icon>
       </mat-card-title>
       <mat-card-subtitle>
         AIN: {{device.ain}}, FW: {{device.firmware}}
@@ -16,7 +17,7 @@
         <table class="device-info">
           <tr>
             <td>State</td>
-            <td>Off <mat-slide-toggle color="primary" [disabled]="!device.present" [(ngModel)]="device.on" (click)="toggleState(device)"></mat-slide-toggle> On</td>
+            <td>Off <mat-slide-toggle color="primary" [(disabled)]="!device.present || !device.unlocked" [(ngModel)]="device.on" (click)="onToggleState(device)"></mat-slide-toggle> On</td>
           </tr>
           <tr>
             <td>Power</td>
@@ -34,5 +35,5 @@
       </mat-card-content>
     </mat-card>
   </div>
-  <div class="warn-text" *ngIf="error">An error occurred! Error code: {{error}}</div>
 </div>
+<div class="warn-text" *ngIf="error">An error occurred! Error code: {{error}}</div>

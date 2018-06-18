@@ -19,9 +19,9 @@ import java.util.List;
  * @author          boto
  * Creation Date    7th June 2018
  */
-public class ResponseHandlerDeviceList extends ResponseHandler<List<DeviceInfo>> {
+public class ResponseHandlerSwitchDeviceList extends ResponseHandler<List<DeviceInfo>> {
 
-    public ResponseHandlerDeviceList() {
+    public ResponseHandlerSwitchDeviceList() {
         setUseCaseSensitiveNames(false);
     }
 

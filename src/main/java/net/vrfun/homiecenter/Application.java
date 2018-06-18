@@ -12,7 +12,7 @@ import org.springframework.boot.autoconfigure.*;
 
 
 /**
- * Main application class.
+ * Main application class
  *
  * @author          boto
  * Creation Date    7th June 2018

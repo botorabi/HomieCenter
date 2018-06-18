@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import {ApiDeviceService} from "../service/api-device.service";
 import {Device} from "../service/device";
+import {AppInformationService} from "../service/app-information.service";
 
 @Component({
   selector: 'app-view-switch-devices',
@@ -12,9 +13,10 @@ export class ViewSwitchDevicesComponent implements OnInit {
   public devices: Array<Device>;
   public error;
 
-  private UPDATE_INTERVAL = 10 * 60 * 1000;
+  private UPDATE_INTERVAL = 30 * 1000;
 
-  constructor(private apiDeviceService: ApiDeviceService) { }
+  constructor(private apiDeviceService: ApiDeviceService,
+              private appInfo: AppInformationService) { }
 
   ngOnInit() {
     this.periodicUpdate();
@@ -35,6 +37,7 @@ export class ViewSwitchDevicesComponent implements OnInit {
       }
       else {
         this.devices = devices;
+        this.appInfo.setSwitchDeviceCount(this.devices.length);
       }
     });
   }
@@ -51,8 +54,8 @@ export class ViewSwitchDevicesComponent implements OnInit {
     return (device.temperature + device.temperatureOffset) / 10;
   }
 
-  public toggleState(device: Device) {
-    if (!device.present) {
+  public onToggleState(device: Device) {
+    if (!device.present || !device.unlocked) {
       return;
     }
     this.apiDeviceService.deviceSwitch(device.id, !device.on, () => {
@@ -60,5 +63,9 @@ export class ViewSwitchDevicesComponent implements OnInit {
         this.updateDevices();
       }, 1000);
     });
+  }
+
+  public onToggleLock(device: Device) {
+    device.unlocked = !device.unlocked;
   }
 }

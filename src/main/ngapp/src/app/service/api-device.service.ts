@@ -1,5 +1,4 @@
-import {Inject, Injectable} from '@angular/core';
-import {DOCUMENT} from "@angular/common";
+import {Injectable} from '@angular/core';
 import {HttpClient, HttpHeaders} from "@angular/common/http";
 import {Device} from "./device";
 import {Camera} from "./camera";
@@ -7,21 +6,16 @@ import {Camera} from "./camera";
 @Injectable()
 export class ApiDeviceService {
 
-  readonly location;
-  readonly port = 8080;
-
   httpOptions = {
     headers: new HttpHeaders({'Content-Type': 'application/json', 'withCredentials': 'true'})
   };
 
   constructor(
-    private http: HttpClient,
-    @Inject(DOCUMENT) private document) {
-    this.location = document.location.protocol + '//' + this.document.location.hostname + ':' + this.port;
+    private http: HttpClient) {
   }
 
   public deviceList(callback: any) {
-    this.http.get(this.location + '/device')
+    this.http.get('/api/switchdevice')
       .subscribe(
         (response: Device[]) => {
           let devices = <Array<Device>>(response);
@@ -37,7 +31,7 @@ export class ApiDeviceService {
   }
 
   public deviceSwitch(deviceId: number, on: boolean, callback: any) {
-    this.http.get(this.location + '/device/' + deviceId + "/" + (on ? "on" : "off"))
+    this.http.get('/api/switchdevice/' + deviceId + "/" + (on ? "on" : "off"))
       .subscribe(response => {
         if (callback) {
           callback();
@@ -46,7 +40,7 @@ export class ApiDeviceService {
   }
 
   public cameraList(callback: any) {
-    this.http.get(this.location + '/device/camera')
+    this.http.get('/api/cameradevice')
       .subscribe(
         (response: Camera[]) => {
           let cameras = <Array<Camera>>(response);
@@ -62,7 +56,7 @@ export class ApiDeviceService {
   }
 
   public cameraCreateOrUpdate(camera: Camera, callback: any) {
-    this.http.post(this.location + "/device/cameraCreateOrUpdate", JSON.stringify(camera), this.httpOptions).
+    this.http.post('/api/cameradevice/createOrUpdate', JSON.stringify(camera), this.httpOptions).
       subscribe(
         (response: Camera) => {
         if (callback) {
@@ -77,7 +71,7 @@ export class ApiDeviceService {
   }
 
   public cameraDelete(camera: Camera, callback: any) {
-    this.http.post(this.location + "/device/cameraDelete/" + camera.id, this.httpOptions).
+    this.http.post('/api/cameradevice/delete/' + camera.id, this.httpOptions).
     subscribe(
       response => {
         if (callback) {

@@ -16,6 +16,9 @@
 .dummy-left-element {
   float: left;
 }
+.device-lock {
+  float: right;
+}
 .device-state-present {
   float: right;
 }
