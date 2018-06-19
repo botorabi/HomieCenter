@@ -58,6 +58,7 @@ export class ViewSwitchDevicesComponent implements OnInit {
     if (!device.present || !device.unlocked) {
       return;
     }
+    device.unlocked = false;
     this.apiDeviceService.deviceSwitch(device.id, !device.on, () => {
       setTimeout(() => {
         this.updateDevices();
