@@ -8,11 +8,13 @@
 package net.vrfun.homiecenter.service;
 
 import net.vrfun.homiecenter.model.*;
+import net.vrfun.homiecenter.reverseproxy.CameraProxyRoutes;
 import org.slf4j.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.constraints.NotNull;
 import java.util.*;
 
 
@@ -30,11 +32,23 @@ public class RestServiceCameraDevice {
     @Autowired
     private CameraInfoRepository cameraInfoRepository;
 
+    @Autowired
+    CameraProxyRoutes cameraProxyRoutes;
+
+
     @GetMapping("/api/cameradevice")
     public ResponseEntity<List<CameraInfo>> getCameras() {
         List<CameraInfo> cameras = new ArrayList<>();
-        cameraInfoRepository.findAll().forEach(camera -> cameras.add(camera));
+        cameraInfoRepository.findAll().forEach(camera -> {
+            createCameraUrlTags(camera);
+            cameras.add(camera);
+        });
         return new ResponseEntity<>(cameras, HttpStatus.OK);
+    }
+
+    private void createCameraUrlTags(@NotNull CameraInfo camera) {
+        camera.setUrlTag(cameraProxyRoutes.getProxyPath() + "/" + cameraProxyRoutes.createRouteTag(camera.getUrl()));
+        camera.setPreviewUrlTag(cameraProxyRoutes.getProxyPath() + "/" + cameraProxyRoutes.createRouteTag(camera.getPreviewUrl()));
     }
 
     @PostMapping("/api/cameradevice/createOrUpdate")
@@ -64,6 +78,10 @@ public class RestServiceCameraDevice {
         }
 
         cameraInfoRepository.save(reqCreateCamera);
+
+        // whenever the camera URLs were changed we have to re-build the camera routes and their tags
+        cameraProxyRoutes.buildRoutes();
+
         return new ResponseEntity<>(reqCreateCamera, HttpStatus.OK);
     }
 
@@ -75,6 +93,10 @@ public class RestServiceCameraDevice {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
         cameraInfoRepository.delete(existingCamera.get());
+
+        // whenever the camera URLs were changed we have to re-build the camera routes and their tags
+        cameraProxyRoutes.buildRoutes();
+
         return new ResponseEntity<>(HttpStatus.OK);
     }
 }

@@ -9,13 +9,13 @@ package net.vrfun.homiecenter.fritzbox;
 
 
 import net.vrfun.homiecenter.model.DeviceInfo;
-import org.jvnet.hk2.annotations.Service;
 import org.slf4j.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.*;
 import org.springframework.core.env.Environment;
 import org.springframework.http.*;
 import org.springframework.lang.Nullable;
+import org.springframework.stereotype.Service;
 
 import javax.validation.constraints.NotNull;
 import java.util.*;

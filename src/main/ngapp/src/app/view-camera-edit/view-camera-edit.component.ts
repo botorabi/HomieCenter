@@ -21,7 +21,7 @@ export class ViewCameraEditComponent implements OnInit {
 
   ngOnInit() {
     if (!this.appInfo.selectedCamera) {
-      this.camera = new Camera("", "", "");
+      this.camera = new Camera("", "", "", "", "");
     }
     else {
       this.camera = this.appInfo.selectedCamera;

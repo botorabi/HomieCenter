@@ -10,7 +10,7 @@ package net.vrfun.homiecenter;
 import org.springframework.boot.web.servlet.error.ErrorController;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.*;
+import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 /**

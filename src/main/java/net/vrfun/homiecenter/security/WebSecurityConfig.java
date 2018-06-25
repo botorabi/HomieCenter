@@ -10,10 +10,12 @@ package net.vrfun.homiecenter.security;
 
 import org.slf4j.*;
 import org.springframework.beans.factory.annotation.*;
-import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.*;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.*;
+import org.springframework.security.config.web.server.ServerHttpSecurity;
 import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
+import org.springframework.security.web.server.SecurityWebFilterChain;
 
 /**
  * Web security configuration
@@ -55,6 +57,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         http
                 .csrf().csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
                 .and()
+                .headers().frameOptions().sameOrigin()
+                .and()
                 .exceptionHandling()
                 .authenticationEntryPoint(restAuthenticationEntryPoint)
                 .and()
@@ -64,9 +68,22 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     }
 
     private void configureForNoAccessSecurity(HttpSecurity http) throws Exception {
-        http.
-                csrf().disable().
-                authorizeRequests().
-                anyRequest().permitAll();
+        http
+                .csrf().disable()
+                .headers().frameOptions().sameOrigin()
+                .and()
+                .authorizeRequests()
+                .anyRequest().permitAll();
+    }
+
+    @Bean
+    public SecurityWebFilterChain springWebFilterChain(ServerHttpSecurity http) throws Exception {
+        return http.httpBasic().and()
+                .csrf().disable()
+                .authorizeExchange()
+                //.pathMatchers("/**").authenticated()
+                .anyExchange().permitAll()
+                .and()
+                .build();
     }
 }

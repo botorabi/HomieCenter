@@ -23,8 +23,8 @@
       </div>
       <br>
       <div class="input-form-buttons">
-        <button *ngIf="camera.id" mat-raised-button title="Delete the camera" color="secondary" (click)="onDelete()">Delete!</button>
-        <button mat-raised-button color="primary" routerLink="" routerLinkActive="active">Cancel</button>
+        <button *ngIf="camera.id" mat-raised-button type="button" title="Delete the camera" color="secondary" (click)="onDelete()">Delete!</button>
+        <button mat-raised-button color="primary" type="button" routerLink="" routerLinkActive="active">Cancel</button>
         <button mat-raised-button type="submit" color="primary" (click)="onApply()">Apply</button>
       </div>
     </form>
