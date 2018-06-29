@@ -13,31 +13,6 @@ export class ApiAuthService {
     private http: HttpClient) {
   }
 
-  public authenticate(credentials: any, callback: any) {
-    this.http.post('/api/user/login', JSON.stringify(credentials), this.httpOptions)
-      .subscribe(
-        response => {
-          let user = this.createUser(response);
-          if (callback) {
-            callback(user, null);
-          }
-        },
-        error => {
-          if (callback) {
-            callback(null, error.status);
-          }
-        });
-  }
-
-  public logout(callback: any) {
-    this.http.get('/api/user/logout')
-      .subscribe(response => {
-        if (callback) {
-          callback();
-        }
-      });
-  }
-
   public getStatus(callback: any) {
     this.http.get('/api/user/status')
       .subscribe(response => {

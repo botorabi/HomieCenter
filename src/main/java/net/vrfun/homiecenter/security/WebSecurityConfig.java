@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017-2018 by Botorabi. All rights reserved.
+ * Copyright (c) 2018 by Botorabi. All rights reserved.
  * https://github.com/botorabi/HomieCenter
  *
  * License: MIT License (MIT), read the LICENSE text in
@@ -8,14 +8,15 @@
 package net.vrfun.homiecenter.security;
 
 
-import org.slf4j.*;
-import org.springframework.beans.factory.annotation.*;
-import org.springframework.context.annotation.*;
-import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.configuration.*;
+import net.vrfun.homiecenter.reverseproxy.CameraProxyRoutes;
+import org.springframework.context.annotation.Bean;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity;
 import org.springframework.security.config.web.server.ServerHttpSecurity;
-import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
+import org.springframework.security.core.userdetails.*;
 import org.springframework.security.web.server.SecurityWebFilterChain;
+import org.springframework.security.web.server.header.XFrameOptionsServerHttpHeadersWriter;
+import org.springframework.web.reactive.function.server.*;
 
 /**
  * Web security configuration
@@ -23,67 +24,105 @@ import org.springframework.security.web.server.SecurityWebFilterChain;
  * @author          boto
  * Creation Date    23th April 2018
 */
-@Configuration
-@EnableWebSecurity
-public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
-
-    private final Logger LOGGER = LoggerFactory.getLogger(this.getClass());
-
-    @Autowired
-    private RestAuthenticationEntryPoint restAuthenticationEntryPoint;
+@EnableWebFluxSecurity
+public class WebSecurityConfig {
 
     /**
-     * Use the environment variable 'homiecenter_disable_security=<true|false>' to enable/disable
-     * the spring http access security mechanisms.
-     *
-     * During development with Angular and using the Node.js web server you may want to disable the
-     * security mechanisms, otherwise you run into authentication issues.
+     * Reactive web needs the static path explicitly.
      */
-    @Value("${homiecenter_disable_security:false}")
-    private boolean disableSecurity = false;
-
-    @Override
-    protected void configure(HttpSecurity http) throws Exception {
-        if (disableSecurity) {
-            LOGGER.warn("The application is running without access security mechanisms!");
-            configureForNoAccessSecurity(http);
-        }
-        else {
-            configureForFullAccessSecurity(http);
-        }
-    }
-
-    private void configureForFullAccessSecurity(HttpSecurity http) throws Exception {
-        http
-                .csrf().csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
-                .and()
-                .headers().frameOptions().sameOrigin()
-                .and()
-                .exceptionHandling()
-                .authenticationEntryPoint(restAuthenticationEntryPoint)
-                .and()
-                .authorizeRequests()
-                .antMatchers("/*", "/api/user/status", "/api/user/login", "/api/user/logout").permitAll()
-                .anyRequest().authenticated();
-    }
-
-    private void configureForNoAccessSecurity(HttpSecurity http) throws Exception {
-        http
-                .csrf().disable()
-                .headers().frameOptions().sameOrigin()
-                .and()
-                .authorizeRequests()
-                .anyRequest().permitAll();
+    @Bean
+    RouterFunction<ServerResponse> staticResourceRouter(){
+        return RouterFunctions.resources("/*", new ClassPathResource("static/"));
     }
 
     @Bean
-    public SecurityWebFilterChain springWebFilterChain(ServerHttpSecurity http) throws Exception {
-        return http.httpBasic().and()
+    public SecurityWebFilterChain securityWebFilterChain(ServerHttpSecurity http) {
+        return http
+                //.csrf().csrfTokenRepository(new WebSessionServerCsrfTokenRepository()).and()
                 .csrf().disable()
+                .headers().frameOptions().mode(XFrameOptionsServerHttpHeadersWriter.Mode.SAMEORIGIN).and()
+                .and()
                 .authorizeExchange()
-                //.pathMatchers("/**").authenticated()
-                .anyExchange().permitAll()
+                .pathMatchers(CameraProxyRoutes.getProxyPath() + "**").authenticated()
+                .pathMatchers("/api/user/status").permitAll()
+                .anyExchange().authenticated()
+                .and().formLogin()
+                .and().build();
+    }
+
+    @Bean
+    public MapReactiveUserDetailsService userDetailsService() {
+        UserDetails user1 = User.withDefaultPasswordEncoder()
+                .username("user")
+                .password("user")
+                .roles("USER")
+                .build();
+
+        UserDetails user2 = User.withDefaultPasswordEncoder()
+                .username("admin")
+                .password("admin")
+                .roles("ADMIN")
+                .build();
+
+        return new MapReactiveUserDetailsService(user1, user2);
+    }
+
+/*
+    @Autowired
+    private ContextRepository contextRepository;
+
+    @Bean
+    public SecurityWebFilterChain springWebFilterChain(ServerHttpSecurity http) {
+        return http
+                //.csrf().csrfTokenRepository(new WebSessionServerCsrfTokenRepository()).and()
+                .csrf().disable()
+                .headers().frameOptions().mode(XFrameOptionsServerHttpHeadersWriter.Mode.SAMEORIGIN).and()
+                .and()
+                .exceptionHandling()
+                .authenticationEntryPoint(new ExceptionAuthEntryPoint())
+                .and()
+//                .securityContextRepository(contextRepository)
+                .authenticationManager(reactiveAuthenticationManager())
+                .authorizeExchange()
+                .pathMatchers(CameraProxyRoutes.getProxyPath() + "**").authenticated()
+                .pathMatchers("/*", "/api/user/status", "/api/user/login", "/api/user/logout").permitAll()
+                .anyExchange().authenticated()
                 .and()
                 .build();
     }
+
+    @Bean
+    ReactiveAuthenticationManager reactiveAuthenticationManager(){
+        return new FritzBoxAuthenticationManager();
+    }
+*/
+
+
+/*
+
+	@Bean
+	SecurityWebFilterChain springWebFilterChain(ServerHttpSecurity http) throws Exception {
+		return http
+			.authorizeExchange()
+				.pathMatchers(HttpMethod.GET, "/posts/**").permitAll()
+                .pathMatchers(HttpMethod.DELETE, "/posts/**").hasRole("ADMIN")
+				//.pathMatchers("/users/{user}/**").access(this::currentUserMatchesPath)
+				.anyExchange().authenticated()
+				.and()
+			.build();
+	}
+
+	private Mono<AuthorizationDecision> currentUserMatchesPath(Mono<Authentication> authentication, AuthorizationContext context) {
+		return authentication
+			.map( a -> context.getVariables().get("user").equals(a.getName()))
+			.map( granted -> new AuthorizationDecision(granted));
+	}
+
+	@Bean
+	public MapReactiveUserDetailsService userDetailsRepository() {
+		UserDetails rob = User.withDefaultPasswordEncoder().username("test").password("password").roles("USER").build();
+		UserDetails admin = User.withDefaultPasswordEncoder().username("admin").password("password").roles("USER","ADMIN").build();
+		return new MapReactiveUserDetailsService(rob, admin);
+	}
+ */
 }

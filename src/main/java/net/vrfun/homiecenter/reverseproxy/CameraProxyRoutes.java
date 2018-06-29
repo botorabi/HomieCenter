@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017-2018 by Botorabi. All rights reserved.
+ * Copyright (c) 2018 by Botorabi. All rights reserved.
  * https://github.com/botorabi/HomieCenter
  *
  * License: MIT License (MIT), read the LICENSE text in
@@ -15,6 +15,7 @@ import org.springframework.context.annotation.*;
 import org.springframework.stereotype.Service;
 
 import javax.validation.constraints.NotNull;
+import java.net.*;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -26,7 +27,6 @@ import java.util.concurrent.ConcurrentHashMap;
  * Creation Date    20th June 2018
  */
 @Service
-@Configuration
 public class CameraProxyRoutes {
 
     private final Logger LOGGER = LoggerFactory.getLogger(CameraProxyRoutes.class);
@@ -51,7 +51,7 @@ public class CameraProxyRoutes {
     }
 
     @NotNull
-    public final String getProxyPath() {
+    public static final String getProxyPath() {
         return PROXY_PATH;
     }
 
@@ -69,7 +69,10 @@ public class CameraProxyRoutes {
      * Whenever the routes were changed then call this method in order to publish the changes in the application.
      */
     public void buildRoutes() {
+        LOGGER.info("building proxy routes");
+
         routes.clear();
+
         cameraInfoRepository.findAll().forEach(camera -> {
             String previewUrl = camera.getPreviewUrl();
             String url = camera.getUrl();
@@ -87,8 +90,13 @@ public class CameraProxyRoutes {
     private void updateGatewayRoutes() {
         refreshableRoutesLocator.clearRoutes();
         routes.forEach((tag, uri) -> {
-            refreshableRoutesLocator.addRoute("camera" + tag, getProxyPath() /*+ tag*/, uri);
-            LOGGER.info("adding proxy path: tag {} -> {}", getProxyPath() + tag, uri);
+            try {
+                URI validUri = new URI(uri);
+                refreshableRoutesLocator.addRoute("camera" + tag, getProxyPath() + tag, validUri);
+                LOGGER.info("adding proxy path: tag {} -> {}", getProxyPath() + tag, uri);
+            } catch (URISyntaxException e) {
+                LOGGER.info("skip invalid proxy path: {}", uri);
+            }
         });
         refreshableRoutesLocator.buildRoutes();
     }

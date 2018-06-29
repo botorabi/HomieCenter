@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017-2018 by Botorabi. All rights reserved.
+ * Copyright (c) 2018 by Botorabi. All rights reserved.
  * https://github.com/botorabi/HomieCenter
  *
  * License: MIT License (MIT), read the LICENSE text in
@@ -11,10 +11,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.gateway.route.*;
 import org.springframework.cloud.gateway.route.builder.RouteLocatorBuilder;
 import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.http.*;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Flux;
 
 import javax.validation.constraints.NotNull;
+import java.net.URI;
+import java.nio.charset.StandardCharsets;
 
 /**
  * A gateway route resolver which is used for dynamically refresh routes during the application runtime.
@@ -51,7 +54,7 @@ public class RefreshableRoutesLocator implements RouteLocator {
      * Add a new route. After adding all routes call 'buildRoutes'.
      */
     @NotNull
-    public RefreshableRoutesLocator addRoute(@NotNull final String id, @NotNull final String path, @NotNull final String uri) {
+    public RefreshableRoutesLocator addRoute(@NotNull final String id, @NotNull final String path, @NotNull final URI uri) {
         routesBuilder.route(id, r -> r
                 .path(path + "/**")
                 .filters(f -> {
@@ -61,7 +64,6 @@ public class RefreshableRoutesLocator implements RouteLocator {
                 })
                 .uri(uri)
         );
-
         return this;
     }
 

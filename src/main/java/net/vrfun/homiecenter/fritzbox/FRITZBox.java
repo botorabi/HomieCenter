@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017-2018 by Botorabi. All rights reserved.
+ * Copyright (c) 2018 by Botorabi. All rights reserved.
  * https://github.com/botorabi/HomieCenter
  *
  * License: MIT License (MIT), read the LICENSE text in
@@ -8,6 +8,7 @@
 package net.vrfun.homiecenter.fritzbox;
 
 
+import javafx.util.Pair;
 import net.vrfun.homiecenter.model.DeviceInfo;
 import org.slf4j.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +19,7 @@ import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Service;
 
 import javax.validation.constraints.NotNull;
+import java.time.Instant;
 import java.util.*;
 
 /**
@@ -36,9 +38,16 @@ public class FRITZBox {
     private final static String ENV_NAME_FRITZBOX_URL = "homiecenter_fritzbox_url";
 
     private String fritzBoxUrl;
-    private Authentication authentication;
+    private FritzBoxAuthentication fritzBoxAuthentication;
     private ResponseHandlerSwitchDeviceList handlerDeviceList ;
     private Requests requests;
+
+    private Pair<Instant, AuthStatus> cachedAuthStatus;
+    private final static long AUTH_STATUS_MAX_CACHE_PERIOD_SEC = 60;
+
+    //! TODO FRITZ!Box credentials must be retrieved from a proper repo
+    private String fritzBoxLogin = "homie";
+    private String fritzBoxPassword = "homie";
 
     @Autowired
     private Environment environment;
@@ -49,7 +58,7 @@ public class FRITZBox {
     @Bean
     public FRITZBox fritzBox() {
         FRITZBox fritzBox = new FRITZBox();
-        fritzBox.authentication = new Authentication(getFritzBoxURL());
+        fritzBox.fritzBoxAuthentication = new FritzBoxAuthentication(getFritzBoxURL());
         fritzBox.handlerDeviceList = new ResponseHandlerSwitchDeviceList();
         fritzBox.requests = new Requests();
 
@@ -58,14 +67,31 @@ public class FRITZBox {
         return fritzBox;
     }
 
+    /**
+     * In order to avoid requesting the FRITZ!Box for authentication state too often, use this method
+     * which caches the state for a max time of 'AUTH_STATUS_MAX_CACHE_PERIOD_SEC'.
+     */
+    @NotNull
+    public AuthStatus getCachedAuthStatus() throws Exception {
+        if ((cachedAuthStatus == null) ||
+                (Instant.now().isAfter(cachedAuthStatus.getKey().plusSeconds(AUTH_STATUS_MAX_CACHE_PERIOD_SEC)))) {
+
+            updateCachedAuthStatus();
+        }
+
+        return cachedAuthStatus.getValue();
+    }
+
     @NotNull
     public AuthStatus getAuthStatus() throws Exception {
-        return authentication.getAuthStatus();
+        return fritzBoxAuthentication.getAuthStatus();
     }
 
     @NotNull
     public AuthStatus login(@NotNull final String userName, @NotNull final String password) throws Exception {
-        AuthStatus authStatus = authentication.login(userName, password);
+        discardCachedAuthStatus();
+
+        AuthStatus authStatus = fritzBoxAuthentication.login(userName, password);
         if (!authStatus.isAuthenticated()) {
             LOGGER.debug("Failed to authenticate at FRITZ!Box");
             throw new Exception("Failed to authenticate at FRITZ!Box");
@@ -74,12 +100,22 @@ public class FRITZBox {
     }
 
     public void logout() throws Exception {
-        authentication.logout();
+        discardCachedAuthStatus();
+
+        fritzBoxAuthentication.logout();
+    }
+
+    private void updateCachedAuthStatus() throws Exception {
+        cachedAuthStatus = new Pair<>(Instant.now(), fritzBoxAuthentication.getAuthStatus());
+    }
+
+    private void discardCachedAuthStatus() {
+        cachedAuthStatus = null;
     }
 
     @NotNull
     public List<DeviceInfo> getDevices() throws Exception {
-        AuthStatus authStatus = getAuthStatus();
+        AuthStatus authStatus = loginIfNeeded();
 
         Map<String, String> parameters = new HashMap<>();
         parameters.put("switchcmd", "getdevicelistinfos");
@@ -120,7 +156,7 @@ public class FRITZBox {
     }
 
     private void switchDevice(Long deviceId, boolean on) throws Exception {
-        AuthStatus authStatus = getAuthStatus();
+        AuthStatus authStatus = loginIfNeeded();
         DeviceInfo device = getDevice(deviceId);
 
         if (device == null) {
@@ -151,6 +187,15 @@ public class FRITZBox {
         }
 
         LOGGER.debug("device ({}) successfully switched {}", device.getAIN(), (on ? "on": "off"));
+    }
+
+    @NotNull
+    private AuthStatus loginIfNeeded() throws Exception {
+        AuthStatus authStatus = getCachedAuthStatus();
+        if (!authStatus.isAuthenticated()) {
+            return login(fritzBoxLogin, fritzBoxPassword);
+        }
+        return authStatus;
     }
 
     @NotNull

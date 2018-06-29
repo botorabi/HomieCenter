@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017-2018 by Botorabi. All rights reserved.
+ * Copyright (c) 2018 by Botorabi. All rights reserved.
  * https://github.com/botorabi/HomieCenter
  *
  * License: MIT License (MIT), read the LICENSE text in
@@ -9,6 +9,7 @@ package net.vrfun.homiecenter.service;
 
 import net.vrfun.homiecenter.model.*;
 import net.vrfun.homiecenter.reverseproxy.CameraProxyRoutes;
+import org.h2.util.StringUtils;
 import org.slf4j.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
@@ -40,15 +41,21 @@ public class RestServiceCameraDevice {
     public ResponseEntity<List<CameraInfo>> getCameras() {
         List<CameraInfo> cameras = new ArrayList<>();
         cameraInfoRepository.findAll().forEach(camera -> {
-            createCameraUrlTags(camera);
+            updateCameraUrlTags(camera);
             cameras.add(camera);
         });
         return new ResponseEntity<>(cameras, HttpStatus.OK);
     }
 
-    private void createCameraUrlTags(@NotNull CameraInfo camera) {
-        camera.setUrlTag(cameraProxyRoutes.getProxyPath() + "/" + cameraProxyRoutes.createRouteTag(camera.getUrl()));
-        camera.setPreviewUrlTag(cameraProxyRoutes.getProxyPath() + "/" + cameraProxyRoutes.createRouteTag(camera.getPreviewUrl()));
+    private void updateCameraUrlTags(@NotNull CameraInfo camera) {
+        String urlTag = StringUtils.isNullOrEmpty(camera.getUrl()) ? "" :
+                cameraProxyRoutes.getProxyPath() + cameraProxyRoutes.createRouteTag(camera.getUrl());
+
+        String previewUrlTag = StringUtils.isNullOrEmpty(camera.getPreviewUrl()) ? "" :
+                cameraProxyRoutes.getProxyPath() + cameraProxyRoutes.createRouteTag(camera.getPreviewUrl());
+
+        camera.setUrlTag(urlTag + "/");
+        camera.setPreviewUrlTag(previewUrlTag + "/");
     }
 
     @PostMapping("/api/cameradevice/createOrUpdate")
@@ -72,10 +79,12 @@ public class RestServiceCameraDevice {
             reqCreateCamera.setUrl("http://" + url);
         }
         String previewUrl = reqCreateCamera.getPreviewUrl();
-        if (previewUrl != null && !previewUrl.startsWith("http://") &&
+        if (!StringUtils.isNullOrEmpty(previewUrl) && !previewUrl.startsWith("http://") &&
                 !previewUrl.startsWith("https://")) {
             reqCreateCamera.setPreviewUrl("http://" + previewUrl);
         }
+
+        updateCameraUrlTags(reqCreateCamera);
 
         cameraInfoRepository.save(reqCreateCamera);
 

@@ -26,9 +26,7 @@ export class AppComponent {
   }
 
   onLogout() {
-    this.apiAuthService.logout(() => {
-      window.location.href = "/";
-    });
+    window.location.href = "/logout";
   }
 
   onCreateCamera() {

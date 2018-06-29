@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017-2018 by Botorabi. All rights reserved.
+ * Copyright (c) 2018 by Botorabi. All rights reserved.
  * https://github.com/botorabi/HomieCenter
  *
  * License: MIT License (MIT), read the LICENSE text in
@@ -13,14 +13,16 @@ import org.slf4j.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
 import org.springframework.lang.Nullable;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
+import org.springframework.security.authentication.*;
 import org.springframework.security.core.*;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.authority.*;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.*;
+import reactor.core.publisher.Mono;
 
 import javax.validation.constraints.NotNull;
+import java.security.Principal;
 import java.util.*;
 
 
@@ -33,6 +35,14 @@ import java.util.*;
 @RestController
 public class RestServiceUser {
 
+    @GetMapping("/test")
+    public Mono<String> greetService(Mono<Principal> principal) {
+        Mono<String> response = principal
+                .map(Principal::getName)
+                .map(name -> "User Name: " + name);
+        return response;
+    }
+
     private final Logger LOGGER = LoggerFactory.getLogger(this.getClass());
 
     /**
@@ -43,67 +53,10 @@ public class RestServiceUser {
     @Autowired
     FRITZBox fritzBox;
 
-    @PostMapping("/api/user/login")
-    public ResponseEntity<AuthStatus> loginUser(@RequestBody ReqLogin reqLogin) throws Exception {
-        if (fritzBox.getAuthStatus().isAuthenticated()) {
-            logoutUser();
-        }
-
-        try {
-            AuthStatus authStatus = fritzBox.login(reqLogin.getLogin(), reqLogin.getPassword());
-            LOGGER.debug("local user {} successfully logged in", reqLogin.getLogin());
-            authorizeUser(reqLogin.getLogin());
-            return new ResponseEntity<>(authStatus, HttpStatus.OK);
-        }
-        catch(Exception exception) {
-            LOGGER.debug("could not login the user {}, reason: ", reqLogin.getLogin(), exception.getMessage());
-        }
-
-        return new ResponseEntity<>(HttpStatus.FORBIDDEN);
-    }
-
-    @GetMapping("/api/user/logout")
-    public ResponseEntity<AuthStatus> logoutUser() throws Exception {
-        deauthorizeUser();
-        fritzBox.logout();
-        return new ResponseEntity<>(HttpStatus.OK);
-    }
-
     @GetMapping("/api/user/status")
-    public ResponseEntity<RespUser> status() throws Exception {
-        boolean isAuthenticated = false;
-        String userName = "";
-
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (checkUserRole(ROLE_USER, authentication)) {
-            isAuthenticated = fritzBox.getAuthStatus().isAuthenticated();
-            if (isAuthenticated) {
-                userName = (String) authentication.getPrincipal();
-            }
-        }
-
-        return new ResponseEntity<>(new RespUser(userName, isAuthenticated), HttpStatus.OK);
-    }
-
-    private void authorizeUser(@NotNull final String userName) {
-        Collection<SimpleGrantedAuthority> authorities = new ArrayList<>();
-        authorities.add(new SimpleGrantedAuthority(ROLE_USER));
-        UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userName, "", authorities);
-        SecurityContextHolder.getContext().setAuthentication(authentication);
-    }
-
-    private void deauthorizeUser() {
-        SecurityContextHolder.getContext().setAuthentication(null);
-    }
-
-    public boolean checkUserRole(@NotNull final String roleName, @Nullable final Authentication authentication) {
-        if (authentication != null) {
-            for (GrantedAuthority authority : authentication.getAuthorities()) {
-                if (roleName.equals(authority.getAuthority())) {
-                    return true;
-                }
-            }
-        }
-        return false;
+    public Mono<ResponseEntity<RespUser>> status(Mono<Authentication> auth) throws Exception {
+        return auth.map(a -> {
+            return new ResponseEntity<>(new RespUser("USER", a.isAuthenticated()), HttpStatus.OK);
+        });
     }
 }

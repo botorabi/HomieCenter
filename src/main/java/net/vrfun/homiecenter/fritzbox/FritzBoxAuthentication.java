@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017-2018 by Botorabi. All rights reserved.
+ * Copyright (c) 2018 by Botorabi. All rights reserved.
  * https://github.com/botorabi/HomieCenter
  *
  * License: MIT License (MIT), read the LICENSE text in
@@ -21,7 +21,7 @@ import java.util.*;
  * @author          boto
  * Creation Date    6th June 2018
  */
-public class Authentication {
+public class FritzBoxAuthentication {
 
     private final Logger LOGGER = LoggerFactory.getLogger(this.getClass());
 
@@ -32,7 +32,7 @@ public class Authentication {
     private Requests requests;
 
 
-    public Authentication(@NotNull final String fritzBoxAddress) {
+    public FritzBoxAuthentication(@NotNull final String fritzBoxAddress) {
         this.fritzBoxAddress = fritzBoxAddress;
         responseHandlerAuthStatus = new ResponseHandlerAuthStatus();
         requests = new Requests();

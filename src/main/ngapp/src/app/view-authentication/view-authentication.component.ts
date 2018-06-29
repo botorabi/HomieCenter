@@ -24,21 +24,8 @@ export class ViewAuthenticationComponent implements OnInit {
 
   login() {
     this.appInfo.setUser(null);
+    this.router.navigate(['/login']);
     this.error = null;
-    this.apiAuthService.authenticate(this.credentials, (user: User, error: string) => {
-      if (error) {
-        if (error == "403") {
-          this.error = "Wrong user name or password! Try again.";
-        }
-        else {
-          this.error = "An error occurred! Error code: " + error;
-        }
-      }
-      else if (user.authenticated) {
-        this.appInfo.setUser(user);
-        this.router.navigate(['']);
-      }
-    });
     return false;
   }
 }

@@ -58,9 +58,7 @@ export class AppInformationService {
       let timeRemaining = this.LogoutTimeoutSec - timeDiff / 1000;
       window.setTimeout(() => {
         if (timeRemaining < 0) {
-          this.apiAuthService.logout(() => {
-            window.location.href = "";
-          });
+          window.location.href = "/logout";
         }
         else {
           this.logoutTime = this.formatTime(timeRemaining);
