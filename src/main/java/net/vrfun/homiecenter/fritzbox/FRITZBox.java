@@ -8,12 +8,12 @@
 package net.vrfun.homiecenter.fritzbox;
 
 
-import javafx.util.Pair;
 import net.vrfun.homiecenter.ApplicationProperties;
 import net.vrfun.homiecenter.model.DeviceInfo;
 import org.slf4j.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.*;
+import org.springframework.data.util.Pair;
 import org.springframework.http.*;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Service;
@@ -67,12 +67,12 @@ public class FRITZBox {
     @NotNull
     public AuthStatus getCachedAuthStatus() throws Exception {
         if ((cachedAuthStatus == null) ||
-                (Instant.now().isAfter(cachedAuthStatus.getKey().plusSeconds(AUTH_STATUS_MAX_CACHE_PERIOD_SEC)))) {
+                (Instant.now().isAfter(cachedAuthStatus.getFirst().plusSeconds(AUTH_STATUS_MAX_CACHE_PERIOD_SEC)))) {
 
             updateCachedAuthStatus();
         }
 
-        return cachedAuthStatus.getValue();
+        return cachedAuthStatus.getSecond();
     }
 
     @NotNull
@@ -99,7 +99,7 @@ public class FRITZBox {
     }
 
     private void updateCachedAuthStatus() throws Exception {
-        cachedAuthStatus = new Pair<>(Instant.now(), fritzBoxAuthentication.getAuthStatus());
+        cachedAuthStatus = Pair.of(Instant.now(), fritzBoxAuthentication.getAuthStatus());
     }
 
     private void discardCachedAuthStatus() {

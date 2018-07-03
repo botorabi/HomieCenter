@@ -7,20 +7,22 @@
  */
 package net.vrfun.homiecenter.service;
 
-import net.vrfun.homiecenter.model.*;
-import net.vrfun.homiecenter.service.comm.*;
+import net.vrfun.homiecenter.model.HomieCenterUser;
+import net.vrfun.homiecenter.model.UserRepository;
+import net.vrfun.homiecenter.service.comm.ReqUserEdit;
+import net.vrfun.homiecenter.service.comm.RespUserStatus;
 import org.h2.util.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.*;
-import org.springframework.lang.Nullable;
-import org.springframework.security.core.*;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
-import reactor.core.publisher.*;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
-import javax.validation.constraints.NotNull;
-import java.util.*;
+import java.util.Optional;
 
 
 /**
@@ -32,18 +34,25 @@ import java.util.*;
 @RestController
 public class RestServiceUser {
 
-    private static final String ROLE_ADMIN = "ROLE_ADMIN";
+    @Autowired
+    private UserRepository userRepository;
 
     @Autowired
-    UserRepository userRepository;
+    private PasswordEncoder passwordEncoder;
 
     @Autowired
-    PasswordEncoder passwordEncoder;
+    private AccessUtils accessUtils;
 
-    //! TODO restrict the access to ADMIN only
-
+    /**
+     * Access is restricted to admin user.
+     */
     @PostMapping("/api/user/create")
-    public ResponseEntity<HomieCenterUser> create(@RequestBody ReqUserEdit userCreate) {
+    public ResponseEntity<HomieCenterUser> create(@RequestBody ReqUserEdit userCreate, Authentication authentication) {
+        //! NOTE: Currently, we cannot easily use the @Secured annotation in cloud gateway, so we check the access manually.
+        if (!accessUtils.requestingUserIsAdmin(authentication)) {
+            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+        }
+
         HomieCenterUser newUser = new HomieCenterUser();
         newUser.setRealName(userCreate.getRealName());
         newUser.setUserName(userCreate.getUserName());
@@ -67,8 +76,7 @@ public class RestServiceUser {
             return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
         }
 
-        User principal = (User)authentication.getPrincipal();
-        if (!accessingAdminOrOwner(principal, storedUser)) {
+        if (!accessUtils.requestingUserIsAdminOrOwner(authentication, storedUser)) {
             return new ResponseEntity<>(HttpStatus.FORBIDDEN);
         }
 
@@ -77,7 +85,10 @@ public class RestServiceUser {
         if (!StringUtils.isNullOrEmpty(userEdit.getPassword())) {
             user.setPassword(passwordEncoder.encode(userEdit.getPassword()));
         }
-        if (roleExists(principal.getAuthorities(), ROLE_ADMIN)) {
+        // don't let degrade the user to non-admin
+        if (accessUtils.requestingUserIsAdmin(authentication) &&
+                !accessUtils.requestingUserIsOwner(authentication, storedUser)) {
+
             user.setAdmin(userEdit.isAdmin());
         }
 
@@ -91,22 +102,10 @@ public class RestServiceUser {
         return new ResponseEntity<>(user, HttpStatus.OK);
     }
 
-    private boolean roleExists(@Nullable Collection<? extends GrantedAuthority> authorities, @NotNull final String name) {
-        if (authorities == null) {
-            return false;
-        }
-        for (GrantedAuthority authority: authorities) {
-            if (authority.getAuthority().equals(name)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
     @GetMapping("/api/user")
     public Flux<HomieCenterUser> getAll(Authentication authentication) {
-        User principal = (User)authentication.getPrincipal();
-        if (!roleExists(principal.getAuthorities(), ROLE_ADMIN)) {
+        if (!accessUtils.requestingUserIsAdmin(authentication)) {
+            User principal = (User)authentication.getPrincipal();
             Optional<HomieCenterUser> currentUser = userRepository.findByUserName(principal.getUsername());
             return Flux.just(currentUser.get());
         }
@@ -120,51 +119,32 @@ public class RestServiceUser {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
 
-        User principal = (User)authentication.getPrincipal();
-        if (!accessingAdminOrOwner(principal, user)) {
+        if (!accessUtils.requestingUserIsAdminOrOwner(authentication, user)) {
             return new ResponseEntity<>(HttpStatus.FORBIDDEN);
         }
         return new ResponseEntity<>(user.get(), HttpStatus.OK);
     }
 
-    //! TODO restrict the access to ADMIN only
-
+    /**
+     * Access is restricted to admin user.
+     */
     @DeleteMapping("/api/user/{id}")
     public ResponseEntity<Long> deleteById(@PathVariable("id") Long id, Authentication authentication) {
+        if (!accessUtils.requestingUserIsAdmin(authentication)) {
+            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+        }
+
         Optional<HomieCenterUser> user = userRepository.findById(id);
         if (!user.isPresent()) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
 
-        User principal = (User)authentication.getPrincipal();
         // avoid deleting the user him/herself
-        if ((principal == null) || accessingOwner(principal, user)) {
+        if (accessUtils.requestingUserIsOwner(authentication, user)) {
             return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
         }
         userRepository.deleteById(id);
         return new ResponseEntity<>(id, HttpStatus.OK);
-    }
-
-    private boolean accessingAdminOrOwner(@Nullable User principal, @NotNull Optional<HomieCenterUser> user) {
-        if (principal == null) {
-            return false;
-        }
-        if (principal.getUsername().equals(user.get().getUserName())) {
-            return true;
-        }
-        Optional<HomieCenterUser> foundUser = userRepository.findByUserName(principal.getUsername());
-        if (foundUser.isPresent() && foundUser.get().isAdmin()) {
-            return true;
-        }
-        return false;
-    }
-
-    private boolean accessingOwner(@NotNull User principal, @NotNull Optional<HomieCenterUser> user) {
-        Optional<HomieCenterUser> foundUser = userRepository.findByUserName(principal.getUsername());
-        if (foundUser.isPresent() && foundUser.get().getId() == user.get().getId()) {
-            return true;
-        }
-        return false;
     }
 
     @GetMapping("/api/user/status")
@@ -172,7 +152,7 @@ public class RestServiceUser {
         return authentication
                 .map(a -> new RespUserStatus(((User) a.getPrincipal()).getUsername(),
                         a.isAuthenticated(),
-                        roleExists(a.getAuthorities(), ROLE_ADMIN) ? "ADMIN" : "USER"
+                        accessUtils.requestingUserIsAdmin(a) ? "ADMIN" : "USER"
                         )
                 )
                 .switchIfEmpty(Mono.just(new RespUserStatus()));

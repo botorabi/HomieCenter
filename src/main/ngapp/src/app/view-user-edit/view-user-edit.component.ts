@@ -70,6 +70,10 @@ export class ViewUserEditComponent implements OnInit {
     });
   }
 
+  canModifyAdminFlag() {
+      return (this.appInfoService.userStatus.role == 'ADMIN') && (this.appInfoService.userStatus.name != this.user.userName);
+  }
+
   private getUserDetails(userId: number) {
     this.apiUserService.getUser(userId, (user: User) => this.user = user);
   }

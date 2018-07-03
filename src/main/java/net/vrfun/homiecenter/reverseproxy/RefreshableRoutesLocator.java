@@ -8,16 +8,15 @@
 package net.vrfun.homiecenter.reverseproxy;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cloud.gateway.route.*;
+import org.springframework.cloud.gateway.route.Route;
+import org.springframework.cloud.gateway.route.RouteLocator;
 import org.springframework.cloud.gateway.route.builder.RouteLocatorBuilder;
 import org.springframework.context.ConfigurableApplicationContext;
-import org.springframework.http.*;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Flux;
 
 import javax.validation.constraints.NotNull;
 import java.net.URI;
-import java.nio.charset.StandardCharsets;
 
 /**
  * A gateway route resolver which is used for dynamically refresh routes during the application runtime.

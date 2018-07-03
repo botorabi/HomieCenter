@@ -8,19 +8,24 @@
 package net.vrfun.homiecenter.security;
 
 
-import net.vrfun.homiecenter.model.*;
+import net.vrfun.homiecenter.model.HomieCenterUser;
+import net.vrfun.homiecenter.model.UserRepository;
 import net.vrfun.homiecenter.reverseproxy.CameraProxyRoutes;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity;
 import org.springframework.security.config.web.server.ServerHttpSecurity;
-import org.springframework.security.core.userdetails.*;
+import org.springframework.security.core.userdetails.ReactiveUserDetailsService;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.server.SecurityWebFilterChain;
 import org.springframework.security.web.server.header.XFrameOptionsServerHttpHeadersWriter;
-import org.springframework.web.reactive.function.server.*;
+import org.springframework.web.reactive.function.server.RouterFunction;
+import org.springframework.web.reactive.function.server.RouterFunctions;
+import org.springframework.web.reactive.function.server.ServerResponse;
 import reactor.core.publisher.Mono;
 
 import java.util.Optional;
@@ -46,7 +51,7 @@ public class WebSecurityConfig {
      * Reactive web needs the static path explicitly.
      */
     @Bean
-    RouterFunction<ServerResponse> staticResourceRouter(){
+    public RouterFunction<ServerResponse> staticResourceRouter(){
         return RouterFunctions.resources("/*", new ClassPathResource("static/"));
     }
 
@@ -62,6 +67,7 @@ public class WebSecurityConfig {
                 .pathMatchers("/api/user/status").permitAll()
                 .anyExchange().authenticated()
                 .and().formLogin()
+                .and().logout()
                 .and().build();
     }
 

@@ -49,10 +49,10 @@ public class RestServiceCameraDevice {
 
     private void updateCameraUrlTags(@NotNull CameraInfo camera) {
         String urlTag = StringUtils.isNullOrEmpty(camera.getUrl()) ? "" :
-                cameraProxyRoutes.getProxyPath() + cameraProxyRoutes.createRouteTag(camera.getUrl());
+                CameraProxyRoutes.getProxyPath() + cameraProxyRoutes.createRouteTag(camera.getUrl());
 
         String previewUrlTag = StringUtils.isNullOrEmpty(camera.getPreviewUrl()) ? "" :
-                cameraProxyRoutes.getProxyPath() + cameraProxyRoutes.createRouteTag(camera.getPreviewUrl());
+                CameraProxyRoutes.getProxyPath() + cameraProxyRoutes.createRouteTag(camera.getPreviewUrl());
 
         camera.setUrlTag(urlTag + "/");
         camera.setPreviewUrlTag(previewUrlTag + "/");

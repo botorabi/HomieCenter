@@ -28,8 +28,8 @@
           <input matInput placeholder="Password Repeat" name="passwordRepeat" [(ngModel)]="passwordRepeat">
         </mat-form-field>
       </div>
-      <div *ngIf="appInfoService.userStatus.role == 'ADMIN'">
-        <mat-checkbox [(ngModel)]="user.admin" name="admin">Administrator</mat-checkbox>
+      <div class="admin-checkbox">
+        <mat-checkbox color="primary" [disabled]="!canModifyAdminFlag()" [(ngModel)]="user.admin" name="admin">Administrator</mat-checkbox>
       </div>
 
       <br>

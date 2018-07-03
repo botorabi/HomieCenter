@@ -130,7 +130,7 @@ public abstract class ResponseHandler<Model> {
     }
 
     protected boolean convertToBoolean(final String value) {
-        return value.equals("0") ? false: true;
+        return !value.equals("0");
     }
 
     protected int convertToInteger(String value) {

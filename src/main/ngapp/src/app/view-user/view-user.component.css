@@ -1,3 +1,6 @@
+.btn-back {
+  float: left;
+}
 .btn-create {
   flex: 0 0 50px !important;
 }
