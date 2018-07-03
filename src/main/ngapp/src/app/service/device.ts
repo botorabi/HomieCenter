@@ -7,7 +7,7 @@ export class Device {
   on: boolean;
   voltage: number;
   power: number;
-  energy: number
+  energy: number;
   temperature: number;
   temperatureOffset: number;
 

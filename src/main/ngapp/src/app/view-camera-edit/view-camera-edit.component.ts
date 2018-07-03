@@ -15,16 +15,16 @@ export class ViewCameraEditComponent implements OnInit {
   error: string;
 
   constructor(private router: Router,
-              private appInfo: AppInformationService,
+              private appInfoService: AppInformationService,
               private apiDeviceService: ApiDeviceService) {
   }
 
   ngOnInit() {
-    if (!this.appInfo.selectedCamera) {
-      this.camera = new Camera("", "", "");
+    if (!this.appInfoService.selectedCamera) {
+      this.camera = new Camera("", "", "", "", "");
     }
     else {
-      this.camera = this.appInfo.selectedCamera;
+      this.camera = this.appInfoService.selectedCamera;
     }
   }
 

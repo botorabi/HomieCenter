@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017-2018 by Botorabi. All rights reserved.
+ * Copyright (c) 2018 by Botorabi. All rights reserved.
  * https://github.com/botorabi/HomieCenter
  *
  * License: MIT License (MIT), read the LICENSE text in
@@ -8,16 +8,20 @@
 package net.vrfun.homiecenter.fritzbox;
 
 
+import net.vrfun.homiecenter.ApplicationProperties;
 import net.vrfun.homiecenter.model.DeviceInfo;
-import org.jvnet.hk2.annotations.Service;
 import org.slf4j.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.*;
-import org.springframework.core.env.Environment;
+import org.springframework.data.util.Pair;
 import org.springframework.http.*;
 import org.springframework.lang.Nullable;
+import org.springframework.stereotype.Service;
+import org.springframework.util.Assert;
 
 import javax.validation.constraints.NotNull;
+import java.net.*;
+import java.time.Instant;
 import java.util.*;
 
 /**
@@ -30,26 +34,24 @@ import java.util.*;
 @Configuration
 public class FRITZBox {
 
-    private final Logger LOGGER = LoggerFactory.getLogger(this.getClass());
+    private final Logger LOGGER = LoggerFactory.getLogger(FRITZBox.class);
 
-    private final static String DEFAULT_FRITZBOX_URL = "http://fritz.box";
-    private final static String ENV_NAME_FRITZBOX_URL = "homiecenter_fritzbox_url";
-
-    private String fritzBoxUrl;
-    private Authentication authentication;
+    private FritzBoxAuthentication fritzBoxAuthentication;
     private ResponseHandlerSwitchDeviceList handlerDeviceList ;
     private Requests requests;
 
     @Autowired
-    private Environment environment;
+    private ApplicationProperties applicationProperties;
 
-    public FRITZBox() {
-    }
+    private Pair<Instant, AuthStatus> cachedAuthStatus;
+    private final static long AUTH_STATUS_MAX_CACHE_PERIOD_SEC = 60;
+    private String fritzBoxURL;
+
 
     @Bean
     public FRITZBox fritzBox() {
         FRITZBox fritzBox = new FRITZBox();
-        fritzBox.authentication = new Authentication(getFritzBoxURL());
+        fritzBox.fritzBoxAuthentication = new FritzBoxAuthentication(getFritzBoxURL());
         fritzBox.handlerDeviceList = new ResponseHandlerSwitchDeviceList();
         fritzBox.requests = new Requests();
 
@@ -58,14 +60,31 @@ public class FRITZBox {
         return fritzBox;
     }
 
+    /**
+     * In order to avoid requesting the FRITZ!Box for authentication state too often, use this method
+     * which caches the state for a max time of 'AUTH_STATUS_MAX_CACHE_PERIOD_SEC'.
+     */
+    @NotNull
+    public AuthStatus getCachedAuthStatus() throws Exception {
+        if ((cachedAuthStatus == null) ||
+                (Instant.now().isAfter(cachedAuthStatus.getFirst().plusSeconds(AUTH_STATUS_MAX_CACHE_PERIOD_SEC)))) {
+
+            updateCachedAuthStatus();
+        }
+
+        return cachedAuthStatus.getSecond();
+    }
+
     @NotNull
     public AuthStatus getAuthStatus() throws Exception {
-        return authentication.getAuthStatus();
+        return fritzBoxAuthentication.getAuthStatus();
     }
 
     @NotNull
     public AuthStatus login(@NotNull final String userName, @NotNull final String password) throws Exception {
-        AuthStatus authStatus = authentication.login(userName, password);
+        discardCachedAuthStatus();
+
+        AuthStatus authStatus = fritzBoxAuthentication.login(userName, password);
         if (!authStatus.isAuthenticated()) {
             LOGGER.debug("Failed to authenticate at FRITZ!Box");
             throw new Exception("Failed to authenticate at FRITZ!Box");
@@ -74,12 +93,22 @@ public class FRITZBox {
     }
 
     public void logout() throws Exception {
-        authentication.logout();
+        discardCachedAuthStatus();
+
+        fritzBoxAuthentication.logout();
+    }
+
+    private void updateCachedAuthStatus() throws Exception {
+        cachedAuthStatus = Pair.of(Instant.now(), fritzBoxAuthentication.getAuthStatus());
+    }
+
+    private void discardCachedAuthStatus() {
+        cachedAuthStatus = null;
     }
 
     @NotNull
     public List<DeviceInfo> getDevices() throws Exception {
-        AuthStatus authStatus = getAuthStatus();
+        AuthStatus authStatus = loginIfNeeded();
 
         Map<String, String> parameters = new HashMap<>();
         parameters.put("switchcmd", "getdevicelistinfos");
@@ -120,7 +149,7 @@ public class FRITZBox {
     }
 
     private void switchDevice(Long deviceId, boolean on) throws Exception {
-        AuthStatus authStatus = getAuthStatus();
+        AuthStatus authStatus = loginIfNeeded();
         DeviceInfo device = getDevice(deviceId);
 
         if (device == null) {
@@ -154,6 +183,15 @@ public class FRITZBox {
     }
 
     @NotNull
+    private AuthStatus loginIfNeeded() throws Exception {
+        AuthStatus authStatus = getCachedAuthStatus();
+        if (!authStatus.isAuthenticated()) {
+            return login(applicationProperties.getFritzBoxUserName(), applicationProperties.getFritzBoxPassword());
+        }
+        return authStatus;
+    }
+
+    @NotNull
     private ResponseEntity<String> requestHttpGET(@NotNull final String SID,
                                                   @NotNull final String relativeUrl,
                                                   @Nullable final Map<String, String> parameters) throws Exception {
@@ -167,22 +205,27 @@ public class FRITZBox {
         return requests.get(url, urlParameters);
     }
 
-    @Nullable
+    @NotNull
     private String getFritzBoxURL() {
-        if (fritzBoxUrl != null) {
-            return fritzBoxUrl;
-        }
-        LOGGER.info("Checking for environment '{}'...", ENV_NAME_FRITZBOX_URL);
-        String url = environment.getProperty(ENV_NAME_FRITZBOX_URL);
-        if (url != null) {
-            LOGGER.info("  Found '{}', using URL '{}'", ENV_NAME_FRITZBOX_URL, url);
-            fritzBoxUrl = url;
-        }
-        else {
-            LOGGER.info("  Did not find '{}', using default URL '{}'", ENV_NAME_FRITZBOX_URL, DEFAULT_FRITZBOX_URL);
-            fritzBoxUrl = DEFAULT_FRITZBOX_URL;
+        if (fritzBoxURL != null) {
+            return fritzBoxURL;
         }
 
-        return fritzBoxUrl;
+        String url = applicationProperties.getFritzBoxUrl();
+        if (!url.startsWith("http://") && !url.startsWith("https://")) {
+            url = "http://" + url;
+        }
+        try {
+            URL validateUrl = new URL(url);
+            url = validateUrl.toString();
+        }
+        catch(MalformedURLException ex) {
+            LOGGER.error("Invalid FRITZ!Box URL in homiecenter.properties file detected!");
+            url = null;
+        }
+        Assert.notNull(url, "Invalid FRITZ!Box URL");
+
+        fritzBoxURL = url;
+        return url;
     }
 }

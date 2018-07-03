@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017-2018 by Botorabi. All rights reserved.
+ * Copyright (c) 2018 by Botorabi. All rights reserved.
  * https://github.com/botorabi/HomieCenter
  *
  * License: MIT License (MIT), read the LICENSE text in
@@ -7,6 +7,7 @@
  */
 package net.vrfun.homiecenter.fritzbox;
 
+import net.vrfun.homiecenter.utils.HashGenerator;
 import org.slf4j.*;
 import org.springframework.http.*;
 
@@ -20,7 +21,7 @@ import java.util.*;
  * @author          boto
  * Creation Date    6th June 2018
  */
-public class Authentication {
+public class FritzBoxAuthentication {
 
     private final Logger LOGGER = LoggerFactory.getLogger(this.getClass());
 
@@ -31,7 +32,7 @@ public class Authentication {
     private Requests requests;
 
 
-    public Authentication(@NotNull final String fritzBoxAddress) {
+    public FritzBoxAuthentication(@NotNull final String fritzBoxAddress) {
         this.fritzBoxAddress = fritzBoxAddress;
         responseHandlerAuthStatus = new ResponseHandlerAuthStatus();
         requests = new Requests();
@@ -134,34 +135,12 @@ public class Authentication {
 
     @NotNull
     private String createResponse(@NotNull final String challenge, @NotNull final String password) throws Exception {
-        return challenge + "-" + createMD5((challenge + "-" + preparePassword(password)).getBytes("UTF-16LE"));
+        return challenge + "-" + HashGenerator.createMD5((challenge + "-" + preparePassword(password)).getBytes("UTF-16LE"));
     }
 
     private String preparePassword(@NotNull final String password) {
         //! NOTE all non-ascii chars have to be replaced by dots
         String dotPassword = password.replaceAll("[^\\x00-\\x7F]", ".");
         return dotPassword;
-    }
-
-    @NotNull
-    private String createMD5(@NotNull final byte[] content) throws Exception {
-        try {
-            MessageDigest digest = MessageDigest.getInstance("MD5");
-            digest.update(content);
-            byte data[] = digest.digest();
-            StringBuilder hexString = new StringBuilder();
-            for (int i = 0; i < data.length; i++) {
-                String hex = Integer.toHexString(0xff & data[i]);
-                if (hex.length() == 1) {
-                    hexString.append('0');
-                }
-                hexString.append(hex);
-            }
-            return hexString.toString();
-        }
-        catch (NoSuchAlgorithmException ex) {
-            LOGGER.error("Problem occurred while creating an MD5 hash, reason: {}", ex.getMessage());
-            throw new Exception(ex.getMessage());
-        }
     }
 }

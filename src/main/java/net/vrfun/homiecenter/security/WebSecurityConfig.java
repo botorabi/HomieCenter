@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017-2018 by Botorabi. All rights reserved.
+ * Copyright (c) 2018 by Botorabi. All rights reserved.
  * https://github.com/botorabi/HomieCenter
  *
  * License: MIT License (MIT), read the LICENSE text in
@@ -8,12 +8,27 @@
 package net.vrfun.homiecenter.security;
 
 
-import org.slf4j.*;
-import org.springframework.beans.factory.annotation.*;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.configuration.*;
-import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
+import net.vrfun.homiecenter.model.HomieCenterUser;
+import net.vrfun.homiecenter.model.UserRepository;
+import net.vrfun.homiecenter.reverseproxy.CameraProxyRoutes;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity;
+import org.springframework.security.config.web.server.ServerHttpSecurity;
+import org.springframework.security.core.userdetails.ReactiveUserDetailsService;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.server.SecurityWebFilterChain;
+import org.springframework.security.web.server.header.XFrameOptionsServerHttpHeadersWriter;
+import org.springframework.web.reactive.function.server.RouterFunction;
+import org.springframework.web.reactive.function.server.RouterFunctions;
+import org.springframework.web.reactive.function.server.ServerResponse;
+import reactor.core.publisher.Mono;
+
+import java.util.Optional;
 
 /**
  * Web security configuration
@@ -21,52 +36,57 @@ import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
  * @author          boto
  * Creation Date    23th April 2018
 */
-@Configuration
-@EnableWebSecurity
-public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
-
-    private final Logger LOGGER = LoggerFactory.getLogger(this.getClass());
+@EnableWebFluxSecurity
+public class WebSecurityConfig {
 
     @Autowired
-    private RestAuthenticationEntryPoint restAuthenticationEntryPoint;
+    private UserRepository userRepository;
+
+    @Bean
+    public PasswordEncoder createPasswordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
 
     /**
-     * Use the environment variable 'homiecenter_disable_security=<true|false>' to enable/disable
-     * the spring http access security mechanisms.
-     *
-     * During development with Angular and using the Node.js web server you may want to disable the
-     * security mechanisms, otherwise you run into authentication issues.
+     * Reactive web needs the static path explicitly.
      */
-    @Value("${homiecenter_disable_security:false}")
-    private boolean disableSecurity = false;
-
-    @Override
-    protected void configure(HttpSecurity http) throws Exception {
-        if (disableSecurity) {
-            LOGGER.warn("The application is running without access security mechanisms!");
-            configureForNoAccessSecurity(http);
-        }
-        else {
-            configureForFullAccessSecurity(http);
-        }
+    @Bean
+    public RouterFunction<ServerResponse> staticResourceRouter(){
+        return RouterFunctions.resources("/*", new ClassPathResource("static/"));
     }
 
-    private void configureForFullAccessSecurity(HttpSecurity http) throws Exception {
-        http
-                .csrf().csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
+    @Bean
+    public SecurityWebFilterChain securityWebFilterChain(ServerHttpSecurity http) {
+        return http
+                //.csrf().csrfTokenRepository(new WebSessionServerCsrfTokenRepository()).and()
+                .csrf().disable()
+                .headers().frameOptions().mode(XFrameOptionsServerHttpHeadersWriter.Mode.SAMEORIGIN).and()
                 .and()
-                .exceptionHandling()
-                .authenticationEntryPoint(restAuthenticationEntryPoint)
-                .and()
-                .authorizeRequests()
-                .antMatchers("/*", "/api/user/status", "/api/user/login", "/api/user/logout").permitAll()
-                .anyRequest().authenticated();
+                .authorizeExchange()
+                .pathMatchers(CameraProxyRoutes.getProxyPath() + "**").authenticated()
+                .pathMatchers("/api/user/status").permitAll()
+                .anyExchange().authenticated()
+                .and().formLogin()
+                .and().logout()
+                .and().build();
     }
 
-    private void configureForNoAccessSecurity(HttpSecurity http) throws Exception {
-        http.
-                csrf().disable().
-                authorizeRequests().
-                anyRequest().permitAll();
+    @Bean
+    public ReactiveUserDetailsService createUserDetailsService() {
+        return userName -> {
+            Optional<HomieCenterUser> user = userRepository.findByUserName(userName);
+
+            if (!user.isPresent()) {
+                return Mono.empty();
+            }
+
+            UserDetails userDetails = User.builder()
+                    .username(user.get().getUserName())
+                    .password(user.get().getPassword())
+                    .roles(user.get().isAdmin() ? "ADMIN" : "USER")
+                    .build();
+
+            return Mono.just(userDetails);
+        };
     }
 }

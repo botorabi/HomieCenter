@@ -6,6 +6,7 @@
         </encoder>
     </appender>
 
+    <logger name="net.vrfun.homiecenter" level="TRACE" />
     <logger name="org.springframework" level="INFO" />
     <logger name="org.apache.http" level="INFO" />
 

@@ -1,5 +1,7 @@
 export class User {
-  name = "";
-  authenticated = false;
-  loginTime: Date;
+  id = 0;
+  realName = "";
+  userName = "";
+  password = "";
+  admin = false;
 }

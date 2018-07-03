@@ -19,7 +19,7 @@ import {RouterModule} from "@angular/router";
 import {ViewAboutComponent} from "./view-about/view-about.component";
 import {ViewHomeComponent} from "./view-home/view-home.component";
 import {AppInformationService} from "./service/app-information.service";
-import {ApiAuthService} from "./service/api-auth.service";
+import {ApiUserService} from "./service/api-user.service";
 import {ViewAuthenticationComponent} from "./view-authentication/view-authentication.component";
 import {Observable} from "rxjs/Observable";
 import {ViewSwitchDevicesComponent} from "./view-switch-devices/view-switch-devices-component";
@@ -28,6 +28,8 @@ import {ViewCameraComponent} from "./view-camera/view-camera.component";
 import {SafePipe} from "./safe-pipe";
 import {ViewCameraDetailsComponent} from "./view-camera-details/view-camera-details.component";
 import {ViewCameraEditComponent} from "./view-camera-edit/view-camera-edit.component";
+import {ViewUserComponent} from "./view-user/view-user.component";
+import {ViewUserEditComponent} from "./view-user-edit/view-user-edit.component";
 
 
 /**
@@ -58,6 +60,8 @@ export class HttpXSRFInterceptor implements HttpInterceptor {
     ViewCameraComponent,
     ViewCameraDetailsComponent,
     ViewCameraEditComponent,
+    ViewUserComponent,
+    ViewUserEditComponent,
     ViewAboutComponent,
     ViewHomeComponent,
     SafePipe
@@ -71,7 +75,7 @@ export class HttpXSRFInterceptor implements HttpInterceptor {
     FormsModule
   ],
   providers: [
-    ApiAuthService,
+    ApiUserService,
     ApiDeviceService,
     AppInformationService,
     { provide: HTTP_INTERCEPTORS, useClass: HttpXSRFInterceptor, multi: true }

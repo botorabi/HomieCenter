@@ -1,0 +1,15 @@
+.btn-back {
+  float: left;
+}
+.btn-create {
+  flex: 0 0 50px !important;
+}
+.user-list {
+  width: 300px;
+  margin: auto;
+  text-align: left;
+}
+.user-list-icon {
+  flex: 0 0 50px !important;
+  white-space: unset !important;
+}

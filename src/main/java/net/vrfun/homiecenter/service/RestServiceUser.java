@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017-2018 by Botorabi. All rights reserved.
+ * Copyright (c) 2018 by Botorabi. All rights reserved.
  * https://github.com/botorabi/HomieCenter
  *
  * License: MIT License (MIT), read the LICENSE text in
@@ -7,21 +7,22 @@
  */
 package net.vrfun.homiecenter.service;
 
-import net.vrfun.homiecenter.fritzbox.*;
-import net.vrfun.homiecenter.service.comm.*;
-import org.slf4j.*;
+import net.vrfun.homiecenter.model.HomieCenterUser;
+import net.vrfun.homiecenter.model.UserRepository;
+import net.vrfun.homiecenter.service.comm.ReqUserEdit;
+import net.vrfun.homiecenter.service.comm.RespUserStatus;
+import org.h2.util.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.*;
-import org.springframework.lang.Nullable;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.*;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
-import javax.validation.constraints.NotNull;
-import java.util.*;
+import java.util.Optional;
 
 
 /**
@@ -33,77 +34,127 @@ import java.util.*;
 @RestController
 public class RestServiceUser {
 
-    private final Logger LOGGER = LoggerFactory.getLogger(this.getClass());
-
-    /**
-     * Virtual role for successfully authenticated users
-     */
-    public static final String ROLE_USER = "ROLE_USER";
+    @Autowired
+    private UserRepository userRepository;
 
     @Autowired
-    FRITZBox fritzBox;
+    private PasswordEncoder passwordEncoder;
 
-    @PostMapping("/api/user/login")
-    public ResponseEntity<AuthStatus> loginUser(@RequestBody ReqLogin reqLogin) throws Exception {
-        if (fritzBox.getAuthStatus().isAuthenticated()) {
-            logoutUser();
+    @Autowired
+    private AccessUtils accessUtils;
+
+    /**
+     * Access is restricted to admin user.
+     */
+    @PostMapping("/api/user/create")
+    public ResponseEntity<HomieCenterUser> create(@RequestBody ReqUserEdit userCreate, Authentication authentication) {
+        //! NOTE: Currently, we cannot easily use the @Secured annotation in cloud gateway, so we check the access manually.
+        if (!accessUtils.requestingUserIsAdmin(authentication)) {
+            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+        }
+
+        HomieCenterUser newUser = new HomieCenterUser();
+        newUser.setRealName(userCreate.getRealName());
+        newUser.setUserName(userCreate.getUserName());
+        newUser.setPassword(passwordEncoder.encode(userCreate.getPassword()));
+        newUser.setAdmin(userCreate.isAdmin());
+
+        try {
+            newUser = userRepository.save(newUser);
+        }
+        catch(Throwable throwable) {
+            return new ResponseEntity<>(newUser, HttpStatus.NOT_ACCEPTABLE);
+        }
+
+        return new ResponseEntity<>(newUser, HttpStatus.OK);
+    }
+
+    @PostMapping("/api/user/edit")
+    public ResponseEntity<HomieCenterUser> edit(@RequestBody ReqUserEdit userEdit, Authentication authentication) {
+        Optional<HomieCenterUser> storedUser = userRepository.findById(userEdit.getId());
+        if (!storedUser.isPresent()) {
+            return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
+        }
+
+        if (!accessUtils.requestingUserIsAdminOrOwner(authentication, storedUser)) {
+            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+        }
+
+        HomieCenterUser user = storedUser.get();
+        user.setRealName(userEdit.getRealName());
+        if (!StringUtils.isNullOrEmpty(userEdit.getPassword())) {
+            user.setPassword(passwordEncoder.encode(userEdit.getPassword()));
+        }
+        // don't let degrade the user to non-admin
+        if (accessUtils.requestingUserIsAdmin(authentication) &&
+                !accessUtils.requestingUserIsOwner(authentication, storedUser)) {
+
+            user.setAdmin(userEdit.isAdmin());
         }
 
         try {
-            AuthStatus authStatus = fritzBox.login(reqLogin.getLogin(), reqLogin.getPassword());
-            LOGGER.debug("local user {} successfully logged in", reqLogin.getLogin());
-            authorizeUser(reqLogin.getLogin());
-            return new ResponseEntity<>(authStatus, HttpStatus.OK);
+            user = userRepository.save(user);
         }
-        catch(Exception exception) {
-            LOGGER.debug("could not login the user {}, reason: ", reqLogin.getLogin(), exception.getMessage());
+        catch(Throwable throwable) {
+            return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
         }
 
-        return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+        return new ResponseEntity<>(user, HttpStatus.OK);
     }
 
-    @GetMapping("/api/user/logout")
-    public ResponseEntity<AuthStatus> logoutUser() throws Exception {
-        deauthorizeUser();
-        fritzBox.logout();
-        return new ResponseEntity<>(HttpStatus.OK);
+    @GetMapping("/api/user")
+    public Flux<HomieCenterUser> getAll(Authentication authentication) {
+        if (!accessUtils.requestingUserIsAdmin(authentication)) {
+            User principal = (User)authentication.getPrincipal();
+            Optional<HomieCenterUser> currentUser = userRepository.findByUserName(principal.getUsername());
+            return Flux.just(currentUser.get());
+        }
+        return Flux.fromIterable(userRepository.findAll());
+    }
+
+    @GetMapping("/api/user/{id}")
+    public ResponseEntity<HomieCenterUser> getById(@PathVariable("id") Long id, Authentication authentication) {
+        Optional<HomieCenterUser> user = userRepository.findById(id);
+        if (!user.isPresent()) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+
+        if (!accessUtils.requestingUserIsAdminOrOwner(authentication, user)) {
+            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+        }
+        return new ResponseEntity<>(user.get(), HttpStatus.OK);
+    }
+
+    /**
+     * Access is restricted to admin user.
+     */
+    @DeleteMapping("/api/user/{id}")
+    public ResponseEntity<Long> deleteById(@PathVariable("id") Long id, Authentication authentication) {
+        if (!accessUtils.requestingUserIsAdmin(authentication)) {
+            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+        }
+
+        Optional<HomieCenterUser> user = userRepository.findById(id);
+        if (!user.isPresent()) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+
+        // avoid deleting the user him/herself
+        if (accessUtils.requestingUserIsOwner(authentication, user)) {
+            return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
+        }
+        userRepository.deleteById(id);
+        return new ResponseEntity<>(id, HttpStatus.OK);
     }
 
     @GetMapping("/api/user/status")
-    public ResponseEntity<RespUser> status() throws Exception {
-        boolean isAuthenticated = false;
-        String userName = "";
-
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (checkUserRole(ROLE_USER, authentication)) {
-            isAuthenticated = fritzBox.getAuthStatus().isAuthenticated();
-            if (isAuthenticated) {
-                userName = (String) authentication.getPrincipal();
-            }
-        }
-
-        return new ResponseEntity<>(new RespUser(userName, isAuthenticated), HttpStatus.OK);
-    }
-
-    private void authorizeUser(@NotNull final String userName) {
-        Collection<SimpleGrantedAuthority> authorities = new ArrayList<>();
-        authorities.add(new SimpleGrantedAuthority(ROLE_USER));
-        UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userName, "", authorities);
-        SecurityContextHolder.getContext().setAuthentication(authentication);
-    }
-
-    private void deauthorizeUser() {
-        SecurityContextHolder.getContext().setAuthentication(null);
-    }
-
-    public boolean checkUserRole(@NotNull final String roleName, @Nullable final Authentication authentication) {
-        if (authentication != null) {
-            for (GrantedAuthority authority : authentication.getAuthorities()) {
-                if (roleName.equals(authority.getAuthority())) {
-                    return true;
-                }
-            }
-        }
-        return false;
+    public Mono<RespUserStatus> getStatus(Mono<Authentication> authentication) {
+        return authentication
+                .map(a -> new RespUserStatus(((User) a.getPrincipal()).getUsername(),
+                        a.isAuthenticated(),
+                        accessUtils.requestingUserIsAdmin(a) ? "ADMIN" : "USER"
+                        )
+                )
+                .switchIfEmpty(Mono.just(new RespUserStatus()));
     }
 }

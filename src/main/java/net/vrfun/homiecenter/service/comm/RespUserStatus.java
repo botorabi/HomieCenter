@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017-2018 by Botorabi. All rights reserved.
+ * Copyright (c) 2018 by Botorabi. All rights reserved.
  * https://github.com/botorabi/HomieCenter
  *
  * License: MIT License (MIT), read the LICENSE text in
@@ -17,16 +17,23 @@ import javax.validation.constraints.NotNull;
  * @author          boto
  * Creation Date    14th June 2018
  */
-public class RespUser {
+public class RespUserStatus {
 
     private String name;
 
     private boolean authenticated;
 
-    public RespUser(@NotNull final String name,
-                    boolean authenticated) {
+    private String role;
+
+    public RespUserStatus() {
+    }
+
+    public RespUserStatus(@NotNull final String name,
+                          boolean authenticated,
+                          @NotNull final String role) {
         this.name = name;
         this.authenticated = authenticated;
+        this.role = role;
     }
 
     public String getName() {
@@ -45,5 +52,14 @@ public class RespUser {
     @JsonProperty("authenticated")
     public void setAuthenticated(boolean authenticated) {
         this.authenticated = authenticated;
+    }
+
+    public String getRole() {
+        return role;
+    }
+
+    @JsonProperty("role")
+    public void setRole(String role) {
+        this.role = role;
     }
 }

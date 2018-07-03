@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017-2018 by Botorabi. All rights reserved.
+ * Copyright (c) 2018 by Botorabi. All rights reserved.
  * https://github.com/botorabi/HomieCenter
  *
  * License: MIT License (MIT), read the LICENSE text in
@@ -10,7 +10,7 @@ package net.vrfun.homiecenter;
 import org.springframework.boot.web.servlet.error.ErrorController;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.*;
+//import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 /**
@@ -25,12 +25,12 @@ import java.io.IOException;
 public class WebMvcErrorHandler implements ErrorController {
 
     private static final String PATH = "/error";
-
+/*
     @RequestMapping(value = PATH)
     void error(HttpServletResponse response) throws IOException {
         response.sendRedirect("/");
     }
-
+*/
     @Override
     public String getErrorPath() {
         return PATH;

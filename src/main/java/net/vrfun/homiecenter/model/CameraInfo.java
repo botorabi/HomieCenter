@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017-2018 by Botorabi. All rights reserved.
+ * Copyright (c) 2018 by Botorabi. All rights reserved.
  * https://github.com/botorabi/HomieCenter
  *
  * License: MIT License (MIT), read the LICENSE text in
@@ -27,7 +27,11 @@ public class CameraInfo implements Serializable {
 
     private String name;
     private String previewUrl;
+    @Transient
+    private String previewUrlTag;
     private String url;
+    @Transient
+    private String urlTag;
 
     public CameraInfo() {}
 
@@ -55,12 +59,28 @@ public class CameraInfo implements Serializable {
         this.previewUrl = previewUrl;
     }
 
+    public String getPreviewUrlTag() {
+        return previewUrlTag;
+    }
+
+    public void setPreviewUrlTag(String previewUrlTag) {
+        this.previewUrlTag = previewUrlTag;
+    }
+
     public String getUrl() {
         return url;
     }
 
     public void setUrl(String url) {
         this.url = url;
+    }
+
+    public String getUrlTag() {
+        return urlTag;
+    }
+
+    public void setUrlTag(String urlTag) {
+        this.urlTag = urlTag;
     }
 
     @Override

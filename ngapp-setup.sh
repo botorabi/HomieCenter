@@ -1,5 +1,6 @@
 #!/bin/sh
 cd $(dirname $0)/src/main/ngapp
 npm install @angular/cli
-ng build --prod
+npm update
+./node_modules/.bin/ng build --prod
 

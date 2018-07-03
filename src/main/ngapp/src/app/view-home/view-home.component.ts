@@ -8,7 +8,7 @@ import {AppInformationService} from "../service/app-information.service";
 })
 export class ViewHomeComponent implements OnInit {
 
-  constructor(public appInfo: AppInformationService) {
+  constructor(public appInfoService: AppInformationService) {
   }
 
   ngOnInit() {
