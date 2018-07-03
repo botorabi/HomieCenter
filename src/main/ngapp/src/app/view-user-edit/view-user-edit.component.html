@@ -1,0 +1,45 @@
+<mat-card class="center">
+  <mat-card-title>Edit User</mat-card-title>
+  <mat-card-subtitle>
+    Edit the user data.
+  </mat-card-subtitle>
+  <br>
+  <mat-card-content>
+    <form class="input-form">
+      <div>
+        <mat-form-field>
+          <mat-label>Real Name</mat-label>
+          <input matInput autofocus placeholder="Real Name" name="realName" [(ngModel)]="user.realName">
+        </mat-form-field>
+      </div>
+      <div>
+        <mat-form-field>
+          <mat-label>Login</mat-label>
+          <input [readonly]="user.id != 0" matInput placeholder="Login" name="userName" [(ngModel)]="user.userName">
+        </mat-form-field>
+      </div>
+      <div>
+        <mat-form-field>
+          <input matInput placeholder="Password" name="password" [(ngModel)]="user.password">
+        </mat-form-field>
+      </div>
+      <div>
+        <mat-form-field>
+          <input matInput placeholder="Password Repeat" name="passwordRepeat" [(ngModel)]="passwordRepeat">
+        </mat-form-field>
+      </div>
+      <div *ngIf="appInfoService.userStatus.role == 'ADMIN'">
+        <mat-checkbox [(ngModel)]="user.admin" name="admin">Administrator</mat-checkbox>
+      </div>
+
+      <br>
+      <div class="input-form-buttons">
+        <button mat-raised-button color="primary" type="button" routerLink="/user" routerLinkActive="active">Cancel</button>
+        <button *ngIf="user.id != 0" mat-raised-button type="submit" color="primary" (click)="onApply()">Apply</button>
+        <button *ngIf="user.id == 0" mat-raised-button type="submit" color="primary" (click)="onCreate()">Create</button>
+      </div>
+    </form>
+    <br>
+    <div class="warn-text" *ngIf="error">An error occurred! Error code: {{error}}</div>
+  </mat-card-content>
+</mat-card>

@@ -2,7 +2,7 @@
   <mat-card class="center">
     <mat-card-title>
       <a mat-mini-fab style="float:left;" routerLink="" routerLinkActive="active"><mat-icon>arrow_back</mat-icon></a>
-      About {{appInfo.name}}
+      About {{appInfoService.name}}
       <mat-icon style="float:right;"></mat-icon>
     </mat-card-title>
     <mat-card-subtitle>A Web Application for Accessing Home Automation Devices via FRITZ!Box</mat-card-subtitle>
@@ -12,7 +12,7 @@
         <div>
           <p>Copyright 2018, Botorabi</p>
           <a href="https://github.com/botorabi/HomieCenter">https://github.com/botorabi/HomieCenter</a>
-          <p>Version {{appInfo.version}}</p>
+          <p>Version {{appInfoService.version}}</p>
         </div>
       </div>
     </mat-card-content>

@@ -9,16 +9,18 @@ package net.vrfun.homiecenter.fritzbox;
 
 
 import javafx.util.Pair;
+import net.vrfun.homiecenter.ApplicationProperties;
 import net.vrfun.homiecenter.model.DeviceInfo;
 import org.slf4j.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.*;
-import org.springframework.core.env.Environment;
 import org.springframework.http.*;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Service;
+import org.springframework.util.Assert;
 
 import javax.validation.constraints.NotNull;
+import java.net.*;
 import java.time.Instant;
 import java.util.*;
 
@@ -32,28 +34,19 @@ import java.util.*;
 @Configuration
 public class FRITZBox {
 
-    private final Logger LOGGER = LoggerFactory.getLogger(this.getClass());
+    private final Logger LOGGER = LoggerFactory.getLogger(FRITZBox.class);
 
-    private final static String DEFAULT_FRITZBOX_URL = "http://fritz.box";
-    private final static String ENV_NAME_FRITZBOX_URL = "homiecenter_fritzbox_url";
-
-    private String fritzBoxUrl;
     private FritzBoxAuthentication fritzBoxAuthentication;
     private ResponseHandlerSwitchDeviceList handlerDeviceList ;
     private Requests requests;
 
+    @Autowired
+    private ApplicationProperties applicationProperties;
+
     private Pair<Instant, AuthStatus> cachedAuthStatus;
     private final static long AUTH_STATUS_MAX_CACHE_PERIOD_SEC = 60;
+    private String fritzBoxURL;
 
-    //! TODO FRITZ!Box credentials must be retrieved from a proper repo
-    private String fritzBoxLogin = "homie";
-    private String fritzBoxPassword = "homie";
-
-    @Autowired
-    private Environment environment;
-
-    public FRITZBox() {
-    }
 
     @Bean
     public FRITZBox fritzBox() {
@@ -193,7 +186,7 @@ public class FRITZBox {
     private AuthStatus loginIfNeeded() throws Exception {
         AuthStatus authStatus = getCachedAuthStatus();
         if (!authStatus.isAuthenticated()) {
-            return login(fritzBoxLogin, fritzBoxPassword);
+            return login(applicationProperties.getFritzBoxUserName(), applicationProperties.getFritzBoxPassword());
         }
         return authStatus;
     }
@@ -212,22 +205,27 @@ public class FRITZBox {
         return requests.get(url, urlParameters);
     }
 
-    @Nullable
+    @NotNull
     private String getFritzBoxURL() {
-        if (fritzBoxUrl != null) {
-            return fritzBoxUrl;
-        }
-        LOGGER.info("Checking for environment '{}'...", ENV_NAME_FRITZBOX_URL);
-        String url = environment.getProperty(ENV_NAME_FRITZBOX_URL);
-        if (url != null) {
-            LOGGER.info("  Found '{}', using URL '{}'", ENV_NAME_FRITZBOX_URL, url);
-            fritzBoxUrl = url;
-        }
-        else {
-            LOGGER.info("  Did not find '{}', using default URL '{}'", ENV_NAME_FRITZBOX_URL, DEFAULT_FRITZBOX_URL);
-            fritzBoxUrl = DEFAULT_FRITZBOX_URL;
+        if (fritzBoxURL != null) {
+            return fritzBoxURL;
         }
 
-        return fritzBoxUrl;
+        String url = applicationProperties.getFritzBoxUrl();
+        if (!url.startsWith("http://") && !url.startsWith("https://")) {
+            url = "http://" + url;
+        }
+        try {
+            URL validateUrl = new URL(url);
+            url = validateUrl.toString();
+        }
+        catch(MalformedURLException ex) {
+            LOGGER.error("Invalid FRITZ!Box URL in homiecenter.properties file detected!");
+            url = null;
+        }
+        Assert.notNull(url, "Invalid FRITZ!Box URL");
+
+        fritzBoxURL = url;
+        return url;
     }
 }

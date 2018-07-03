@@ -3,7 +3,7 @@
     <mat-card-title>Welcome to Homie Center</mat-card-title>
     <mat-card-subtitle></mat-card-subtitle>
     <mat-card-content>
-      <div *ngIf="appInfo.user === null">
+      <div *ngIf="appInfoService.userStatus === null">
         <p>
           Please login with your FRITZ!Box credentials.
         </p>
@@ -12,20 +12,20 @@
       </div>
     </mat-card-content>
   </mat-card>
-  <div *ngIf="appInfo.user">
-    <mat-expansion-panel [(expanded)]="appInfo.camerasExpanded">
+  <div *ngIf="appInfoService.userStatus">
+    <mat-expansion-panel [(expanded)]="appInfoService.camerasExpanded">
       <mat-expansion-panel-header>
         <mat-panel-title>Switch Devices
-          <span *ngIf="appInfo.switchDeviceCount > 0" class="device-count">({{appInfo.switchDeviceCount}})</span>
+          <span *ngIf="appInfoService.switchDeviceCount > 0" class="device-count">({{appInfoService.switchDeviceCount}})</span>
         </mat-panel-title>
         <mat-panel-description></mat-panel-description>
       </mat-expansion-panel-header>
       <app-view-switch-devices></app-view-switch-devices>
     </mat-expansion-panel>
-    <mat-expansion-panel [(expanded)]="appInfo.switchDevicesExpanded">
+    <mat-expansion-panel [(expanded)]="appInfoService.switchDevicesExpanded">
       <mat-expansion-panel-header>
         <mat-panel-title>IP Cameras
-          <span *ngIf="appInfo.cameraCount > 0" class="device-count">({{appInfo.cameraCount}})</span>
+          <span *ngIf="appInfoService.cameraCount > 0" class="device-count">({{appInfoService.cameraCount}})</span>
         </mat-panel-title>
         <mat-panel-description></mat-panel-description>
       </mat-expansion-panel-header>

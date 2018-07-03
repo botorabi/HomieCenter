@@ -12,9 +12,9 @@ export class ViewCameraDetailsComponent implements OnInit {
   camera: Camera;
   error: string;
 
-  constructor(private appInfo: AppInformationService) { }
+  constructor(private appInfoService: AppInformationService) { }
 
   ngOnInit() {
-    this.camera = this.appInfo.selectedCamera;
+    this.camera = this.appInfoService.selectedCamera;
   }
 }

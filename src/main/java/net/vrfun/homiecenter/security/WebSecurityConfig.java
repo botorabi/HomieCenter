@@ -8,15 +8,22 @@
 package net.vrfun.homiecenter.security;
 
 
+import net.vrfun.homiecenter.model.*;
 import net.vrfun.homiecenter.reverseproxy.CameraProxyRoutes;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity;
 import org.springframework.security.config.web.server.ServerHttpSecurity;
 import org.springframework.security.core.userdetails.*;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.server.SecurityWebFilterChain;
 import org.springframework.security.web.server.header.XFrameOptionsServerHttpHeadersWriter;
 import org.springframework.web.reactive.function.server.*;
+import reactor.core.publisher.Mono;
+
+import java.util.Optional;
 
 /**
  * Web security configuration
@@ -26,6 +33,14 @@ import org.springframework.web.reactive.function.server.*;
 */
 @EnableWebFluxSecurity
 public class WebSecurityConfig {
+
+    @Autowired
+    private UserRepository userRepository;
+
+    @Bean
+    public PasswordEncoder createPasswordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
 
     /**
      * Reactive web needs the static path explicitly.
@@ -51,78 +66,21 @@ public class WebSecurityConfig {
     }
 
     @Bean
-    public MapReactiveUserDetailsService userDetailsService() {
-        UserDetails user1 = User.withDefaultPasswordEncoder()
-                .username("user")
-                .password("user")
-                .roles("USER")
-                .build();
+    public ReactiveUserDetailsService createUserDetailsService() {
+        return userName -> {
+            Optional<HomieCenterUser> user = userRepository.findByUserName(userName);
 
-        UserDetails user2 = User.withDefaultPasswordEncoder()
-                .username("admin")
-                .password("admin")
-                .roles("ADMIN")
-                .build();
+            if (!user.isPresent()) {
+                return Mono.empty();
+            }
 
-        return new MapReactiveUserDetailsService(user1, user2);
+            UserDetails userDetails = User.builder()
+                    .username(user.get().getUserName())
+                    .password(user.get().getPassword())
+                    .roles(user.get().isAdmin() ? "ADMIN" : "USER")
+                    .build();
+
+            return Mono.just(userDetails);
+        };
     }
-
-/*
-    @Autowired
-    private ContextRepository contextRepository;
-
-    @Bean
-    public SecurityWebFilterChain springWebFilterChain(ServerHttpSecurity http) {
-        return http
-                //.csrf().csrfTokenRepository(new WebSessionServerCsrfTokenRepository()).and()
-                .csrf().disable()
-                .headers().frameOptions().mode(XFrameOptionsServerHttpHeadersWriter.Mode.SAMEORIGIN).and()
-                .and()
-                .exceptionHandling()
-                .authenticationEntryPoint(new ExceptionAuthEntryPoint())
-                .and()
-//                .securityContextRepository(contextRepository)
-                .authenticationManager(reactiveAuthenticationManager())
-                .authorizeExchange()
-                .pathMatchers(CameraProxyRoutes.getProxyPath() + "**").authenticated()
-                .pathMatchers("/*", "/api/user/status", "/api/user/login", "/api/user/logout").permitAll()
-                .anyExchange().authenticated()
-                .and()
-                .build();
-    }
-
-    @Bean
-    ReactiveAuthenticationManager reactiveAuthenticationManager(){
-        return new FritzBoxAuthenticationManager();
-    }
-*/
-
-
-/*
-
-	@Bean
-	SecurityWebFilterChain springWebFilterChain(ServerHttpSecurity http) throws Exception {
-		return http
-			.authorizeExchange()
-				.pathMatchers(HttpMethod.GET, "/posts/**").permitAll()
-                .pathMatchers(HttpMethod.DELETE, "/posts/**").hasRole("ADMIN")
-				//.pathMatchers("/users/{user}/**").access(this::currentUserMatchesPath)
-				.anyExchange().authenticated()
-				.and()
-			.build();
-	}
-
-	private Mono<AuthorizationDecision> currentUserMatchesPath(Mono<Authentication> authentication, AuthorizationContext context) {
-		return authentication
-			.map( a -> context.getVariables().get("user").equals(a.getName()))
-			.map( granted -> new AuthorizationDecision(granted));
-	}
-
-	@Bean
-	public MapReactiveUserDetailsService userDetailsRepository() {
-		UserDetails rob = User.withDefaultPasswordEncoder().username("test").password("password").roles("USER").build();
-		UserDetails admin = User.withDefaultPasswordEncoder().username("admin").password("password").roles("USER","ADMIN").build();
-		return new MapReactiveUserDetailsService(rob, admin);
-	}
- */
 }

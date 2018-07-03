@@ -1,6 +1,6 @@
 import {Injectable} from '@angular/core';
-import {User} from "./user";
-import {ApiAuthService} from "./api-auth.service";
+import {UserStatus} from "./user-status";
+import {ApiUserService} from "./api-user.service";
 import {Camera} from "./camera";
 
 @Injectable()
@@ -9,7 +9,7 @@ export class AppInformationService {
   name: string = "Homie Center";
   version: string = "0.5.0";
 
-  user: User;
+  userStatus: UserStatus;
   logoutTime: string;
   selectedCamera: Camera;
   switchDeviceCount = 0;
@@ -19,20 +19,20 @@ export class AppInformationService {
 
   private LogoutTimeoutSec = 30 * 60;
 
-  constructor(private apiAuthService: ApiAuthService) {
+  constructor(private apiAuthService: ApiUserService) {
     this.logoutTime = this.formatTime(this.LogoutTimeoutSec);
-    this.apiAuthService.getStatus((user: User) => {
-      if (user.authenticated) {
-        this.setUser(user);
+    this.apiAuthService.getStatus((userStatus: UserStatus) => {
+      if (userStatus.authenticated) {
+        this.setUserStatus(userStatus);
       }
       else {
-        this.setUser(null);
+        this.setUserStatus(null);
       }
     });
   }
 
-  public setUser(user: User) {
-    this.user = user;
+  public setUserStatus(userStatus: UserStatus) {
+    this.userStatus = userStatus;
     this.refreshLogoutTimer();
   }
 
@@ -49,12 +49,12 @@ export class AppInformationService {
   }
 
   private refreshLogoutTimer() {
-    this.updateLogoutTimer(this.user);
+    this.updateLogoutTimer(this.userStatus);
   }
 
-  private updateLogoutTimer(user: User) {
-    if (user) {
-      let timeDiff = Date.now() - user.loginTime.getTime();
+  private updateLogoutTimer(userStatus: UserStatus) {
+    if (userStatus) {
+      let timeDiff = Date.now() - userStatus.loginTime.getTime();
       let timeRemaining = this.LogoutTimeoutSec - timeDiff / 1000;
       window.setTimeout(() => {
         if (timeRemaining < 0) {
@@ -62,7 +62,7 @@ export class AppInformationService {
         }
         else {
           this.logoutTime = this.formatTime(timeRemaining);
-          this.updateLogoutTimer(this.user);
+          this.updateLogoutTimer(this.userStatus);
         }
       }, 10000);
     }

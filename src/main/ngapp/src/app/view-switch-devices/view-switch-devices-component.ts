@@ -16,7 +16,7 @@ export class ViewSwitchDevicesComponent implements OnInit {
   private UPDATE_INTERVAL = 30 * 1000;
 
   constructor(private apiDeviceService: ApiDeviceService,
-              private appInfo: AppInformationService) { }
+              private appInfoService: AppInformationService) { }
 
   ngOnInit() {
     this.periodicUpdate();
@@ -37,7 +37,7 @@ export class ViewSwitchDevicesComponent implements OnInit {
       }
       else {
         this.devices = devices;
-        this.appInfo.setSwitchDeviceCount(this.devices.length);
+        this.appInfoService.setSwitchDeviceCount(this.devices.length);
       }
     });
   }

@@ -15,7 +15,7 @@ export class ViewCameraComponent implements OnInit {
   error: string;
 
   constructor(private router: Router,
-              private appInfo: AppInformationService,
+              private appInfoService: AppInformationService,
               private apiDeviceService: ApiDeviceService) {
   }
 
@@ -23,18 +23,18 @@ export class ViewCameraComponent implements OnInit {
     this.apiDeviceService.cameraList((cameras: Array<Camera>, error: string) => {
       this.cameras = cameras;
       if (this.cameras) {
-        this.appInfo.setCameraCount(this.cameras.length);
+        this.appInfoService.setCameraCount(this.cameras.length);
       }
     });
   }
 
   onDetails(camera: Camera) {
-    this.appInfo.setSelectedCamera(camera);
+    this.appInfoService.setSelectedCamera(camera);
     this.router.navigate(["camera-details"]);
   }
 
   onEdit(camera: Camera) {
-    this.appInfo.setSelectedCamera(camera);
+    this.appInfoService.setSelectedCamera(camera);
     this.router.navigate(["camera-edit"]);
   }
 

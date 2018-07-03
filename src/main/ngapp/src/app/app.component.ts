@@ -1,6 +1,6 @@
 import {Component} from '@angular/core';
 import {AppInformationService} from "./service/app-information.service";
-import {ApiAuthService} from "./service/api-auth.service";
+import {ApiUserService} from "./service/api-user.service";
 import {Router} from "@angular/router";
 
 @Component({
@@ -10,18 +10,18 @@ import {Router} from "@angular/router";
 })
 export class AppComponent {
 
-  constructor(public appInfo: AppInformationService,
-              private apiAuthService: ApiAuthService,
+  constructor(public appInfoService: AppInformationService,
+              private apiAuthService: ApiUserService,
               private router: Router) {
   }
 
   onHome() {
-    this.appInfo.setSelectedCamera(null);
+    this.appInfoService.setSelectedCamera(null);
     window.location.href = "/";
   }
 
   onLogin() {
-    this.appInfo.setSelectedCamera(null);
+    this.appInfoService.setSelectedCamera(null);
     this.router.navigate(["login"]);
   }
 
@@ -30,11 +30,15 @@ export class AppComponent {
   }
 
   onCreateCamera() {
-    this.appInfo.setSelectedCamera(null);
+    this.appInfoService.setSelectedCamera(null);
     this.router.navigate(["camera-edit"]);
   }
 
   onAbout() {
     this.router.navigate(["about"]);
+  }
+
+  onUsers() {
+    this.router.navigate(["user"]);
   }
 }
