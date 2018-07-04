@@ -2,7 +2,7 @@
   <mat-card>
     <mat-card-title>
       <a mat-mini-fab routerLink="" routerLinkActive="active"><mat-icon>arrow_back</mat-icon></a>  {{camera?.name}}
-      <span class="camera-url">URL: <a href="{{camera?.url}}" target="blank">{{camera?.url}}</a></span>
+      <span class="camera-url"><a mat-mini-fab href="{{camera?.urlTag}}" title="Open in new tab" target="_blank"><mat-icon>open_in_new</mat-icon></a></span>
     </mat-card-title>
     <mat-card-subtitle>
     </mat-card-subtitle>

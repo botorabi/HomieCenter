@@ -29,6 +29,9 @@ export class ViewCameraComponent implements OnInit {
   }
 
   onDetails(camera: Camera) {
+    if (this.getCameraLink(camera.urlTag) == "") {
+      return;
+    }
     this.appInfoService.setSelectedCamera(camera);
     this.router.navigate(["camera-details"]);
   }
@@ -38,18 +41,51 @@ export class ViewCameraComponent implements OnInit {
     this.router.navigate(["camera-edit"]);
   }
 
-  onToggleIFrameSize(cameraId: string) {
-    let iframeId = "camera-iframe-" + cameraId;
+  onToggleIFrameSize(camera: Camera) {
+    if (this.getCameraLink(camera.previewUrlTag) == "") {
+      return;
+    }
+    let iframeId = "camera-iframe-" + camera.id;
     let iframe: HTMLIFrameElement = <HTMLIFrameElement>document.getElementById(iframeId);
     if (!iframe) {
       console.log("ERROR: could not find iframe " + iframeId);
       return;
     }
     if (iframe.height == "200") {
-      iframe.height = iframe.width = "400";
+      iframe.width = "480";
+      iframe.height = "640";
     }
     else {
       iframe.height = iframe.width = "200";
     }
+  }
+
+  onRefreshPreview(camera: Camera) {
+    if (this.getCameraLink(camera.previewUrlTag) == "") {
+      return;
+    }
+    let iframeId = "camera-iframe-" + camera.id;
+    let iframe: HTMLIFrameElement = <HTMLIFrameElement>document.getElementById(iframeId);
+    if (!iframe) {
+      console.log("ERROR: could not find iframe " + iframeId);
+      return;
+    }
+    iframe.src = camera.previewUrlTag;
+  }
+
+  getCameraLink(tag: string) : string {
+    // filter out missing paths
+    if (tag == "/") {
+      return "";
+    }
+    return tag;
+  }
+
+  getCameraName(camera: Camera) {
+    let name = camera.name;
+    if (name.length > 12) {
+      name = name.substr(0, 11) + "...";
+    }
+    return name;
   }
 }

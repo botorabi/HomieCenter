@@ -8,27 +8,17 @@
 package net.vrfun.homiecenter.security;
 
 
-import net.vrfun.homiecenter.model.HomieCenterUser;
-import net.vrfun.homiecenter.model.UserRepository;
 import net.vrfun.homiecenter.reverseproxy.CameraProxyRoutes;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity;
 import org.springframework.security.config.web.server.ServerHttpSecurity;
-import org.springframework.security.core.userdetails.ReactiveUserDetailsService;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.server.SecurityWebFilterChain;
+import org.springframework.security.web.server.csrf.WebSessionServerCsrfTokenRepository;
 import org.springframework.security.web.server.header.XFrameOptionsServerHttpHeadersWriter;
-import org.springframework.web.reactive.function.server.RouterFunction;
-import org.springframework.web.reactive.function.server.RouterFunctions;
-import org.springframework.web.reactive.function.server.ServerResponse;
-import reactor.core.publisher.Mono;
-
-import java.util.Optional;
+import org.springframework.web.reactive.function.server.*;
 
 /**
  * Web security configuration
@@ -38,9 +28,6 @@ import java.util.Optional;
 */
 @EnableWebFluxSecurity
 public class WebSecurityConfig {
-
-    @Autowired
-    private UserRepository userRepository;
 
     @Bean
     public PasswordEncoder createPasswordEncoder() {
@@ -58,8 +45,8 @@ public class WebSecurityConfig {
     @Bean
     public SecurityWebFilterChain securityWebFilterChain(ServerHttpSecurity http) {
         return http
-                //.csrf().csrfTokenRepository(new WebSessionServerCsrfTokenRepository()).and()
-                .csrf().disable()
+                .csrf().csrfTokenRepository(new WebSessionServerCsrfTokenRepository()).and()
+                //.csrf().disable()
                 .headers().frameOptions().mode(XFrameOptionsServerHttpHeadersWriter.Mode.SAMEORIGIN).and()
                 .and()
                 .authorizeExchange()
@@ -69,24 +56,5 @@ public class WebSecurityConfig {
                 .and().formLogin()
                 .and().logout()
                 .and().build();
-    }
-
-    @Bean
-    public ReactiveUserDetailsService createUserDetailsService() {
-        return userName -> {
-            Optional<HomieCenterUser> user = userRepository.findByUserName(userName);
-
-            if (!user.isPresent()) {
-                return Mono.empty();
-            }
-
-            UserDetails userDetails = User.builder()
-                    .username(user.get().getUserName())
-                    .password(user.get().getPassword())
-                    .roles(user.get().isAdmin() ? "ADMIN" : "USER")
-                    .build();
-
-            return Mono.just(userDetails);
-        };
     }
 }

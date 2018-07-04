@@ -8,7 +8,7 @@
       <button mat-menu-item (click)="onHome()">Home</button>
       <button mat-menu-item *ngIf="appInfoService.userStatus" (click)="onLogout()">Logout</button>
       <button mat-menu-item *ngIf="!appInfoService.userStatus" (click)="onLogin()">Login</button>
-      <button mat-menu-item *ngIf="appInfoService.userStatus" (click)="onCreateCamera()">Add IP Camera</button>
+      <button mat-menu-item *ngIf="appInfoService.userStatus?.role == 'ADMIN'" (click)="onCreateCamera()">Add IP Camera</button>
       <button mat-menu-item *ngIf="appInfoService.userStatus?.role == 'ADMIN'" (click)="onUsers()">Manage Users</button>
       <button mat-menu-item *ngIf="appInfoService.userStatus?.role != 'ADMIN'" (click)="onUsers()">Edit User</button>
       <button mat-menu-item (click)="onAbout()">About</button>

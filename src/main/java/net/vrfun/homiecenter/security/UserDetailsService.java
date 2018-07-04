@@ -1,0 +1,42 @@
+package net.vrfun.homiecenter.security;
+
+import net.vrfun.homiecenter.model.*;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
+import org.springframework.security.core.userdetails.*;
+import org.springframework.stereotype.Component;
+import reactor.core.publisher.Mono;
+
+import java.util.Optional;
+
+/**
+ * This service is used for authentication process.
+ *
+ * @author          boto
+ * Creation Date    4th July 2018
+ */
+@Component
+public class UserDetailsService {
+
+    @Autowired
+    private UserRepository userRepository;
+
+    @Bean
+    public ReactiveUserDetailsService createUserDetailsService() {
+        return userName -> {
+            Optional<HomieCenterUser> user = userRepository.findByUserName(userName);
+
+            if (!user.isPresent()) {
+                return Mono.empty();
+            }
+
+            UserDetails userDetails = User.builder()
+                    .username(user.get().getUserName())
+                    .password(user.get().getPassword())
+                    .roles(user.get().isAdmin() ? "ADMIN" : "USER")
+                    .build();
+
+            return Mono.just(userDetails);
+        };
+    }
+}

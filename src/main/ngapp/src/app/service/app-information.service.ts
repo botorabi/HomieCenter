@@ -7,7 +7,7 @@ import {Camera} from "./camera";
 export class AppInformationService {
 
   name: string = "Homie Center";
-  version: string = "0.5.0";
+  version: string = "0.6.0";
 
   userStatus: UserStatus;
   logoutTime: string;

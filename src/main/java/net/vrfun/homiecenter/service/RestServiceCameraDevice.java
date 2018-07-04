@@ -13,9 +13,11 @@ import org.h2.util.StringUtils;
 import org.slf4j.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.constraints.NotNull;
+import java.net.*;
 import java.util.*;
 
 
@@ -36,30 +38,58 @@ public class RestServiceCameraDevice {
     @Autowired
     CameraProxyRoutes cameraProxyRoutes;
 
+    @Autowired
+    private AccessUtils accessUtils;
 
     @GetMapping("/api/cameradevice")
-    public ResponseEntity<List<CameraInfo>> getCameras() {
+    public ResponseEntity<List<CameraInfo>> getCameras(Authentication authentication) {
         List<CameraInfo> cameras = new ArrayList<>();
         cameraInfoRepository.findAll().forEach(camera -> {
             updateCameraUrlTags(camera);
+            // we transmit the actual URLs only to admins!
+            if (!accessUtils.requestingUserIsAdmin(authentication)) {
+                blankCameraURLs(camera);
+            }
             cameras.add(camera);
         });
         return new ResponseEntity<>(cameras, HttpStatus.OK);
     }
 
     private void updateCameraUrlTags(@NotNull CameraInfo camera) {
-        String urlTag = StringUtils.isNullOrEmpty(camera.getUrl()) ? "" :
-                CameraProxyRoutes.getProxyPath() + cameraProxyRoutes.createRouteTag(camera.getUrl());
+        try {
+            //validate the url
+            new URL(camera.getUrl());
+            String urlTag = CameraProxyRoutes.getProxyPath() + cameraProxyRoutes.createRouteTag(camera.getUrl()) + "/";
+            camera.setUrlTag(urlTag);
+        }
+        catch (MalformedURLException e) {
+            camera.setUrlTag("");
+        }
 
-        String previewUrlTag = StringUtils.isNullOrEmpty(camera.getPreviewUrl()) ? "" :
-                CameraProxyRoutes.getProxyPath() + cameraProxyRoutes.createRouteTag(camera.getPreviewUrl());
-
-        camera.setUrlTag(urlTag + "/");
-        camera.setPreviewUrlTag(previewUrlTag + "/");
+        try {
+            new URL(camera.getPreviewUrl());
+            String urlTag = CameraProxyRoutes.getProxyPath() + cameraProxyRoutes.createRouteTag(camera.getPreviewUrl()) + "/";
+            camera.setPreviewUrlTag(urlTag);
+        }
+        catch (MalformedURLException e) {
+            camera.setPreviewUrlTag("");
+        }
     }
 
+    private void blankCameraURLs(@NotNull CameraInfo camera) {
+        camera.setUrl("");
+        camera.setPreviewUrl("");
+    }
+
+    /**
+     * Access is restricted to admin user.
+     */
     @PostMapping("/api/cameradevice/createOrUpdate")
-    public ResponseEntity<CameraInfo> createOrUpdateCamera(@RequestBody CameraInfo reqCreateCamera) {
+    public ResponseEntity<CameraInfo> createOrUpdateCamera(@RequestBody CameraInfo reqCreateCamera, Authentication authentication) {
+        if (!accessUtils.requestingUserIsAdmin(authentication)) {
+            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+        }
+
         if (reqCreateCamera.getId() != null) {
             Optional<CameraInfo> existingCamera = cameraInfoRepository.findById(reqCreateCamera.getId());
             if (!existingCamera.isPresent()) {
@@ -74,7 +104,7 @@ public class RestServiceCameraDevice {
         }
 
         String url = reqCreateCamera.getUrl();
-        if (!url.startsWith("http://") &&
+        if (!StringUtils.isNullOrEmpty(url) && !url.startsWith("http://") &&
                 !url.startsWith("https://")) {
             reqCreateCamera.setUrl("http://" + url);
         }
@@ -94,8 +124,15 @@ public class RestServiceCameraDevice {
         return new ResponseEntity<>(reqCreateCamera, HttpStatus.OK);
     }
 
+    /**
+     * Access is restricted to admin user.
+     */
     @PostMapping("/api/cameradevice/delete/{id}")
-    public ResponseEntity<Void> deleteCamera(@PathVariable Long id) {
+    public ResponseEntity<Void> deleteCamera(@PathVariable Long id, Authentication authentication) {
+        if (!accessUtils.requestingUserIsAdmin(authentication)) {
+            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+        }
+
         Optional<CameraInfo> existingCamera = cameraInfoRepository.findById(id);
         if (!existingCamera.isPresent()) {
             LOGGER.debug("cannot delete camera, id {} does not exist!", id);
