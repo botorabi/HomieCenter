@@ -1,4 +1,4 @@
-    Copyright (c) 2017-2018 by Botorabi. All rights reserved.
+    Copyright (c) 2018 by Botorabi. All rights reserved.
     https://github.com/botorabi/HomieCenter
 
     License: MIT License (MIT)
@@ -6,6 +6,10 @@
 
     First Created:     May 2018
     Author:            Botorabi (botorabi AT gmx DOT net)
+
+[![Maintainability](https://api.codeclimate.com/v1/badges/3e56cc0c08d3b552019c/maintainability)](https://codeclimate.com/github/botorabi/HomieCenter/maintainability)
+[![Test Coverage](https://api.codeclimate.com/v1/badges/3e56cc0c08d3b552019c/test_coverage)](https://codeclimate.com/github/botorabi/HomieCenter/test_coverage)
+[![Build Status](https://travis-ci.org/botorabi/HomieCenter.svg?branch=master)](https://travis-ci.org/botorabi/HomieCenter)
 
 # Homie Center
 

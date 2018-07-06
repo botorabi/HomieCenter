@@ -14,6 +14,15 @@ export class ApiUserService {
     private http: HttpClient) {
   }
 
+  public logout(callback: any) {
+    this.http.post('/logout', null, this.httpOptions)
+      .subscribe(response => {
+          if (callback) {
+            callback();
+          }
+        });
+  }
+
   public getStatus(callback: any) {
     this.http.get('/api/user/status')
       .subscribe(response => {

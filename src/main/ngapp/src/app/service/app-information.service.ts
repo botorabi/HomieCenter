@@ -7,7 +7,7 @@ import {Camera} from "./camera";
 export class AppInformationService {
 
   name: string = "Homie Center";
-  version: string = "0.5.0";
+  version: string = "0.6.0";
 
   userStatus: UserStatus;
   logoutTime: string;
@@ -19,9 +19,9 @@ export class AppInformationService {
 
   private LogoutTimeoutSec = 30 * 60;
 
-  constructor(private apiAuthService: ApiUserService) {
+  constructor(private apiUserService: ApiUserService) {
     this.logoutTime = this.formatTime(this.LogoutTimeoutSec);
-    this.apiAuthService.getStatus((userStatus: UserStatus) => {
+    this.apiUserService.getStatus((userStatus: UserStatus) => {
       if (userStatus.authenticated) {
         this.setUserStatus(userStatus);
       }
@@ -58,7 +58,8 @@ export class AppInformationService {
       let timeRemaining = this.LogoutTimeoutSec - timeDiff / 1000;
       window.setTimeout(() => {
         if (timeRemaining < 0) {
-          window.location.href = "/logout";
+          this.apiUserService.logout(null);
+          window.location.href = "/";
         }
         else {
           this.logoutTime = this.formatTime(timeRemaining);

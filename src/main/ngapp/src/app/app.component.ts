@@ -11,7 +11,7 @@ import {Router} from "@angular/router";
 export class AppComponent {
 
   constructor(public appInfoService: AppInformationService,
-              private apiAuthService: ApiUserService,
+              private apiUserService: ApiUserService,
               private router: Router) {
   }
 
@@ -26,7 +26,8 @@ export class AppComponent {
   }
 
   onLogout() {
-    window.location.href = "/logout";
+    this.apiUserService.logout(null);
+    window.location.href = "/";
   }
 
   onCreateCamera() {

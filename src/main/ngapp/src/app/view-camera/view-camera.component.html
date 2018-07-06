@@ -2,17 +2,19 @@
   <div class="main-div device-container">
     <div *ngFor="let camera of cameras">
       <mat-card class="device-item">
-        <mat-card-title>
-          <a mat-icon-button class="title-name" color="primary" (click)="onDetails(camera)">{{camera.name}}</a>
-          <a mat-icon-button class="title-button" title="Details" (click)="onDetails(camera)"><mat-icon>visibility</mat-icon></a>
-          <a mat-icon-button class="title-button" title="Edit" (click)="onEdit(camera)"><mat-icon>edit</mat-icon></a>
-          <a mat-icon-button class="title-button" title="Enlarge" (click)="onToggleIFrameSize(camera.id)"><mat-icon>aspect_ratio</mat-icon></a>
-        </mat-card-title>
+        <mat-card-title><span title="{{camera.name}}">{{getCameraName(camera)}}</span></mat-card-title>
         <mat-card-subtitle>
+          <a mat-icon-button class="title-button" color="primary" title="Details" [disabled]="getCameraLink(camera.urlTag) == ''" (click)="onDetails(camera)"><mat-icon>visibility</mat-icon></a>
+          <a *ngIf="appInfoService.userStatus?.role=='ADMIN'" mat-icon-button class="title-button" color="primary" title="Edit" (click)="onEdit(camera)"><mat-icon>edit</mat-icon></a>
+          <a mat-icon-button class="title-button" color="primary" title="Enlarge" [disabled]="getCameraLink(camera.previewUrlTag) == ''" (click)="onToggleIFrameSize(camera)"><mat-icon>aspect_ratio</mat-icon></a>
+          <a mat-icon-button class="title-button" color="primary" title="Refresh" [disabled]="getCameraLink(camera.previewUrlTag) == ''" (click)="onRefreshPreview(camera)"><mat-icon>refresh</mat-icon></a>
         </mat-card-subtitle>
         <br>
         <mat-card-content>
-          <iframe id="camera-iframe-{{camera.id}}" height="200" width="200" style="border: 0px;" [src]="camera.previewUrlTag | safe"></iframe>
+          <div class="no-preview" title="No preview available!" *ngIf="getCameraLink(camera.previewUrlTag) == ''">
+            <mat-icon>photo_camera</mat-icon>
+          </div>
+          <iframe *ngIf="getCameraLink(camera.previewUrlTag) != ''" id="camera-iframe-{{camera.id}}" height="200" width="200" style="border: 0px;" [src]="getCameraLink(camera.previewUrlTag) | safe"></iframe>
         </mat-card-content>
       </mat-card>
     </div>

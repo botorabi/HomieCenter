@@ -7,16 +7,11 @@
  */
 package net.vrfun.homiecenter;
 
-import net.vrfun.homiecenter.model.HomieCenterUser;
-import net.vrfun.homiecenter.model.UserRepository;
-import net.vrfun.homiecenter.reverseproxy.CameraProxyRoutes;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.autoconfigure.*;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
-import org.springframework.security.crypto.password.PasswordEncoder;
 
 
 /**
@@ -30,37 +25,14 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 public class Application {
 
     @Autowired
-    private CameraProxyRoutes cameraProxyRoutes;
-
-    @Autowired
-    private UserRepository userRepository;
-
-    @Autowired
-    private PasswordEncoder passwordEncoder;
-
-
-    public Application() {
-    }
+    private ApplicationStartup applicationStartup;
 
     /**
      * Put all start-up code to this method.
      */
     @EventListener(ApplicationReadyEvent.class)
     public void startup() {
-        cameraProxyRoutes.buildRoutes();
-
-        createDefaultUserIfNeeded();
-    }
-
-    private void createDefaultUserIfNeeded() {
-        if (userRepository.count() == 0) {
-            HomieCenterUser defaultUser = new HomieCenterUser();
-            defaultUser.setUserName("admin");
-            defaultUser.setPassword(passwordEncoder.encode("admin"));
-            defaultUser.setRealName("Administrator");
-            defaultUser.setAdmin(true);
-            userRepository.save(defaultUser);
-        }
+        applicationStartup.start();
     }
 
     public static void main(String[] args) {
