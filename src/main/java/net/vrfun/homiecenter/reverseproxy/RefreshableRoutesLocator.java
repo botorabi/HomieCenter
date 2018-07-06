@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.gateway.route.*;
 import org.springframework.cloud.gateway.route.builder.RouteLocatorBuilder;
 import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.context.annotation.Bean;
 import org.springframework.http.*;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Flux;
@@ -38,6 +39,7 @@ public class RefreshableRoutesLocator implements RouteLocator {
     @Autowired
     ConfigurableApplicationContext context;
 
+    @Autowired
     public RefreshableRoutesLocator(RouteLocatorBuilder builder) {
         this.builder = builder;
         clearRoutes();

@@ -9,9 +9,10 @@ package net.vrfun.homiecenter.reverseproxy;
 
 import net.vrfun.homiecenter.model.CameraInfoRepository;
 import net.vrfun.homiecenter.utils.HashGenerator;
+import org.h2.util.StringUtils;
 import org.slf4j.*;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.*;
+import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Service;
 
 import javax.validation.constraints.NotNull;
@@ -33,21 +34,19 @@ public class CameraProxyRoutes {
 
     private final static String PROXY_PATH = "/camera";
 
-    @Autowired
     private CameraInfoRepository cameraInfoRepository;
 
-    @Autowired
     private RefreshableRoutesLocator refreshableRoutesLocator;
 
     private Map<String /*Tag*/, String /*Path*/> routes = new ConcurrentHashMap<>();
 
 
-    @Bean
-    public CameraProxyRoutes createProxyRoutes() {
-        return new CameraProxyRoutes();
-    }
+    @Autowired
+    public CameraProxyRoutes(CameraInfoRepository cameraInfoRepository,
+                             RefreshableRoutesLocator refreshableRoutesLocator) {
 
-    public CameraProxyRoutes() {
+        this.cameraInfoRepository = cameraInfoRepository;
+        this.refreshableRoutesLocator = refreshableRoutesLocator;
     }
 
     @NotNull
@@ -60,9 +59,19 @@ public class CameraProxyRoutes {
         return routes;
     }
 
-    @NotNull
-    public String getRoute(@NotNull final String cameraTag) {
-        return routes.getOrDefault(cameraTag, "");
+    @Nullable
+    public String getRouteUrl(@NotNull final String cameraTag) {
+        return routes.getOrDefault(cameraTag, null);
+    }
+
+    @Nullable
+    public String getRouteTag(@NotNull final String cameraUrl) {
+        for (Map.Entry<String, String> entry: routes.entrySet()) {
+            if (cameraUrl.equals(entry.getValue())) {
+                return entry.getKey();
+            }
+        }
+        return null;
     }
 
     /**
@@ -76,15 +85,29 @@ public class CameraProxyRoutes {
         cameraInfoRepository.findAll().forEach(camera -> {
             String previewUrl = camera.getPreviewUrl();
             String url = camera.getUrl();
-            if (previewUrl != null && !previewUrl.isEmpty()) {
+            if (isValidUrl(previewUrl)) {
                 routes.put(createRouteTag(previewUrl), previewUrl);
             }
-            if (url != null && !url.isEmpty()) {
+            if (isValidUrl(url)) {
                 routes.put(createRouteTag(url), url);
             }
         });
 
         updateGatewayRoutes();
+    }
+
+    private boolean isValidUrl(@Nullable String url) {
+        if (StringUtils.isNullOrEmpty(url)) {
+            return false;
+        }
+
+        try {
+            new URL(url);
+        } catch (MalformedURLException e) {
+            return false;
+        }
+
+        return true;
     }
 
     private void updateGatewayRoutes() {

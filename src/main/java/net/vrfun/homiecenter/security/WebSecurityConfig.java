@@ -16,7 +16,6 @@ import org.springframework.security.config.web.server.ServerHttpSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.server.SecurityWebFilterChain;
-import org.springframework.security.web.server.csrf.WebSessionServerCsrfTokenRepository;
 import org.springframework.security.web.server.header.XFrameOptionsServerHttpHeadersWriter;
 import org.springframework.web.reactive.function.server.*;
 
@@ -45,16 +44,19 @@ public class WebSecurityConfig {
     @Bean
     public SecurityWebFilterChain securityWebFilterChain(ServerHttpSecurity http) {
         return http
-                .csrf().csrfTokenRepository(new WebSessionServerCsrfTokenRepository()).and()
-                //.csrf().disable()
-                .headers().frameOptions().mode(XFrameOptionsServerHttpHeadersWriter.Mode.SAMEORIGIN).and()
+                //.csrf().csrfTokenRepository(new WebSessionServerCsrfTokenRepository()).and()
+                .csrf().disable()
+                .headers()
+                    .frameOptions().mode(XFrameOptionsServerHttpHeadersWriter.Mode.SAMEORIGIN).and()
                 .and()
                 .authorizeExchange()
-                .pathMatchers(CameraProxyRoutes.getProxyPath() + "**").authenticated()
-                .pathMatchers("/api/user/status").permitAll()
-                .anyExchange().authenticated()
-                .and().formLogin()
-                .and().logout()
+                    .pathMatchers(CameraProxyRoutes.getProxyPath() + "**").authenticated()
+                    .pathMatchers("/api/user/status").permitAll()
+                    .anyExchange().authenticated()
+                .and()
+                .formLogin()
+                .and()
+                .logout()
                 .and().build();
     }
 }
