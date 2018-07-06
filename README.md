@@ -7,6 +7,10 @@
     First Created:     May 2018
     Author:            Botorabi (botorabi AT gmx DOT net)
 
+[![Maintainability](https://api.codeclimate.com/v1/badges/3e56cc0c08d3b552019c/maintainability)](https://codeclimate.com/github/botorabi/HomieCenter/maintainability)
+[![Test Coverage](https://api.codeclimate.com/v1/badges/3e56cc0c08d3b552019c/test_coverage)](https://codeclimate.com/github/botorabi/HomieCenter/test_coverage)
+[![Build Status](https://travis-ci.org/botorabi/HomieCenter.svg?branch=master)](https://travis-ci.org/botorabi/HomieCenter)
+
 # Homie Center
 
 **Homie Center** is a web application dedicated to home automation. It provides a simple control center for devices connected to a FRITZ!Box (see https://avm.de).
