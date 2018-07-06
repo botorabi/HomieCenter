@@ -7,15 +7,17 @@ cache:
 
 language: java
 
+before_install:
+  - cd misc/spring.webflux-v5.0.7-RELEASE-patch/
+  - ./install-webflux-package.sh
+  - cd ../../
+
 before_script:
   - curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
   - chmod +x ./cc-test-reporter
   - ./cc-test-reporter before-build
 
 script:
-  - cd misc/spring.webflux-v5.0.7-RELEASE-patch/
-  - ./install-webflux-package.sh
-  - cd ../../
   - mvn clean verify
 
 jdk:
