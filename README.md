@@ -34,8 +34,5 @@ As expected from a Spring Boot application, running it is as simple as issuing t
   java -jar target/homiecenter-< VERSION >.tar
 
 
-The application will try to connect to your FRITZ!Box via the URL **http : // fritz.box** (whithout the blanks), this URL is the most common one accessing a FRITZ!Box from your local network.
-It is also possible to define a custom URL by using the environment variable **homiecenter_fritzbox_url**. Here is an example for a custom URL:
-
-  export  homiecenter_fritzbox_url=http://< my custom FRITZ!Box IP >:< my custom port >
+The application settings such as a custom FRITZ!Box URL can be set in file 'homiecenter.properties' which must be located in the execution directory.
 
