@@ -29,6 +29,7 @@ export class ViewUserEditComponent implements OnInit {
         this.getUserDetails(userId);
       }
     });
+    this.appInfoService.refreshLogoutTimer();
   }
 
   ngOnDestroy() {

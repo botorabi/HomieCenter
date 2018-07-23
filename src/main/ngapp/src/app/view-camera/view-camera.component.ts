@@ -26,6 +26,7 @@ export class ViewCameraComponent implements OnInit {
         this.appInfoService.setCameraCount(this.cameras.length);
       }
     });
+    this.appInfoService.refreshLogoutTimer();
   }
 
   onDetails(camera: Camera) {
@@ -51,13 +52,33 @@ export class ViewCameraComponent implements OnInit {
       console.log("ERROR: could not find iframe " + iframeId);
       return;
     }
+    let width = 0;
+    let height = 0;
+    let doc = iframe.contentDocument.documentElement;
     if (iframe.height == "200") {
-      iframe.width = "480";
-      iframe.height = "640";
+      if (doc.scrollWidth > doc.scrollHeight) {
+        width = 640;
+        height = 480;
+      }
+      else {
+        width = 480;
+        height = 640;
+      }
     }
     else {
-      iframe.height = iframe.width = "200";
+      height = width = 200;
     }
+    this.adaptIFrameSize(iframe, width, height);
+  }
+
+  private adaptIFrameSize(iFrame: HTMLIFrameElement, width: number, height: number) : void {
+    let windowWidth = window.innerWidth * 0.8;
+    let scale = 1.0;
+    if (windowWidth < width) {
+      scale = windowWidth / width;
+    }
+    iFrame.width = '' + Math.floor(width * scale);
+    iFrame.height = '' + Math.floor(height * scale);
   }
 
   onRefreshPreview(camera: Camera) {
@@ -71,6 +92,11 @@ export class ViewCameraComponent implements OnInit {
       return;
     }
     iframe.src = camera.previewUrlTag;
+    let thiz = this;
+    iframe.onload = function() {
+      thiz.onToggleIFrameSize(camera);
+      thiz.onToggleIFrameSize(camera);
+    }
   }
 
   getCameraLink(tag: string) : string {

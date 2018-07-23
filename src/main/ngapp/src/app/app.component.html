@@ -1,9 +1,5 @@
 <mat-toolbar color="primary">
   <mat-toolbar-row>
-    <a mat-button routerLink="" routerLinkActive="active"><img src="/favicon.ico" height="48" width="48">
-      <span style="margin-left: 20px">Homie Center</span>
-    </a>
-    <span style="flex: 1 1 auto;"></span>
     <mat-menu #appMenu="matMenu">
       <button mat-menu-item (click)="onHome()">Home</button>
       <button mat-menu-item *ngIf="appInfoService.userStatus" (click)="onLogout()">Logout</button>
@@ -14,8 +10,11 @@
       <button mat-menu-item (click)="onAbout()">About</button>
     </mat-menu>
     <button mat-icon-button [matMenuTriggerFor]="appMenu">
-      <mat-icon>more_vert</mat-icon>
+      <mat-icon>menu</mat-icon>
     </button>
+    <span class="center">{{getMenuTitle()}}</span>
+    <span style="flex: 1 1 auto;"></span>
+    <button mat-icon-button (click)="onHome()"><img src="/favicon.ico" height="48" width="48"></button>
   </mat-toolbar-row>
 </mat-toolbar>
 
@@ -27,7 +26,17 @@
 
 <footer>
   <mat-toolbar color="primary">
-    <span class="mat-small">Homie Center v{{appInfoService.version}}, Copyright 2018 </span>
-    <div class="mat-small footer-username"><span *ngIf="appInfoService.userStatus">User: {{appInfoService.userStatus.name}}, Timeout in {{appInfoService.logoutTime}} </span></div>
+    <span class="mat-small">
+      Homie Center v{{appInfoService.version}}
+      <br>
+      <small>Copyright 2018</small>
+    </span>
+    <div class="mat-small footer-username">
+      <span *ngIf="appInfoService.userStatus">
+        User: {{appInfoService.userStatus.name}}
+        <br>
+        <small>Timeout in {{appInfoService.logoutTimeString}}</small>
+      </span>
+    </div>
   </mat-toolbar>
 </footer>

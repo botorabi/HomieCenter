@@ -11,5 +11,6 @@ export class ViewAboutComponent implements OnInit {
   constructor(public appInfoService: AppInformationService) { }
 
   ngOnInit() {
+    this.appInfoService.refreshLogoutTimer();
   }
 }

@@ -19,6 +19,7 @@ export class ViewSwitchDevicesComponent implements OnInit {
               private appInfoService: AppInformationService) { }
 
   ngOnInit() {
+    this.appInfoService.refreshLogoutTimer();
     this.periodicUpdate();
   }
 
