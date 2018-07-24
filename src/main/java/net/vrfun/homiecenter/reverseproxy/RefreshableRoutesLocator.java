@@ -10,9 +10,8 @@ package net.vrfun.homiecenter.reverseproxy;
 import org.h2.util.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.gateway.route.*;
-import org.springframework.cloud.gateway.route.builder.RouteLocatorBuilder;
+import org.springframework.cloud.gateway.route.builder.*;
 import org.springframework.context.ConfigurableApplicationContext;
-import org.springframework.context.annotation.Bean;
 import org.springframework.http.*;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Flux;
@@ -60,22 +59,34 @@ public class RefreshableRoutesLocator implements RouteLocator {
         if (StringUtils.isNullOrEmpty(uri.getScheme())) {
             throw new URISyntaxException("Missing scheme in URI: {}", uri.toString());
         }
-        routesBuilder.route(id, r -> r
+
+        routesBuilder.route(id, fn -> fn
                 .path(path + "/**")
-                .filters(f -> {
-                    f.addRequestHeader("X-Forwarded-Prefix", path);
-                    f.stripPrefix(1);
-                    // setup the retry filter, it is important as during transitions from one page to another access problems can occur.
-                    f.retry(config -> {
-                        config.setRetries(5);
-                        config.setStatuses(HttpStatus.INTERNAL_SERVER_ERROR);
-                        config.setMethods(HttpMethod.GET, HttpMethod.POST, HttpMethod.PUT, HttpMethod.DELETE);
-                    });
-                    return f;
-                })
+                .filters(filterSpec -> setupRouteFilters(path, filterSpec))
                 .uri(uri)
         );
+
         return this;
+    }
+
+    @NotNull
+    private UriSpec setupRouteFilters(@NotNull final String path, @NotNull GatewayFilterSpec filterSpec) {
+        filterSpec.stripPrefix(1);
+
+        // setup the retry filter, it is important as during transitions from one page to another access problems can occur.
+        filterSpec.retry(config -> {
+            config.setRetries(5);
+            config.setStatuses(HttpStatus.INTERNAL_SERVER_ERROR);
+            config.setMethods(HttpMethod.GET, HttpMethod.POST, HttpMethod.PUT, HttpMethod.DELETE);
+        });
+
+        // handle redirects coming from a routed service
+        //  the service may be aware of request header 'X-Forwarded-Prefix'
+        filterSpec.addRequestHeader("X-Forwarded-Prefix", path);
+        //  as a fallback for services not aware of 'X-Forwarded-Prefix' we correct the Location header in response
+        filterSpec.filter(new ModifyResponseHeaderLocationGatewayFilterFactory().apply(c -> c.setName(path + "/")));
+
+        return filterSpec;
     }
 
     /**
