@@ -26,6 +26,7 @@ export class ViewCameraEditComponent implements OnInit {
     else {
       this.camera = this.appInfoService.selectedCamera;
     }
+    this.appInfoService.refreshLogoutTimer();
   }
 
   onApply() {

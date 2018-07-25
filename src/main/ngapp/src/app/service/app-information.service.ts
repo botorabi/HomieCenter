@@ -7,11 +7,12 @@ import {Camera} from "./camera";
 export class AppInformationService {
 
   name: string = "Homie Center";
-  version: string = "0.6.0";
+  version: string = "0.7.0";
 
-  userStatus: UserStatus;
-  logoutTime: string;
-  selectedCamera: Camera;
+  userStatus: UserStatus = null;
+  logoutTimeString: string = "";
+  logoutTimer: Date;
+  selectedCamera: Camera = null;
   switchDeviceCount = 0;
   cameraCount = 0;
   camerasExpanded = true;
@@ -20,7 +21,7 @@ export class AppInformationService {
   private LogoutTimeoutSec = 30 * 60;
 
   constructor(private apiUserService: ApiUserService) {
-    this.logoutTime = this.formatTime(this.LogoutTimeoutSec);
+    this.logoutTimeString = this.formatTime(this.LogoutTimeoutSec);
     this.apiUserService.getStatus((userStatus: UserStatus) => {
       if (userStatus.authenticated) {
         this.setUserStatus(userStatus);
@@ -33,7 +34,7 @@ export class AppInformationService {
 
   public setUserStatus(userStatus: UserStatus) {
     this.userStatus = userStatus;
-    this.refreshLogoutTimer();
+    this.periodicLogoutTimerUpdate(userStatus);
   }
 
   public setSelectedCamera(camera: Camera) {
@@ -48,28 +49,34 @@ export class AppInformationService {
     this.switchDeviceCount = count;
   }
 
-  private refreshLogoutTimer() {
-    this.updateLogoutTimer(this.userStatus);
+  public refreshLogoutTimer() {
+    this.logoutTimer = new Date();
+    this.logoutTimeString = this.formatTime(this.getRemainingTime());
   }
 
-  private updateLogoutTimer(userStatus: UserStatus) {
+  private periodicLogoutTimerUpdate(userStatus: UserStatus) {
     if (userStatus) {
-      let timeDiff = Date.now() - userStatus.loginTime.getTime();
-      let timeRemaining = this.LogoutTimeoutSec - timeDiff / 1000;
       window.setTimeout(() => {
+        let timeRemaining = this.getRemainingTime();
         if (timeRemaining < 0) {
           this.apiUserService.logout(null);
           window.location.href = "/";
         }
         else {
-          this.logoutTime = this.formatTime(timeRemaining);
-          this.updateLogoutTimer(this.userStatus);
+          this.logoutTimeString = this.formatTime(timeRemaining);
+          this.periodicLogoutTimerUpdate(this.userStatus);
         }
       }, 10000);
     }
   }
 
-  private formatTime(timeRemaining: number) {
+  private getRemainingTime() : number {
+    let timeDiff = Date.now() - this.logoutTimer.getTime();
+    let timeRemaining = this.LogoutTimeoutSec - timeDiff / 1000;
+    return timeRemaining;
+  }
+
+  private formatTime(timeRemaining: number) : string {
     let seconds = Math.floor(timeRemaining);
     let hours = Math.floor(seconds / 3600);
     let minutes = Math.floor((seconds - (hours * 3600)) / 60);
@@ -77,7 +84,7 @@ export class AppInformationService {
     return "" + this.formatTimeDigits(minutes) + " min";
   }
 
-  private formatTimeDigits(value: number) {
+  private formatTimeDigits(value: number) : string {
     return "" + ((value < 9) ? ("0" + value) : value);
   }
 }

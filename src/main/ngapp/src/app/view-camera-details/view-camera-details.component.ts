@@ -16,5 +16,6 @@ export class ViewCameraDetailsComponent implements OnInit {
 
   ngOnInit() {
     this.camera = this.appInfoService.selectedCamera;
+    this.appInfoService.refreshLogoutTimer();
   }
 }

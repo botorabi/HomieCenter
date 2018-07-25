@@ -21,6 +21,7 @@ export class ViewUserComponent implements OnInit {
   }
 
   ngOnInit() {
+    this.appInfoService.refreshLogoutTimer();
     this.getUsers();
   }
 

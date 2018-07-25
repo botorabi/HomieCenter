@@ -98,7 +98,6 @@ export class ApiUserService {
     userStatus.name = userJson.name;
     userStatus.authenticated = userJson.authenticated;
     userStatus.role = userJson.role;
-    userStatus.loginTime = new Date();
     return userStatus;
   }
 }

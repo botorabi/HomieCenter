@@ -32,14 +32,21 @@ public class RestServiceCameraDevice {
 
     private final Logger LOGGER = LoggerFactory.getLogger(this.getClass());
 
-    @Autowired
     private CameraInfoRepository cameraInfoRepository;
 
-    @Autowired
-    CameraProxyRoutes cameraProxyRoutes;
+    private CameraProxyRoutes cameraProxyRoutes;
+
+    private AccessUtils accessUtils;
 
     @Autowired
-    private AccessUtils accessUtils;
+    public RestServiceCameraDevice(@NotNull CameraInfoRepository cameraInfoRepository,
+                                   @NotNull CameraProxyRoutes cameraProxyRoutes,
+                                   @NotNull AccessUtils accessUtils) {
+
+        this.cameraInfoRepository = cameraInfoRepository;
+        this.cameraProxyRoutes = cameraProxyRoutes;
+        this.accessUtils = accessUtils;
+    }
 
     @GetMapping("/api/cameradevice")
     public ResponseEntity<List<CameraInfo>> getCameras(Authentication authentication) {
@@ -84,25 +91,42 @@ public class RestServiceCameraDevice {
     /**
      * Access is restricted to admin user.
      */
-    @PostMapping("/api/cameradevice/createOrUpdate")
-    public ResponseEntity<CameraInfo> createOrUpdateCamera(@RequestBody CameraInfo reqCreateCamera, Authentication authentication) {
+    @PostMapping("/api/cameradevice/create")
+    public ResponseEntity<CameraInfo> createCamera(@RequestBody CameraInfo reqCreateCamera, Authentication authentication) {
         if (!accessUtils.requestingUserIsAdmin(authentication)) {
             return new ResponseEntity<>(HttpStatus.FORBIDDEN);
         }
 
-        if (reqCreateCamera.getId() != null) {
-            Optional<CameraInfo> existingCamera = cameraInfoRepository.findById(reqCreateCamera.getId());
-            if (!existingCamera.isPresent()) {
-                LOGGER.debug("cannot update camera, id {} does not exist!", reqCreateCamera.getId());
-                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-            }
-        }
-        else {
-            if (reqCreateCamera == null || reqCreateCamera.getUrl().isEmpty()) {
-                return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
-            }
+        if (StringUtils.isNullOrEmpty(reqCreateCamera.getUrl())) {
+            return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
         }
 
+        createOrUpdateCameraInRepository(reqCreateCamera);
+
+        return new ResponseEntity<>(reqCreateCamera, HttpStatus.OK);
+    }
+
+    /**
+     * Access is restricted to admin user.
+     */
+    @PutMapping("/api/cameradevice/update")
+    public ResponseEntity<CameraInfo> updateCamera(@RequestBody CameraInfo reqCreateCamera, Authentication authentication) {
+        if (!accessUtils.requestingUserIsAdmin(authentication)) {
+            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+        }
+
+        Optional<CameraInfo> existingCamera = cameraInfoRepository.findById(reqCreateCamera.getId());
+        if (!existingCamera.isPresent()) {
+            LOGGER.debug("cannot update camera, id {} does not exist!", reqCreateCamera.getId());
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+
+        createOrUpdateCameraInRepository(reqCreateCamera);
+
+        return new ResponseEntity<>(reqCreateCamera, HttpStatus.OK);
+    }
+
+    private void createOrUpdateCameraInRepository(@NotNull CameraInfo reqCreateCamera) {
         String url = reqCreateCamera.getUrl();
         if (!StringUtils.isNullOrEmpty(url) && !url.startsWith("http://") &&
                 !url.startsWith("https://")) {
@@ -120,8 +144,6 @@ public class RestServiceCameraDevice {
 
         // whenever the camera URLs were changed we have to re-build the camera routes and their tags
         cameraProxyRoutes.buildRoutes();
-
-        return new ResponseEntity<>(reqCreateCamera, HttpStatus.OK);
     }
 
     /**

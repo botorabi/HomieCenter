@@ -14,6 +14,7 @@ import org.springframework.security.core.userdetails.*;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
 
+import javax.validation.constraints.NotNull;
 import java.util.Optional;
 
 /**
@@ -25,8 +26,12 @@ import java.util.Optional;
 @Component
 public class UserDetailsService {
 
-    @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    public UserDetailsService(@NotNull UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
 
     @Bean
     public ReactiveUserDetailsService createUserDetailsService() {

@@ -135,7 +135,7 @@ public class FRITZBox {
         return null;
     }
 
-    public void handleDeviceCommand(Long deviceId, String command) throws Exception {
+    public void handleDeviceCommand(long deviceId, @NotNull final String command) throws Exception {
         switch(command) {
             case "on":
                 switchDevice(deviceId, true);

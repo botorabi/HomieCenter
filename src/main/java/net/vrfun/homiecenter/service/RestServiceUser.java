@@ -18,6 +18,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.*;
 
+import javax.validation.constraints.NotNull;
 import java.util.Optional;
 
 
@@ -30,14 +31,21 @@ import java.util.Optional;
 @RestController
 public class RestServiceUser {
 
-    @Autowired
     private UserRepository userRepository;
 
-    @Autowired
     private PasswordEncoder passwordEncoder;
 
-    @Autowired
     private AccessUtils accessUtils;
+
+    @Autowired
+    public RestServiceUser(@NotNull UserRepository userRepository,
+                           @NotNull PasswordEncoder passwordEncoder,
+                           @NotNull AccessUtils accessUtils) {
+
+        this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
+        this.accessUtils = accessUtils;
+    }
 
     /**
      * Access is restricted to admin user.
@@ -69,7 +77,7 @@ public class RestServiceUser {
     public ResponseEntity<HomieCenterUser> edit(@RequestBody ReqUserEdit userEdit, Authentication authentication) {
         Optional<HomieCenterUser> storedUser = userRepository.findById(userEdit.getId());
         if (!storedUser.isPresent()) {
-            return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
 
         if (!accessUtils.requestingUserIsAdminOrOwner(authentication, storedUser)) {
@@ -81,7 +89,8 @@ public class RestServiceUser {
         if (!StringUtils.isNullOrEmpty(userEdit.getPassword())) {
             user.setPassword(passwordEncoder.encode(userEdit.getPassword()));
         }
-        // don't let degrade the user to non-admin
+        // changing the admin flag is only allowed to admins, but they are not allowed to change their own admin flag
+        //  thus avoiding an accidental role degradation.
         if (accessUtils.requestingUserIsAdmin(authentication) &&
                 !accessUtils.requestingUserIsOwner(authentication, storedUser)) {
 
