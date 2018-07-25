@@ -7,19 +7,15 @@
  */
 package net.vrfun.homiecenter.security;
 
-import net.vrfun.homiecenter.model.*;
+import net.vrfun.homiecenter.model.UserRepository;
+import net.vrfun.homiecenter.testutils.UserTestUtils;
 import org.junit.*;
 import org.junit.runner.RunWith;
 import org.mockito.*;
 import org.springframework.security.core.userdetails.*;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import javax.validation.constraints.NotNull;
-import java.util.Optional;
-
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.when;
 
 
 @RunWith(SpringRunner.class)
@@ -30,15 +26,18 @@ public class UserDetailsServiceTest {
 
     private UserDetailsService userDetailsService;
 
+    private UserTestUtils userTestUtils;
+
     @Before
     public void setup() {
         MockitoAnnotations.initMocks(this);
         userDetailsService = new UserDetailsService(userRepository);
+        userTestUtils = new UserTestUtils(userRepository);
     }
 
     @Test
     public void emptyUserRepository() {
-        createEmptyUserRepository();
+        userTestUtils.mockEmptyUserRepository();
         ReactiveUserDetailsService service = userDetailsService.createUserDetailsService();
         UserDetails userDetails = service.findByUsername("Any User").block();
 
@@ -47,26 +46,12 @@ public class UserDetailsServiceTest {
 
     @Test
     public void userRepositoryWithAdmin() {
-        createUserRepositoryWithUser(true, "Administrator", "Password");
+        userTestUtils.mockUserRepositoryWithUser(true,0L,"Administrator", "Password");
         ReactiveUserDetailsService service = userDetailsService.createUserDetailsService();
         UserDetails userDetails = service.findByUsername("Administrator").block();
 
         assertThat(userDetails).isNotNull();
         assertThat(userDetails.getUsername()).isEqualTo("Administrator");
         assertThat(userDetails.getPassword()).isEqualTo("Password");
-    }
-
-    private void createEmptyUserRepository() {
-        when(userRepository.findByUserName(any())).thenReturn(Optional.empty());
-    }
-
-    private void createUserRepositoryWithUser(boolean admin, @NotNull final String userName, @NotNull final String password) {
-        HomieCenterUser adminUser = new HomieCenterUser();
-        adminUser.setAdmin(admin);
-        adminUser.setRealName(userName);
-        adminUser.setUserName(userName);
-        adminUser.setPassword(password);
-        Optional<HomieCenterUser> foundUser = Optional.of(adminUser);
-        when(userRepository.findByUserName(any())).thenReturn(foundUser);
     }
 }

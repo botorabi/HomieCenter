@@ -29,7 +29,7 @@ import java.util.Optional;
 @Component
 public class AccessUtils {
 
-    private static final String ROLE_ADMIN = "ROLE_ADMIN";
+    public static final String ROLE_ADMIN = "ROLE_ADMIN";
 
     private UserRepository userRepository;
 
@@ -38,23 +38,22 @@ public class AccessUtils {
         this.userRepository = userRepository;
     }
 
-    public boolean requestingUserIsAdminOrOwner(@Nullable Authentication authentication, @NotNull Optional<HomieCenterUser> user) {
-        User principal = (User)authentication.getPrincipal();
-        if (principal.getUsername().equals(user.get().getUserName())) {
+    public boolean requestingUserIsAdminOrOwner(@Nullable Authentication authentication, @NotNull Optional<HomieCenterUser> userInRepository) {
+        final User principal = (User)authentication.getPrincipal();
+        if (principal.getUsername().equals(userInRepository.get().getUserName())) {
             return true;
         }
-        Optional<HomieCenterUser> foundUser = userRepository.findByUserName(principal.getUsername());
+        final Optional<HomieCenterUser> foundUser = userRepository.findByUserName(principal.getUsername());
         return foundUser.isPresent() && foundUser.get().isAdmin();
     }
 
-    public boolean requestingUserIsOwner(@NotNull Authentication authentication, @NotNull Optional<HomieCenterUser> user) {
-        User principal = (User)authentication.getPrincipal();
-        Optional<HomieCenterUser> foundUser = userRepository.findByUserName(principal.getUsername());
-        return foundUser.isPresent() && foundUser.get().getId() == user.get().getId();
+    public boolean requestingUserIsOwner(@NotNull Authentication authentication, @NotNull Optional<HomieCenterUser> userInRepository) {
+        final User principal = (User)authentication.getPrincipal();
+        return userInRepository.isPresent() && userInRepository.get().getUserName().equals(principal.getUsername());
     }
 
     public boolean requestingUserIsAdmin(@NotNull Authentication authentication) {
-        User principal = (User)authentication.getPrincipal();
+        final User principal = (User)authentication.getPrincipal();
         return roleExists(principal.getAuthorities(), ROLE_ADMIN);
     }
 

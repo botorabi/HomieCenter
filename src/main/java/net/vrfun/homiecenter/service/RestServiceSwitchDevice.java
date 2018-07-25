@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.constraints.NotNull;
 import java.util.List;
 
 
@@ -28,8 +29,13 @@ public class RestServiceSwitchDevice {
 
     private final Logger LOGGER = LoggerFactory.getLogger(this.getClass());
 
+    private FRITZBox fritzBox;
+
+
     @Autowired
-    FRITZBox fritzBox;
+    public RestServiceSwitchDevice(@NotNull FRITZBox fritzBox) {
+        this.fritzBox = fritzBox;
+    }
 
     @GetMapping("/api/switchdevice")
     public ResponseEntity<List<DeviceInfo>> getDevices() {

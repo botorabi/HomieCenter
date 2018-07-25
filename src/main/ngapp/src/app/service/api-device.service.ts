@@ -56,7 +56,10 @@ export class ApiDeviceService {
   }
 
   public cameraCreateOrUpdate(camera: Camera, callback: any) {
-    this.http.post('/api/cameradevice/createOrUpdate', JSON.stringify(camera), this.httpOptions).
+    let create = camera.id == '';
+    let restUrl = create ? '/api/cameradevice/create' : '/api/cameradevice/update';
+    let fn = create ? this.http.post : this.http.put;
+    fn(restUrl, JSON.stringify(camera), this.httpOptions).
       subscribe(
         (response: Camera) => {
         if (callback) {
