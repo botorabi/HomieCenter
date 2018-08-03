@@ -1,13 +1,13 @@
 <mat-toolbar color="primary">
   <mat-toolbar-row>
     <mat-menu #appMenu="matMenu">
-      <button mat-menu-item (click)="onHome()">Home</button>
-      <button mat-menu-item *ngIf="appInfoService.userStatus" (click)="onLogout()">Logout</button>
-      <button mat-menu-item *ngIf="!appInfoService.userStatus" (click)="onLogin()">Login</button>
-      <button mat-menu-item *ngIf="appInfoService.userStatus?.role == 'ADMIN'" (click)="onCreateCamera()">Add IP Camera</button>
-      <button mat-menu-item *ngIf="appInfoService.userStatus?.role == 'ADMIN'" (click)="onUsers()">Manage Users</button>
-      <button mat-menu-item *ngIf="appInfoService.userStatus?.role != 'ADMIN'" (click)="onUsers()">Edit User</button>
-      <button mat-menu-item (click)="onAbout()">About</button>
+      <button mat-menu-item (click)="onHome()"><mat-icon>home</mat-icon>Home</button>
+      <button mat-menu-item *ngIf="appInfoService.userStatus" (click)="onLogout()"><mat-icon>exit_to_app</mat-icon>Logout</button>
+      <button mat-menu-item *ngIf="!appInfoService.userStatus" (click)="onLogin()"><mat-icon>exit_to_app</mat-icon>Login</button>
+      <button mat-menu-item *ngIf="appInfoService.userStatus?.role == 'ADMIN'" (click)="onCreateCamera()"><mat-icon>linked_camera</mat-icon>Add IP Camera</button>
+      <button mat-menu-item *ngIf="appInfoService.userStatus?.role == 'ADMIN'" (click)="onUsers()"><mat-icon>people</mat-icon>Manage Users</button>
+      <button mat-menu-item *ngIf="appInfoService.userStatus?.role != 'ADMIN'" (click)="onUsers()"><mat-icon>person</mat-icon>Edit User</button>
+      <button mat-menu-item (click)="onAbout()"><mat-icon>help</mat-icon>About</button>
     </mat-menu>
     <button mat-icon-button [matMenuTriggerFor]="appMenu">
       <mat-icon>menu</mat-icon>

@@ -23,7 +23,7 @@ export class ViewAuthenticationComponent implements OnInit {
 
   onLogin() {
     this.appInfoService.setUserStatus(null);
-    this.router.navigate(['/login']);
+    this.router.navigate(['/nav/login']);
     this.error = null;
     return false;
   }
