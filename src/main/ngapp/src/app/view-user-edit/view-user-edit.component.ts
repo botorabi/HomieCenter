@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, OnDestroy, OnInit} from '@angular/core';
 import {ActivatedRoute, Router} from "@angular/router";
 import {User} from "../service/user";
 import {ApiUserService} from "../service/api-user.service";
@@ -9,7 +9,7 @@ import {AppInformationService} from "../service/app-information.service";
   templateUrl: './view-user-edit.component.html',
   styleUrls: ['./view-user-edit.component.css']
 })
-export class ViewUserEditComponent implements OnInit {
+export class ViewUserEditComponent implements OnInit, OnDestroy {
 
   user = new User();
   passwordRepeat: string;

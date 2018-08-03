@@ -2,6 +2,7 @@ import {Component, OnInit} from '@angular/core';
 import {AppInformationService} from "./service/app-information.service";
 import {ApiUserService} from "./service/api-user.service";
 import {Router} from "@angular/router";
+import {UserStatus} from "./service/user-status";
 
 @Component({
   selector: 'app-root',
@@ -17,6 +18,14 @@ export class AppComponent implements OnInit {
 
   ngOnInit(): void {
     this.appInfoService.refreshLogoutTimer();
+    this.apiUserService.getStatus((userStatus: UserStatus) => {
+      if (userStatus.authenticated) {
+        this.appInfoService.setUserStatus(userStatus);
+      }
+      else {
+        this.appInfoService.setUserStatus(null);
+      }
+    });
   }
 
   getMenuTitle() : string {
@@ -24,7 +33,7 @@ export class AppComponent implements OnInit {
     if (currentRoute.startsWith('/')) {
       currentRoute = currentRoute.substr(1);
     }
-    if (currentRoute.startsWith('user-edit')) {
+    if (currentRoute.startsWith('nav/user-edit')) {
       return 'Edit User';
     }
 
@@ -33,19 +42,19 @@ export class AppComponent implements OnInit {
       case '':
         title = 'Homie Center';
         break;
-      case 'login':
+      case 'nav/login':
         title = 'Login';
         break;
-      case 'about':
+      case 'nav/about':
         title = 'About';
         break;
-      case 'camera-edit':
+      case 'nav/camera-edit':
         title = 'Edit Camera';
         break;
-      case 'camera-details':
+      case 'nav/camera-details':
         title = 'Camera' + (this.appInfoService.selectedCamera ? ': ' + this.appInfoService.selectedCamera.name : '');
         break;
-      case 'user':
+      case 'nav/user':
         title = 'Users';
         break;
     }
@@ -60,7 +69,7 @@ export class AppComponent implements OnInit {
 
   onLogin() {
     this.appInfoService.setSelectedCamera(null);
-    this.router.navigate(['login']);
+    this.router.navigate(['/nav/login']);
   }
 
   onLogout() {
@@ -71,16 +80,15 @@ export class AppComponent implements OnInit {
   onCreateCamera() {
     this.appInfoService.refreshLogoutTimer();
     this.appInfoService.setSelectedCamera(null);
-    this.router.navigate(['camera-edit']);
+    this.router.navigate(['/nav/camera-edit']);
   }
 
   onAbout() {
     this.appInfoService.refreshLogoutTimer();
-    this.router.navigate(['about']);
+    this.router.navigate(['/nav/about']);
   }
 
   onUsers() {
-    this.appInfoService.refreshLogoutTimer();
-    this.router.navigate(['user']);
+    this.router.navigate(['/nav/user']);
   }
 }

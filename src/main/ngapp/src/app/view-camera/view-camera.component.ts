@@ -34,12 +34,12 @@ export class ViewCameraComponent implements OnInit {
       return;
     }
     this.appInfoService.setSelectedCamera(camera);
-    this.router.navigate(["camera-details"]);
+    this.router.navigate(["/nav/camera-details"]);
   }
 
   onEdit(camera: Camera) {
     this.appInfoService.setSelectedCamera(camera);
-    this.router.navigate(["camera-edit"]);
+    this.router.navigate(["/nav/camera-edit"]);
   }
 
   onToggleIFrameSize(camera: Camera) {

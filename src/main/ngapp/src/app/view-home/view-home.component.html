@@ -1,17 +1,4 @@
 <div class="main-div">
-  <mat-card class="center">
-    <mat-card-title>Welcome to Homie Center</mat-card-title>
-    <mat-card-subtitle></mat-card-subtitle>
-    <mat-card-content>
-      <div *ngIf="appInfoService.userStatus === null">
-        <p>
-          Please login with your FRITZ!Box credentials.
-        </p>
-        <br>
-        <a mat-raised-button color="primary" routerLink="login" routerLinkActive="active">Login</a>
-      </div>
-    </mat-card-content>
-  </mat-card>
   <div *ngIf="appInfoService.userStatus">
     <mat-expansion-panel [(expanded)]="appInfoService.camerasExpanded">
       <mat-expansion-panel-header>

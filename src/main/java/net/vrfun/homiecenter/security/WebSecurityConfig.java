@@ -9,8 +9,10 @@ package net.vrfun.homiecenter.security;
 
 
 import net.vrfun.homiecenter.reverseproxy.CameraProxyRoutes;
+import org.slf4j.*;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
-import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.*;
 import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity;
 import org.springframework.security.config.web.server.ServerHttpSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -18,6 +20,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.server.SecurityWebFilterChain;
 import org.springframework.security.web.server.header.XFrameOptionsServerHttpHeadersWriter;
 import org.springframework.web.reactive.function.server.*;
+
+import java.io.File;
 
 /**
  * Web security configuration
@@ -28,6 +32,21 @@ import org.springframework.web.reactive.function.server.*;
 @EnableWebFluxSecurity
 public class WebSecurityConfig {
 
+    private final Logger LOGGER = LoggerFactory.getLogger(WebSecurityConfig.class);
+
+    /**
+     * Is development mode enabled?
+     */
+    @Value("${enable-dev-mode: false}")
+    private boolean developmentModeEnabled;
+
+    /**
+     * Pass -Duse-filesystem-resources=true on java command line in order to use filesystem web resources.
+     */
+    @Value("${use-filesystem-resources: false}")
+    private boolean useFileSystemResources;
+
+
     @Bean
     public PasswordEncoder createPasswordEncoder() {
         return new BCryptPasswordEncoder();
@@ -35,9 +54,20 @@ public class WebSecurityConfig {
 
     /**
      * Reactive web needs the static path explicitly.
+     * In addition we provide a filesystem resource folder during development, it eases the work with Angular.
      */
     @Bean
     public RouterFunction<ServerResponse> staticResourceRouter(){
+        if (developmentModeEnabled && useFileSystemResources) {
+
+            //! TODO: Check this! Some resource caching mechanism seems to prevent us from proper file system serving!
+
+            File file = new File("");
+            String resourceFolder = "file:" + file.getAbsolutePath() + "/src/main/resources/static/";
+            LOGGER.info("Dev run: using filesystem resource folder: {}", resourceFolder);
+            return RouterFunctions.resources("/*", new FileSystemResource(resourceFolder));
+        }
+
         return RouterFunctions.resources("/*", new ClassPathResource("static/"));
     }
 

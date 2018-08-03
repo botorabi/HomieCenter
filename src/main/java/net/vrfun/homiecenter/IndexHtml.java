@@ -22,8 +22,6 @@ import java.nio.charset.StandardCharsets;
  * Using spring cloud gateway prevents obviously the automatic mapping of root directory to index.html.
  * So we have to do that manually here.
  *
- *  TODO replace this solution by a proper rewrite filter!
- *
  * @author          boto
  * Creation Date    25th June 2018
  */
@@ -38,6 +36,14 @@ public class IndexHtml {
 
     @RequestMapping(value = "/", method = RequestMethod.GET)
     public ResponseEntity<String> home() throws IOException {
+        return new ResponseEntity<>(getIndexHtmlContent(), HttpStatus.OK);
+    }
+
+    /**
+     * Make Angular's router happy.
+     */
+    @RequestMapping(value = "/nav/**", method = RequestMethod.GET)
+    public ResponseEntity<String> angularPaths() throws IOException {
         return new ResponseEntity<>(getIndexHtmlContent(), HttpStatus.OK);
     }
 

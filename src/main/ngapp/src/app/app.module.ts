@@ -1,18 +1,10 @@
 import {BrowserModule} from '@angular/platform-browser';
-import {Injectable, NgModule} from '@angular/core';
+import {NgModule} from '@angular/core';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {MaterialModule} from "./material.module";
 
 import {AppComponent} from './app.component';
-import {
-  HTTP_INTERCEPTORS,
-  HttpClientModule,
-  HttpEvent,
-  HttpHandler,
-  HttpInterceptor,
-  HttpRequest,
-  HttpXsrfTokenExtractor
-} from "@angular/common/http";
+import {HTTP_INTERCEPTORS, HttpClientModule} from "@angular/common/http";
 import {FormsModule} from "@angular/forms";
 import {appRoutes} from "./app.routes";
 import {RouterModule} from "@angular/router";
@@ -21,7 +13,6 @@ import {ViewHomeComponent} from "./view-home/view-home.component";
 import {AppInformationService} from "./service/app-information.service";
 import {ApiUserService} from "./service/api-user.service";
 import {ViewAuthenticationComponent} from "./view-authentication/view-authentication.component";
-import {Observable} from "rxjs/Observable";
 import {ViewSwitchDevicesComponent} from "./view-switch-devices/view-switch-devices-component";
 import {ApiDeviceService} from "./service/api-device.service";
 import {ViewCameraComponent} from "./view-camera/view-camera.component";
@@ -30,27 +21,9 @@ import {ViewCameraDetailsComponent} from "./view-camera-details/view-camera-deta
 import {ViewCameraEditComponent} from "./view-camera-edit/view-camera-edit.component";
 import {ViewUserComponent} from "./view-user/view-user.component";
 import {ViewUserEditComponent} from "./view-user-edit/view-user-edit.component";
+import {AppHttpInterceptorService} from "./service/app-http-interceptor.service";
+import {ViewErrorPageComponent} from "./view-error-page/view-error-page.component";
 
-
-/**
- * Handle CSRF
- */
-@Injectable()
-export class HttpXSRFInterceptor implements HttpInterceptor {
-
-  constructor(private tokenExtractor: HttpXsrfTokenExtractor) {
-  }
-
-  intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
-    const headerName = 'XSRF-TOKEN';
-    const respHeaderName = 'X-XSRF-TOKEN';
-    let token = this.tokenExtractor.getToken() as string;
-    if (token !== null && !req.headers.has(headerName)) {
-      req = req.clone({ headers: req.headers.set(respHeaderName, token) });
-    }
-    return next.handle(req);
-  }
-}
 
 @NgModule({
   declarations: [
@@ -64,6 +37,7 @@ export class HttpXSRFInterceptor implements HttpInterceptor {
     ViewUserEditComponent,
     ViewAboutComponent,
     ViewHomeComponent,
+    ViewErrorPageComponent,
     SafePipe
   ],
   imports: [
@@ -78,7 +52,7 @@ export class HttpXSRFInterceptor implements HttpInterceptor {
     ApiUserService,
     ApiDeviceService,
     AppInformationService,
-    { provide: HTTP_INTERCEPTORS, useClass: HttpXSRFInterceptor, multi: true }
+    { provide: HTTP_INTERCEPTORS, useClass: AppHttpInterceptorService, multi: true }
     ],
   bootstrap: [AppComponent]
 })
