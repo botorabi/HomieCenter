@@ -34,7 +34,7 @@
 
       <br>
       <div class="input-form-buttons">
-        <button mat-raised-button color="primary" type="button" routerLink="/user" routerLinkActive="active">Cancel</button>
+        <button mat-raised-button color="primary" type="button" routerLink="/nav/user" routerLinkActive="active">Cancel</button>
         <button *ngIf="user.id != 0" mat-raised-button type="submit" color="primary" (click)="onApply()">Apply</button>
         <button *ngIf="user.id == 0" mat-raised-button type="submit" color="primary" (click)="onCreate()">Create</button>
       </div>
