@@ -49,7 +49,7 @@ export class ViewUserEditComponent implements OnInit, OnDestroy {
       }
       else {
         this.user = user;
-        this.router.navigate(["/user"]);
+        this.router.navigate(["/nav/user"]);
       }
     });
   }
@@ -66,7 +66,7 @@ export class ViewUserEditComponent implements OnInit, OnDestroy {
       }
       else {
         this.user = user;
-        this.router.navigate(["/user"]);
+        this.router.navigate(["/nav/user"]);
       }
     });
   }
