@@ -1,43 +1,49 @@
-<mat-toolbar color="primary">
-  <mat-toolbar-row>
-    <mat-menu #appMenu="matMenu">
-      <button mat-menu-item (click)="onHome()"><mat-icon>home</mat-icon>Home</button>
-      <button mat-menu-item *ngIf="appInfoService.userStatus?.role == 'ADMIN'" (click)="onCreateCamera()"><mat-icon>linked_camera</mat-icon>Add IP Camera</button>
-      <button mat-menu-item *ngIf="appInfoService.userStatus?.role == 'ADMIN'" (click)="onUsers()"><mat-icon>people</mat-icon>Manage Users</button>
-      <button mat-menu-item *ngIf="appInfoService.userStatus?.role != 'ADMIN'" (click)="onUsers()"><mat-icon>person</mat-icon>Edit User</button>
-      <hr>
-      <button mat-menu-item *ngIf="appInfoService.userStatus" (click)="onLogout()"><mat-icon>exit_to_app</mat-icon>Logout</button>
-      <button mat-menu-item *ngIf="!appInfoService.userStatus" (click)="onLogin()"><mat-icon>exit_to_app</mat-icon>Login</button>
-      <button mat-menu-item (click)="onAbout()"><mat-icon>help</mat-icon>About</button>
-    </mat-menu>
-    <button mat-icon-button [matMenuTriggerFor]="appMenu">
-      <mat-icon>menu</mat-icon>
-    </button>
-    <span class="center">{{getMenuTitle()}}</span>
-    <span style="flex: 1 1 auto;"></span>
-    <button mat-icon-button (click)="onHome()"><img src="/favicon.ico" height="48" width="48"></button>
-  </mat-toolbar-row>
-</mat-toolbar>
-
-<br>
-
-<router-outlet></router-outlet>
-
-<br>
-
-<footer>
+<div class="app-container">
   <mat-toolbar color="primary">
-    <span class="mat-small">
-      Homie Center v{{appInfoService.version}}
-      <br>
-      <small>Copyright 2018</small>
-    </span>
-    <div class="mat-small footer-username">
-      <span *ngIf="appInfoService.userStatus">
-        User: {{appInfoService.userStatus.name}}
-        <br>
-        <small>Timeout in {{appInfoService.logoutTimeString}}</small>
-      </span>
-    </div>
+    <mat-toolbar-row>
+      <mat-menu #appMenu="matMenu">
+        <button mat-menu-item (click)="onHome()"><mat-icon>home</mat-icon>Home</button>
+        <span *ngIf="appInfoService.isUserAuthenticated()">
+          <button mat-menu-item *ngIf="appInfoService.userStatus?.role == 'ADMIN'" (click)="onCreateCamera()"><mat-icon>linked_camera</mat-icon>Add IP Camera</button>
+          <button mat-menu-item *ngIf="appInfoService.userStatus?.role == 'ADMIN'" (click)="onUsers()"><mat-icon>people</mat-icon>Manage Users</button>
+          <button mat-menu-item *ngIf="appInfoService.userStatus?.role != 'ADMIN'" (click)="onUsers()"><mat-icon>person</mat-icon>Edit User</button>
+        </span>
+        <hr>
+        <button mat-menu-item *ngIf="appInfoService.isUserAuthenticated()" (click)="onLogout()"><mat-icon>exit_to_app</mat-icon>Logout</button>
+        <button mat-menu-item *ngIf="!appInfoService.isUserAuthenticated()" (click)="onLogin()"><mat-icon>exit_to_app</mat-icon>Login</button>
+        <button mat-menu-item (click)="onAbout()"><mat-icon>help</mat-icon>About</button>
+      </mat-menu>
+      <button mat-icon-button [matMenuTriggerFor]="appMenu">
+        <mat-icon>menu</mat-icon>
+      </button>
+      <span class="center">{{getMenuTitle()}}</span>
+      <span style="flex: 1 1 auto;"></span>
+      <button mat-icon-button (click)="onHome()"><img src="/favicon.ico" height="48" width="48"></button>
+    </mat-toolbar-row>
   </mat-toolbar>
-</footer>
+
+  <mat-card class="app-content">
+    <mat-card-title></mat-card-title>
+    <mat-card-subtitle></mat-card-subtitle>
+    <mat-card-content>
+      <router-outlet></router-outlet>
+    </mat-card-content>
+  </mat-card>
+
+  <footer class="app-footer">
+    <mat-toolbar color="primary">
+      <span class="mat-small">
+        Homie Center v{{appInfoService.version}}
+        <br>
+        <small>Copyright 2018</small>
+      </span>
+      <div class="mat-small footer-username">
+        <span *ngIf="appInfoService.isUserAuthenticated()">
+          User: {{appInfoService.userStatus.name}}
+          <br>
+          <small>Timeout in {{appInfoService.logoutTimeString}}</small>
+        </span>
+      </div>
+    </mat-toolbar>
+  </footer>
+</div>

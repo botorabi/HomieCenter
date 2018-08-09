@@ -1,5 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 import {AppInformationService} from "../service/app-information.service";
+import {ApiUserService} from "../service/api-user.service";
 
 @Component({
   selector: 'app-view-home',
@@ -8,9 +9,16 @@ import {AppInformationService} from "../service/app-information.service";
 })
 export class ViewHomeComponent implements OnInit {
 
-  constructor(public appInfoService: AppInformationService) {
+  pageReady = false;
+
+  constructor(public appInfoService: AppInformationService,
+              private apiUserService: ApiUserService) {
   }
 
   ngOnInit() {
+    this.apiUserService.getStatus((userStatus) => {
+      this.appInfoService.setUserStatus(userStatus);
+      this.pageReady = true;
+    });
   }
 }

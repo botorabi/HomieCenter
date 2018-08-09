@@ -1,41 +1,39 @@
-<mat-card class="center">
-  <a mat-mini-fab class="btn-back" routerLink="" routerLinkActive="active"><mat-icon>arrow_back</mat-icon></a>
-  <mat-card-title>Users</mat-card-title>
-  <mat-card-subtitle>
-    List of all Homie Center users
-  </mat-card-subtitle>
+<a mat-mini-fab class="btn-back-float" routerLink="" routerLinkActive="active"><mat-icon>arrow_back</mat-icon></a>
+<h2>Users</h2>
+<h3>
+  List of all Homie Center users
+</h3>
+<br>
+<div class="user-list">
+  <mat-table [dataSource]="dataSource">
+    <ng-container matColumnDef="realName">
+      <mat-header-cell *matHeaderCellDef>Real Name</mat-header-cell>
+      <mat-cell *matCellDef="let user">{{user.realName}} {{user.admin ? "(admin)" : ""}}</mat-cell>
+    </ng-container>
+
+    <ng-container matColumnDef="userName">
+      <mat-header-cell *matHeaderCellDef> Login Name</mat-header-cell>
+      <mat-cell *matCellDef="let user"> {{user.userName}}</mat-cell>
+    </ng-container>
+
+    <ng-container matColumnDef="link">
+      <mat-header-cell *matHeaderCellDef class="btn-create">
+        <a *ngIf="appInfoService.userStatus?.role == 'ADMIN'" mat-icon-button color="primary" title="Add New User" [routerLink]="['/nav/user-edit', 0]" routerLinkActive="active"><mat-icon>add_circle</mat-icon></a>
+      </mat-header-cell>
+      <mat-cell *matCellDef="let user" class="user-list-icon">
+        <a mat-icon-button class="mat-small" color="primary" title="Edit" [routerLink]="['/nav/user-edit', user.id]" routerLinkActive="active"><mat-icon>edit</mat-icon></a>
+        <a mat-icon-button *ngIf="!isOwner(user.userName)" class="mat-small" color="primary" title="Delete" (click)="onDelete(user.id)"><mat-icon>delete</mat-icon></a>
+      </mat-cell>
+    </ng-container>
+
+    <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+    <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+  </mat-table>
   <br>
-  <mat-card-content class="user-list">
-    <mat-table [dataSource]="dataSource">
-      <ng-container matColumnDef="realName">
-        <mat-header-cell *matHeaderCellDef>Real Name</mat-header-cell>
-        <mat-cell *matCellDef="let user">{{user.realName}} {{user.admin ? "(admin)" : ""}}</mat-cell>
-      </ng-container>
-
-      <ng-container matColumnDef="userName">
-        <mat-header-cell *matHeaderCellDef> Login Name</mat-header-cell>
-        <mat-cell *matCellDef="let user"> {{user.userName}}</mat-cell>
-      </ng-container>
-
-      <ng-container matColumnDef="link">
-        <mat-header-cell *matHeaderCellDef class="btn-create">
-          <a *ngIf="appInfoService.userStatus?.role == 'ADMIN'" mat-icon-button color="primary" title="Add New User" [routerLink]="['/nav/user-edit', 0]" routerLinkActive="active"><mat-icon>add_circle</mat-icon></a>
-        </mat-header-cell>
-        <mat-cell *matCellDef="let user" class="user-list-icon">
-          <a mat-icon-button class="mat-small" color="primary" title="Edit" [routerLink]="['/nav/user-edit', user.id]" routerLinkActive="active"><mat-icon>edit</mat-icon></a>
-          <a mat-icon-button *ngIf="!isOwner(user.userName)" class="mat-small" color="primary" title="Delete" (click)="onDelete(user.id)"><mat-icon>delete</mat-icon></a>
-        </mat-cell>
-      </ng-container>
-
-      <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
-      <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
-    </mat-table>
-    <br>
-    <mat-paginator #paginator
-                   [pageSize]="10"
-                   [hidePageSize]="true"
-                   [showFirstLastButtons]="false">
-    </mat-paginator>
-  </mat-card-content>
-  <div class="warn-text" *ngIf="error">{{error}}</div>
-</mat-card>
+  <mat-paginator #paginator
+                 [pageSize]="10"
+                 [hidePageSize]="true"
+                 [showFirstLastButtons]="false">
+  </mat-paginator>
+</div>
+<div class="warn-text" *ngIf="error">{{error}}</div>

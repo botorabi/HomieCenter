@@ -7,18 +7,15 @@
  */
 package net.vrfun.homiecenter.service;
 
-import net.vrfun.homiecenter.model.HomieCenterUser;
-import net.vrfun.homiecenter.model.UserRepository;
+import net.vrfun.homiecenter.model.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.lang.Nullable;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.*;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Component;
 
 import javax.validation.constraints.NotNull;
-import java.util.Collection;
-import java.util.Optional;
+import java.util.*;
 
 /**
  * Utilities for checking the requesting user.
@@ -38,7 +35,7 @@ public class AccessUtils {
         this.userRepository = userRepository;
     }
 
-    public boolean requestingUserIsAdminOrOwner(@Nullable Authentication authentication, @NotNull Optional<HomieCenterUser> userInRepository) {
+    public boolean requestingUserIsAdminOrOwner(@NotNull Authentication authentication, @NotNull Optional<HomieCenterUser> userInRepository) {
         final User principal = (User)authentication.getPrincipal();
         if (principal.getUsername().equals(userInRepository.get().getUserName())) {
             return true;

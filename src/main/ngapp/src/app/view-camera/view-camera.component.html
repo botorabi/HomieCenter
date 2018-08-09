@@ -1,5 +1,5 @@
 <div *ngIf="cameras?.length">
-  <div class="main-div device-container">
+  <div class="device-container">
     <div *ngFor="let camera of cameras">
       <mat-card class="device-item">
         <mat-card-title><span title="{{camera.name}}">{{getCameraName(camera)}}</span></mat-card-title>

@@ -1,20 +1,14 @@
-<div class="main-div">
-  <mat-card class="center">
-    <mat-card-title>
-      <a mat-mini-fab style="float:left;" routerLink="" routerLinkActive="active"><mat-icon>arrow_back</mat-icon></a>
-      About {{appInfoService.name}}
-      <mat-icon style="float:right;"></mat-icon>
-    </mat-card-title>
-    <mat-card-subtitle>A Web Application for Accessing Home Automation Devices via FRITZ!Box</mat-card-subtitle>
-    <mat-card-content>
-      <div>
-        <img src="/favicon.ico" height="192" width="192">
-        <div>
-          <p>Copyright 2018, Botorabi</p>
-          <a href="https://github.com/botorabi/HomieCenter">https://github.com/botorabi/HomieCenter</a>
-          <p>Version {{appInfoService.version}}</p>
-        </div>
-      </div>
-    </mat-card-content>
-  </mat-card>
+<h2>
+  About {{appInfoService.name}}
+  <mat-icon style="float:right;"></mat-icon>
+</h2>
+<h3>A Web Application for Accessing Home Automation Devices via FRITZ!Box</h3>
+<br>
+<div>
+  <img src="/favicon.ico" height="192" width="192">
+  <div>
+    <p>Copyright 2018, Botorabi</p>
+    <a href="https://github.com/botorabi/HomieCenter">https://github.com/botorabi/HomieCenter</a>
+    <p>Version {{appInfoService.version}}</p>
+  </div>
 </div>

@@ -7,7 +7,7 @@ import {Camera} from "./camera";
 export class AppInformationService {
 
   name: string = "Homie Center";
-  version: string = "0.8.1";
+  version: string = "0.9.0";
 
   userStatus: UserStatus = null;
   logoutTimeString: string = "";
@@ -27,6 +27,10 @@ export class AppInformationService {
   public setUserStatus(userStatus: UserStatus) {
     this.userStatus = userStatus;
     this.periodicLogoutTimerUpdate(userStatus);
+  }
+
+  public isUserAuthenticated() : boolean {
+    return this.userStatus && this.userStatus.authenticated;
   }
 
   public setSelectedCamera(camera: Camera) {
