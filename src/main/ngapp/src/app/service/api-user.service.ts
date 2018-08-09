@@ -1,7 +1,8 @@
 import {Injectable} from '@angular/core';
-import {HttpClient, HttpHeaders} from "@angular/common/http";
+import {HttpClient, HttpHeaders, HttpParams, HttpUrlEncodingCodec} from "@angular/common/http";
 import {UserStatus} from "./user-status";
 import {User} from "./user";
+
 
 @Injectable()
 export class ApiUserService {
@@ -10,8 +11,36 @@ export class ApiUserService {
     headers: new HttpHeaders({'Content-Type': 'application/json', 'withCredentials': 'true'})
   };
 
-  constructor(
-    private http: HttpClient) {
+  constructor(private http: HttpClient) {
+  }
+
+  public login(userName: string, userPassword: string, callback: any) {
+    let body = new HttpParams()
+      .set("username", userName)
+      .set("password", userPassword)
+      .toString();
+
+    let thiz = this;
+    this.http.post('/login', body, {
+        headers: new HttpHeaders({'Content-Type': 'application/x-www-form-urlencoded', 'Accept' : 'text/html'})
+      })
+      .subscribe(
+        null,
+        error => {
+          thiz.checkAuthentication(callback);
+        },
+        () => {
+          thiz.checkAuthentication(callback);
+        }
+      );
+  }
+
+  private checkAuthentication(callback: any) {
+    if (callback) {
+      this.getStatus((userStatus) => {
+        callback(userStatus);
+      })
+    };
   }
 
   public logout(callback: any) {

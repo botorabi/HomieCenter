@@ -1,5 +1,13 @@
-<div class="main-div">
-  <div *ngIf="appInfoService.userStatus">
+<div *ngIf="pageReady">
+  <div *ngIf="!appInfoService.isUserAuthenticated()">
+      <h2>Welcome to Homie Center</h2>
+      <p>
+        Please login to proceed.
+      </p>
+      <br>
+      <a mat-raised-button color="primary" routerLink="/nav/login" routerLinkActive="active">Login</a>
+  </div>
+  <div *ngIf="appInfoService.isUserAuthenticated()">
     <mat-expansion-panel [(expanded)]="appInfoService.camerasExpanded">
       <mat-expansion-panel-header>
         <mat-panel-title>Switch Devices
@@ -9,6 +17,7 @@
       </mat-expansion-panel-header>
       <app-view-switch-devices></app-view-switch-devices>
     </mat-expansion-panel>
+    <br>
     <mat-expansion-panel [(expanded)]="appInfoService.switchDevicesExpanded">
       <mat-expansion-panel-header>
         <mat-panel-title>IP Cameras

@@ -1,17 +1,20 @@
 @import "~@angular/material/prebuilt-themes/indigo-pink.css";
 
-.main-div{
-  min-height: 100px;
-  justify-content: center;
-  align-items: center;
-  display: block;
-  width: 100%;
-  margin: auto;
+html, body {
+  height: 98%;
 }
 
 .center{
   margin: 10px auto;
   text-align: center;
+}
+
+.btn-back {
+  text-align: left;
+}
+
+.btn-back-float {
+  float: left;
 }
 
 .mat-mini-fab {
@@ -62,7 +65,7 @@
   margin: auto;
 }
 .input-form-buttons {
-  text-align: right;
+  text-align: center;
 }
 .mat-form-field {
   width:300px !important;
@@ -76,7 +79,13 @@
 .device-container {
   display: flex;
   flex-flow: row wrap;
+  min-height: 100px;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  margin: auto;
 }
+
 .device-item {
   flex-shrink: 1;
   margin: 10px;

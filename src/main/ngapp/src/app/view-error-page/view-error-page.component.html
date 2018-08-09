@@ -1,13 +1,9 @@
-<mat-card class="center">
-  <mat-card-title>Page Not Found</mat-card-title>
-  <mat-card-subtitle>The requested page was not found.</mat-card-subtitle>
-  <mat-card-content>
-    <div *ngIf="message">
-      Error Message: {{message}}
-    </div>
-    <br>
-    <p>
-      <a mat-raised-button color="primary" routerLink="/" routerLinkActive="active"><span>Home</span></a>
-    </p>
-  </mat-card-content>
-</mat-card>
+<h2>Page Not Found</h2>
+<h3>Sorry, the requested page was not found!</h3>
+<div *ngIf="message">
+  Error Message: {{message}}
+</div>
+<br>
+<p>
+  <a mat-raised-button color="primary" routerLink="/" routerLinkActive="active"><span>Home</span></a>
+</p>

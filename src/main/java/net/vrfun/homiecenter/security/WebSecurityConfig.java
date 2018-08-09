@@ -13,12 +13,14 @@ import org.slf4j.*;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.core.io.*;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity;
 import org.springframework.security.config.web.server.ServerHttpSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.server.SecurityWebFilterChain;
 import org.springframework.security.web.server.header.XFrameOptionsServerHttpHeadersWriter;
+import org.springframework.security.web.server.util.matcher.ServerWebExchangeMatchers;
 import org.springframework.web.reactive.function.server.*;
 
 import java.io.File;
@@ -81,12 +83,15 @@ public class WebSecurityConfig {
                 .and()
                 .authorizeExchange()
                     .pathMatchers(CameraProxyRoutes.getProxyPath() + "**").authenticated()
-                    .pathMatchers("/api/user/status").permitAll()
+                    .pathMatchers("/*", "/login", "/nav/login", "/nav/about", "/api/user/status").permitAll()
                     .anyExchange().authenticated()
                 .and()
                 .formLogin()
+                    .loginPage("/nav/login")
+                    .requiresAuthenticationMatcher(ServerWebExchangeMatchers.pathMatchers(HttpMethod.POST, "/login"))
                 .and()
                 .logout()
-                .and().build();
+                .and()
+                .build();
     }
 }

@@ -1,26 +1,19 @@
-<mat-card class="center">
-  <mat-card-title>User Login</mat-card-title>
-  <mat-card-subtitle>
-    Please login with your FRITZ!Box credentials.
-  </mat-card-subtitle>
+<h2>Please Login</h2>
+<div class="warn-text" *ngIf="error">{{error}}</div>
+<br>
+<form class="input-form">
+  <div>
+    <mat-form-field>
+      <input matInput autofocus placeholder="User Name" name="login" [(ngModel)]="credentials.login">
+    </mat-form-field>
+  </div>
+  <div>
+    <mat-form-field>
+      <input matInput type="password" placeholder="Password" name="password" [(ngModel)]="credentials.password">
+    </mat-form-field>
+  </div>
   <br>
-  <mat-card-content>
-    <form class="input-form">
-      <div>
-        <mat-form-field>
-          <input matInput autofocus placeholder="User Name" name="login" [(ngModel)]="credentials.login">
-        </mat-form-field>
-      </div>
-      <div>
-        <mat-form-field>
-          <input matInput type="password" placeholder="Password" name="password" [(ngModel)]="credentials.password">
-        </mat-form-field>
-      </div>
-      <br>
-      <div class="input-form-buttons">
-        <button mat-raised-button type="submit" color="primary" (click)="onLogin()">Login</button>
-      </div>
-    </form>
-  </mat-card-content>
-  <div class="warn-text" *ngIf="error">{{error}}</div>
-</mat-card>
+  <div class="input-form-buttons">
+    <button mat-raised-button type="submit" color="primary" (click)="onLogin()">Login</button>
+  </div>
+</form>
