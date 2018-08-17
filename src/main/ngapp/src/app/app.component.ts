@@ -1,7 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import {AppInformationService} from "./service/app-information.service";
 import {ApiUserService} from "./service/api-user.service";
-import {Router} from "@angular/router";
+import {NavigationEnd, Router} from "@angular/router";
 import {UserStatus} from "./service/user-status";
 
 @Component({
@@ -26,6 +26,24 @@ export class AppComponent implements OnInit {
         this.appInfoService.setUserStatus(null);
       }
     });
+
+    this.router.events.subscribe((event) => {
+      if (event instanceof NavigationEnd) {
+        this.handleNavigation(event.url);
+      }
+    });
+  }
+
+  private handleNavigation(url: string) {
+    let userInteraction =
+      url.startsWith("/nav/") ||
+      url.startsWith("nav/") ||
+      url.length == 0 ||
+      url == '/';
+
+    if (userInteraction) {
+      this.appInfoService.refreshLogoutTimer();
+    }
   }
 
   getMenuTitle() : string {
