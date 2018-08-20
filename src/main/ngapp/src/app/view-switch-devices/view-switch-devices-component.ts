@@ -70,4 +70,8 @@ export class ViewSwitchDevicesComponent implements OnInit {
   public onToggleLock(device: Device) {
     device.unlocked = !device.unlocked;
   }
+
+  public getTitleClass(name: string) {
+     return name.length > 12 ? "title-small" : "title-normal";
+  }
 }

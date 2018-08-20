@@ -4,7 +4,7 @@
     <mat-card class="device-item">
       <mat-card-title>
         <mat-icon class="dummy-left-element"></mat-icon>
-        <span>{{device.name}}</span>
+        <span class="{{getTitleClass(device.name)}}">{{device.name}}</span>
         <mat-icon *ngIf="!device.present" class="device-state-not-present" title="Not available!">link_off</mat-icon>
         <mat-icon *ngIf="device.present && !device.unlocked" color="primary" class="device-lock" title="Unlock" (click)="onToggleLock(device)">lock</mat-icon>
         <mat-icon *ngIf="device.present && device.unlocked" color="primary" class="device-lock" title="Lock" (click)="onToggleLock(device)">lock_open</mat-icon>
