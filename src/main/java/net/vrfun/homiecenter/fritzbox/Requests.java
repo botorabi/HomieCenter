@@ -85,7 +85,7 @@ public class Requests {
      * Create a REST template which supports UTF-8 character set in TEXT response handling.
      */
     @NotNull
-    private RestTemplate createRestTemplate() {
+    protected RestTemplate createRestTemplate() {
         RestTemplate restTemplate = new RestTemplate();
 
         addUTF8Support(restTemplate);
@@ -98,7 +98,7 @@ public class Requests {
      * As the certificate of the FRITZ!Box cannot be validated, it is simply ignored during HTTPS requests.
      */
     @NotNull
-    private RestTemplate createRestTemplateWithoutCertificateValidation() throws KeyStoreException, NoSuchAlgorithmException, KeyManagementException {
+    protected RestTemplate createRestTemplateWithoutCertificateValidation() throws KeyStoreException, NoSuchAlgorithmException, KeyManagementException {
         final TrustStrategy TRUSTING_STRATEGY = (X509Certificate[] chain, String authType) -> true;
         SSLContext sslContext = org.apache.http.ssl.SSLContexts.custom()
                 .loadTrustMaterial(null, TRUSTING_STRATEGY)

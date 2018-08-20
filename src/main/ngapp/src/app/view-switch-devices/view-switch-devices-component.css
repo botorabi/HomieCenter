@@ -26,3 +26,9 @@
   float: right;
   color: red;
 }
+.title-small {
+  font-size: small;
+  font-weight: bold;
+}
+.title-normal {
+}
