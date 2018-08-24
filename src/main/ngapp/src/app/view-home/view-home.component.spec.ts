@@ -1,6 +1,15 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import {async, ComponentFixture, TestBed} from '@angular/core/testing';
 
-import { ViewHomeComponent } from './view-home.component';
+import {ViewHomeComponent} from './view-home.component';
+import {MaterialModule} from "../material.module";
+import {HttpClientTestingModule} from "../../../node_modules/@angular/common/http/testing";
+import {FormsModule} from "@angular/forms";
+import {AppInformationService} from "../service/app-information.service";
+import {ApiDeviceService} from "../service/api-device.service";
+import {ApiUserService} from "../service/api-user.service";
+import {ViewSwitchDevicesComponent} from "../view-switch-devices/view-switch-devices-component";
+import {ViewCameraComponent} from "../view-camera/view-camera.component";
+import {SafePipe} from "../safe-pipe";
 
 describe('ViewHomeComponent', () => {
   let component: ViewHomeComponent;
@@ -8,7 +17,22 @@ describe('ViewHomeComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ ViewHomeComponent ]
+      declarations: [
+        ViewHomeComponent,
+        ViewSwitchDevicesComponent,
+        ViewCameraComponent,
+        SafePipe
+      ],
+      imports: [
+        MaterialModule,
+        FormsModule,
+        HttpClientTestingModule
+      ],
+      providers: [
+        AppInformationService,
+        ApiDeviceService,
+        ApiUserService
+      ]
     })
     .compileComponents();
   }));

@@ -1,6 +1,12 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import {async, ComponentFixture, TestBed} from '@angular/core/testing';
 
-import { ViewAuthenticationComponent } from './view-authentication.component';
+import {ViewAuthenticationComponent} from './view-authentication.component';
+import {MaterialModule} from "../material.module";
+import {AppInformationService} from "../service/app-information.service";
+import {ApiUserService} from "../service/api-user.service";
+import {RouterTestingModule} from "@angular/router/testing";
+import {HttpClientTestingModule} from "@angular/common/http/testing";
+import {FormsModule} from "@angular/forms";
 
 describe('ViewAuthenticationComponent', () => {
   let component: ViewAuthenticationComponent;
@@ -8,7 +14,17 @@ describe('ViewAuthenticationComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ ViewAuthenticationComponent ]
+      declarations: [ ViewAuthenticationComponent ],
+      imports: [
+        MaterialModule,
+        HttpClientTestingModule,
+        RouterTestingModule,
+        FormsModule
+      ],
+      providers: [
+        AppInformationService,
+        ApiUserService
+      ]
     })
     .compileComponents();
   }));

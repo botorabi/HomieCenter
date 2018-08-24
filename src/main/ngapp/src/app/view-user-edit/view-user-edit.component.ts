@@ -72,7 +72,9 @@ export class ViewUserEditComponent implements OnInit, OnDestroy {
   }
 
   canModifyAdminFlag() {
-      return (this.appInfoService.userStatus.role == 'ADMIN') && (this.appInfoService.userStatus.name != this.user.userName);
+      return this.appInfoService.userStatus &&
+        (this.appInfoService.userStatus.role == 'ADMIN') &&
+        (this.appInfoService.userStatus.name != this.user.userName);
   }
 
   private getUserDetails(userId: number) {

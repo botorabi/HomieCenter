@@ -1,14 +1,26 @@
 #!/bin/sh
 
-if [ "$#" -ne 1 ]; then
-    echo "Use: distribute-package.sh <version string>"
-    exit -1
-fi
+echo "Creating distribution package for Homie Center"
 
 cd $(dirname $0)
 CWD=$PWD
+VERSION=""
 
-VERSION=$1
+if [ "$#" -eq 1 ]; then
+  VERSION=$1
+  echo "Using command line argument for version information: ${VERSION}"
+else
+  echo "Retrieving version information from pom.xml file..."
+  VERSION=$(cd ..; mvn org.apache.maven.plugins:maven-help-plugin:2.1.1:evaluate -Dexpression=project.version | grep -v '\[')
+  echo "Using version information: ${VERSION}"
+fi
+
+if [ "${VERSION}" = "@" ] || [ -z "${VERSION}" ]; then
+  echo "Could not determine the version information, define it by command line!"
+  echo " Use: distribute-package.sh <version string>"
+  exit -1
+fi
+
 DIST_DIR=homiecenter-${VERSION}
 rm -rf ${DIST_DIR}*
 

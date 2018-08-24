@@ -7,6 +7,8 @@
  */
 package net.vrfun.homiecenter.fritzbox;
 
+import org.h2.util.StringUtils;
+
 import java.util.Map;
 
 /**
@@ -61,7 +63,7 @@ public class AuthStatus {
         }
         catch (Throwable throwable) {
             // a valid sid contains numbers and letters!
-            return true;
+            return !StringUtils.isNullOrEmpty(SID);
         }
     }
 

@@ -60,6 +60,24 @@ public class FRITZBox {
         return fritzBox;
     }
 
+    @NotNull
+    public FRITZBox withFritzBoxAuthentication(@NotNull FritzBoxAuthentication fritzBoxAuthentication) {
+        this.fritzBoxAuthentication = fritzBoxAuthentication;
+        return this;
+    }
+
+    @NotNull
+    public FRITZBox withRequests(@NotNull Requests requests) {
+        this.requests = requests;
+        return this;
+    }
+
+    @NotNull
+    public FRITZBox withResponseHandlerSwitchDeviceList(@NotNull ResponseHandlerSwitchDeviceList responseHandlerSwitchDeviceList) {
+        this.handlerDeviceList = responseHandlerSwitchDeviceList;
+        return this;
+    }
+
     /**
      * In order to avoid requesting the FRITZ!Box for authentication state too often, use this method
      * which caches the state for a max time of 'AUTH_STATUS_MAX_CACHE_PERIOD_SEC'.
@@ -98,11 +116,11 @@ public class FRITZBox {
         fritzBoxAuthentication.logout();
     }
 
-    private void updateCachedAuthStatus() throws Exception {
+    protected void updateCachedAuthStatus() throws Exception {
         cachedAuthStatus = Pair.of(Instant.now(), fritzBoxAuthentication.getAuthStatus());
     }
 
-    private void discardCachedAuthStatus() {
+    protected void discardCachedAuthStatus() {
         cachedAuthStatus = null;
     }
 
@@ -148,7 +166,7 @@ public class FRITZBox {
         }
     }
 
-    private void switchDevice(Long deviceId, boolean on) throws Exception {
+    protected void switchDevice(Long deviceId, boolean on) throws Exception {
         AuthStatus authStatus = loginIfNeeded();
         DeviceInfo device = getDevice(deviceId);
 
@@ -183,7 +201,7 @@ public class FRITZBox {
     }
 
     @NotNull
-    private AuthStatus loginIfNeeded() throws Exception {
+    protected AuthStatus loginIfNeeded() throws Exception {
         AuthStatus authStatus = getCachedAuthStatus();
         if (!authStatus.isAuthenticated()) {
             return login(applicationProperties.getFritzBoxUserName(), applicationProperties.getFritzBoxPassword());
@@ -192,7 +210,7 @@ public class FRITZBox {
     }
 
     @NotNull
-    private ResponseEntity<String> requestHttpGET(@NotNull final String SID,
+    protected ResponseEntity<String> requestHttpGET(@NotNull final String SID,
                                                   @NotNull final String relativeUrl,
                                                   @Nullable final Map<String, String> parameters) throws Exception {
 
@@ -206,7 +224,7 @@ public class FRITZBox {
     }
 
     @NotNull
-    private String getFritzBoxURL() {
+    protected String getFritzBoxURL() {
         if (fritzBoxURL != null) {
             return fritzBoxURL;
         }

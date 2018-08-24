@@ -32,20 +32,24 @@ public class ResponseHandlerAuthStatus extends ResponseHandler<AuthStatus> {
 
         Node rightsNode = findNode(node, "Rights");
         if (rightsNode != null) {
-            HashMap<String, String> rights = new HashMap<>();
-            Node nextNode = rightsNode.getFirstChild();
-            while(nextNode != null) {
-                nextNode = findNextSiblingNode(nextNode, "Name");
+            authStatus.setRights(collectRights(rightsNode));
+        }
+    }
+
+    private HashMap<String, String> collectRights(@NotNull final Node rightsNode) {
+        HashMap<String, String> rights = new HashMap<>();
+        Node nextNode = rightsNode.getFirstChild();
+        while(nextNode != null) {
+            nextNode = findNextSiblingNode(nextNode, "Name");
+            if (nextNode != null) {
+                String name = nextNode.getFirstChild().getNodeValue();
+                nextNode = findNextSiblingNode(nextNode, "Access");
                 if (nextNode != null) {
-                    String name = nextNode.getFirstChild().getNodeValue();
-                    nextNode = findNextSiblingNode(nextNode, "Access");
-                    if (nextNode != null) {
-                        String val = nextNode.getFirstChild().getNodeValue();
-                        rights.put(name, val);
-                    }
+                    String val = nextNode.getFirstChild().getNodeValue();
+                    rights.put(name, val);
                 }
             }
-            authStatus.setRights(rights);
         }
+        return rights;
     }
 }
