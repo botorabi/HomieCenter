@@ -3,18 +3,23 @@
   <div *ngFor="let device of devices">
     <mat-card class="device-item">
       <mat-card-title>
-        <mat-icon class="dummy-left-element"></mat-icon>
-        <span class="{{getTitleClass(device.name)}}">{{device.name}}</span>
+        <mat-icon class="device-widget-collapse" title="Details" (click)="onToggleWidgetCollapse(device)">{{getWidgetCollapseSymbol(device)}}</mat-icon>
+        <span class="{{getTitleClass(device.name)}}" (click)="onToggleWidgetCollapse(device)">&nbsp;{{device.name}}&nbsp;</span>
         <mat-icon *ngIf="!device.present" class="device-state-not-present" title="Not available!">link_off</mat-icon>
         <mat-icon *ngIf="device.present && !device.unlocked" color="primary" class="device-lock" title="Unlock" (click)="onToggleLock(device)">lock</mat-icon>
         <mat-icon *ngIf="device.present && device.unlocked" color="primary" class="device-lock" title="Lock" (click)="onToggleLock(device)">lock_open</mat-icon>
       </mat-card-title>
-      <mat-card-subtitle>
-        AIN: {{device.ain}}, FW: {{device.firmware}}
+      <mat-card-subtitle class="switch-card-subtitle">
+        {{getDeviceSummary(device)}}
       </mat-card-subtitle>
       <br>
-      <mat-card-content>
+      <mat-card-content class="switch-card-content" *ngIf="!isWidgetCollapse(device)" [@detailsFading]>
         <table class="device-info">
+          <tr>
+            <td colspan="2">
+              <hr>
+            </td>
+          </tr>
           <tr>
             <td>State</td>
             <td>Off <mat-slide-toggle color="primary" [(disabled)]="!device.present || !device.unlocked" [(ngModel)]="device.on" (click)="onToggleState(device)"></mat-slide-toggle> On</td>
@@ -26,6 +31,12 @@
           <tr>
             <td>Temperature</td>
             <td>{{getTemperature(device)}} °C</td>
+          </tr>
+          <tr>
+            <td colspan="2">
+              <hr>
+              <span class="device-fw">AIN: {{device.ain}}, FW: {{device.firmware}}</span>
+            </td>
           </tr>
         </table>
       </mat-card-content>
