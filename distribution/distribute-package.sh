@@ -26,9 +26,6 @@ rm -rf ${DIST_DIR}*
 
 cd ${CWD}/..
 
-echo "Building Angular App..."
-./ngapp-build.sh
-
 echo "Building, testing, and packaging the Web App..."
 mvn clean test package
 
