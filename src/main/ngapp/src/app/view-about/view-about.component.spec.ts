@@ -1,6 +1,12 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { ViewAboutComponent } from './view-about.component';
+import {MaterialModule} from "../material.module";
+import {HttpClientModule} from "../../../node_modules/@angular/common/http";
+import {RouterTestingModule} from "../../../node_modules/@angular/router/testing";
+import {FormsModule} from "@angular/forms";
+import {ApiUserService} from "../service/api-user.service";
+import {AppInformationService} from "../service/app-information.service";
 
 describe('ViewAboutComponent', () => {
   let component: ViewAboutComponent;
@@ -8,7 +14,15 @@ describe('ViewAboutComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ ViewAboutComponent ]
+      declarations: [ ViewAboutComponent ],
+      imports: [
+        MaterialModule,
+        HttpClientModule
+      ],
+      providers: [
+        AppInformationService,
+        ApiUserService
+      ]
     })
     .compileComponents();
   }));

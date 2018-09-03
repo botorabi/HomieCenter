@@ -20,6 +20,7 @@ import {
   MatToolbarModule
 } from "@angular/material";
 import {ReactiveFormsModule} from "@angular/forms";
+import {BrowserAnimationsModule} from "@angular/platform-browser/animations";
 
 const modules = [
   MatButtonModule,
@@ -40,7 +41,9 @@ const modules = [
   MatBadgeModule,
   MatStepperModule,
   MatSlideToggleModule,
-  ReactiveFormsModule];
+  ReactiveFormsModule,
+  BrowserAnimationsModule
+];
 
 @NgModule({
   imports: [modules],

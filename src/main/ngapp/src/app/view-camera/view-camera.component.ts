@@ -15,7 +15,7 @@ export class ViewCameraComponent implements OnInit {
   error: string;
 
   constructor(private router: Router,
-              private appInfoService: AppInformationService,
+              public appInfoService: AppInformationService,
               private apiDeviceService: ApiDeviceService) {
   }
 

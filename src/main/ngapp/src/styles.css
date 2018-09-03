@@ -89,4 +89,5 @@ html, body {
 .device-item {
   flex-shrink: 1;
   margin: 10px;
+  min-width: 220px;
 }

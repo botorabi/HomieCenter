@@ -31,11 +31,31 @@ public class FritzBoxAuthentication {
     private ResponseHandlerAuthStatus responseHandlerAuthStatus;
     private Requests requests;
 
+    public FritzBoxAuthentication() {
+    }
 
     public FritzBoxAuthentication(@NotNull final String fritzBoxAddress) {
         this.fritzBoxAddress = fritzBoxAddress;
         responseHandlerAuthStatus = new ResponseHandlerAuthStatus();
         requests = new Requests();
+    }
+
+    @NotNull
+    public FritzBoxAuthentication withFritzBoxAddress(@NotNull final String fritzBoxAddress) {
+        this.fritzBoxAddress = fritzBoxAddress;
+        return this;
+    }
+
+    @NotNull
+    public FritzBoxAuthentication withResponseHandlerAuthStatus(@NotNull ResponseHandlerAuthStatus responseHandlerAuthStatus) {
+        this.responseHandlerAuthStatus = responseHandlerAuthStatus;
+        return this;
+    }
+
+    @NotNull
+    public FritzBoxAuthentication withRequests(@NotNull Requests requests) {
+        this.requests = requests;
+        return this;
     }
 
     @NotNull
@@ -83,9 +103,10 @@ public class FritzBoxAuthentication {
         }
     }
 
-    private AuthStatus authenticate(@NotNull final String challenge,
-                                    @NotNull final String userName,
-                                    @NotNull final String password) throws Exception {
+    @NotNull
+    protected AuthStatus authenticate(@NotNull final String challenge,
+                                      @NotNull final String userName,
+                                      @NotNull final String password) throws Exception {
 
         String url = fritzBoxAddress + "/login_sid.lua";
         Map<String, String> params = new HashMap<>();
@@ -114,7 +135,8 @@ public class FritzBoxAuthentication {
         }
     }
 
-    private ResponseEntity<String> getConnectionState() throws Exception {
+    @NotNull
+    protected ResponseEntity<String> getConnectionState() throws Exception {
         ResponseEntity<String> response;
         String url = fritzBoxAddress + "/login_sid.lua";
 
@@ -134,13 +156,13 @@ public class FritzBoxAuthentication {
     }
 
     @NotNull
-    private String createResponse(@NotNull final String challenge, @NotNull final String password) throws Exception {
+    protected String createResponse(@NotNull final String challenge, @NotNull final String password) throws Exception {
         return challenge + "-" + HashGenerator.createMD5((challenge + "-" + preparePassword(password)).getBytes("UTF-16LE"));
     }
 
-    private String preparePassword(@NotNull final String password) {
+    @NotNull
+    protected String preparePassword(@NotNull final String password) {
         //! NOTE all non-ascii chars have to be replaced by dots
-        String dotPassword = password.replaceAll("[^\\x00-\\x7F]", ".");
-        return dotPassword;
+        return password.replaceAll("[^\\x00-\\x7F]", ".");
     }
 }

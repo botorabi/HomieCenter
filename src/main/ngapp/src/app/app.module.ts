@@ -1,6 +1,5 @@
 import {BrowserModule} from '@angular/platform-browser';
 import {NgModule} from '@angular/core';
-import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {MaterialModule} from "./material.module";
 
 import {AppComponent} from './app.component';
@@ -43,7 +42,6 @@ import {ViewErrorPageComponent} from "./view-error-page/view-error-page.componen
   imports: [
     RouterModule.forRoot(appRoutes, {onSameUrlNavigation:"reload"}),
     BrowserModule,
-    BrowserAnimationsModule,
     HttpClientModule,
     MaterialModule,
     FormsModule

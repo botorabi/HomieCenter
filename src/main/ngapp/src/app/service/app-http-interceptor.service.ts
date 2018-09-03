@@ -4,7 +4,7 @@ import {Observable} from "rxjs/Observable";
 
 
 /**
- * Handle CSRF and session timer refreshing
+ * Handle CSRF
  */
 @Injectable()
 export class AppHttpInterceptorService implements HttpInterceptor {
