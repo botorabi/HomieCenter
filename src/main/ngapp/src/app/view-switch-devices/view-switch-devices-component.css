@@ -21,7 +21,7 @@
   font-weight: bold;
 }
 .device-lock {
-  float: right;
+  float: left;
 }
 .device-state-present {
   float: right;
@@ -32,16 +32,25 @@
 }
 .device-fw {
   font-size: small;
-  text-align: center;
+  text-align: center !important;
 }
 .device-widget-collapse {
   float: left;
   color: grey;
   cursor: pointer;
 }
+.device-state-switch-on {
+  color: gold;
+  float: right;
+  vertical-align: sub;
+}
+.device-state-switch-off {
+  color: grey;
+  float: right;
+  vertical-align: sub;
+}
 .title-small {
-  font-size: small;
-  font-weight: bold;
+  font-size: smaller;
   cursor: pointer;
 }
 .title-normal {

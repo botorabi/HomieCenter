@@ -4,10 +4,9 @@
     <mat-card class="device-item">
       <mat-card-title>
         <mat-icon class="device-widget-collapse" title="Details" (click)="onToggleWidgetCollapse(device)">{{getWidgetCollapseSymbol(device)}}</mat-icon>
-        <span class="{{getTitleClass(device.name)}}" (click)="onToggleWidgetCollapse(device)">&nbsp;{{device.name}}&nbsp;</span>
+        <span class="title-small" (click)="onToggleWidgetCollapse(device)" title="{{device.name}}">&nbsp;{{getTrimmedDeviceName(device)}}&nbsp;</span>
         <mat-icon *ngIf="!device.present" class="device-state-not-present" title="Not available!">link_off</mat-icon>
-        <mat-icon *ngIf="device.present && !device.unlocked" color="primary" class="device-lock" title="Unlock" (click)="onToggleLock(device)">lock</mat-icon>
-        <mat-icon *ngIf="device.present && device.unlocked" color="primary" class="device-lock" title="Lock" (click)="onToggleLock(device)">lock_open</mat-icon>
+        <span *ngIf="device.present" class="{{getSwitchStateStyle(device)}}"><mat-icon>wb_incandescent</mat-icon></span>
       </mat-card-title>
       <mat-card-subtitle class="switch-card-subtitle">
         {{getDeviceSummary(device)}}
@@ -21,7 +20,11 @@
             </td>
           </tr>
           <tr>
-            <td>State</td>
+            <td>
+              <mat-icon *ngIf="device.present && !device.unlocked" color="primary" class="device-lock" title="Unlock" (click)="onToggleLock(device)">lock</mat-icon>
+              <mat-icon *ngIf="device.present && device.unlocked" color="primary" class="device-lock" title="Lock" (click)="onToggleLock(device)">lock_open</mat-icon>
+              State
+            </td>
             <td>Off <mat-slide-toggle color="primary" [(disabled)]="!device.present || !device.unlocked" [(ngModel)]="device.on" (click)="onToggleState(device)"></mat-slide-toggle> On</td>
           </tr>
           <tr>
@@ -30,12 +33,12 @@
           </tr>
           <tr>
             <td>Temperature</td>
-            <td>{{getTemperature(device)}} °C</td>
+            <td>{{getTemperature(device)}}°C</td>
           </tr>
           <tr>
-            <td colspan="2">
+            <td colspan="2" class="device-fw">
               <hr>
-              <span class="device-fw">AIN: {{device.ain}}, FW: {{device.firmware}}</span>
+              <span>AIN: {{device.ain}}, FW: {{device.firmware}}</span>
             </td>
           </tr>
         </table>

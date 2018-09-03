@@ -3,6 +3,7 @@ import {ApiDeviceService} from "../service/api-device.service";
 import {Device} from "../service/device";
 import {AppInformationService} from "../service/app-information.service";
 import {animate, style, transition, trigger} from "@angular/animations";
+import {DeviceWidgetUpdater} from "./device-widget-updater";
 
 
 @Component({
@@ -24,54 +25,58 @@ import {animate, style, transition, trigger} from "@angular/animations";
 })
 export class ViewSwitchDevicesComponent implements OnInit {
 
-  public devices: Array<Device>;
+  public devices: Array<Device> = new Array<Device>();
   public error;
 
   private UPDATE_INTERVAL = 30 * 1000;
+
   private collapsedWidgets = new Map<string, boolean>();
+  private deviceWidgetUpdater: DeviceWidgetUpdater;
 
   constructor(private apiDeviceService: ApiDeviceService,
-              private appInfoService: AppInformationService) { }
+              private appInfoService: AppInformationService) {
+
+    this.deviceWidgetUpdater = new DeviceWidgetUpdater(this.devices);
+  }
 
   ngOnInit() {
     this.appInfoService.refreshLogoutTimer();
     this.periodicUpdate();
   }
 
-  private periodicUpdate() {
+  private periodicUpdate() : void {
     this.updateDevices();
     setTimeout(() => {
       this.periodicUpdate();
     }, this.UPDATE_INTERVAL);
   }
 
-  private updateDevices() {
+  private updateDevices() : void {
     this.error = null;
     this.apiDeviceService.deviceList((devices: Array<Device>, errorStatus: string) => {
       if (devices === null) {
         this.error = errorStatus;
       }
       else {
-        //! TODO update the devices in a way that the widgets do not get reset!
-        this.devices = devices;
+        this.deviceWidgetUpdater.updateDevices(devices);
         this.appInfoService.setSwitchDeviceCount(this.devices.length);
       }
     });
   }
 
-  public getVoltage(device: Device) {
+  public getVoltage(device: Device) : string {
     return (device.voltage / 1000).toFixed(1);
   }
 
-  public getPower(device: Device) {
+  public getPower(device: Device) : string {
     return (device.power / 1000).toFixed(1);
   }
 
-  public getTemperature(device: Device) {
-    return (device.temperature + device.temperatureOffset) / 10;
+  public getTemperature(device: Device) : string {
+    return ((device.temperature + device.temperatureOffset) / 10).toFixed(1);
   }
 
-  public onToggleState(device: Device) {
+  public onToggleState(device: Device) : void {
     if (!device.present || !device.unlocked) {
       return;
     }
@@ -83,25 +88,26 @@ export class ViewSwitchDevicesComponent implements OnInit {
     });
   }
 
-  public onToggleLock(device: Device) {
+  public onToggleLock(device: Device) : void {
     device.unlocked = !device.unlocked;
   }
 
-  public getTitleClass(name: string) {
-     return name.length > 9 ? "title-small" : "title-normal";
+  public getTrimmedDeviceName(device: Device) : string {
+    let name = device.name;
+    return name.length > 12 ? (name.substr(0, 11) + '...') : name;
   }
 
-  public getDeviceSummary(device: Device) {
+  public getDeviceSummary(device: Device) : string {
     if (!device.present) {
-      return "Device Not Available!";
+      return 'Device Not Available!';
     }
 
-    let summary = "";
-    summary += device.on ? "On" : "Off";
+    let summary = '';
+    summary += device.on ? 'On' : 'Off';
     if (device.on) {
-      summary += " / " + this.getPower(device) + " Watt";
+      summary += ' / ' + this.getPower(device) + ' Watt';
     }
-    summary += " / " + this.getTemperature(device) + "°C";
+    summary += ' / ' + this.getTemperature(device) + '°C';
     return summary;
   }
 
@@ -116,7 +122,11 @@ export class ViewSwitchDevicesComponent implements OnInit {
     return !collapsed;
   }
 
-  public getWidgetCollapseSymbol(device: Device) {
-    return this.isWidgetCollapse(device) ? "keyboard_arrow_down" : "keyboard_arrow_up";
+  public getWidgetCollapseSymbol(device: Device) : string {
+    return this.isWidgetCollapse(device) ? 'keyboard_arrow_down' : 'keyboard_arrow_up';
+  }
+
+  public getSwitchStateStyle(device: Device) : string {
+    return device.on ? 'device-state-switch-on' : 'device-state-switch-off';
   }
 }
