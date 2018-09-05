@@ -14,7 +14,7 @@
           <div class="no-preview" title="No preview available!" *ngIf="getCameraLink(camera.previewUrlTag) == ''">
             <mat-icon>photo_camera</mat-icon>
           </div>
-          <iframe *ngIf="getCameraLink(camera.previewUrlTag) != ''" id="camera-iframe-{{camera.id}}" height="200" width="200" style="border: 0px;" [src]="getCameraLink(camera.previewUrlTag) | safe"></iframe>
+          <iframe class="preview-iframe" *ngIf="getCameraLink(camera.previewUrlTag) != ''" id="camera-iframe-{{camera.id}}" height="200" width="200" [src]="getCameraLink(camera.previewUrlTag) | safe"></iframe>
         </mat-card-content>
       </mat-card>
     </div>

@@ -7,6 +7,7 @@
  */
 package net.vrfun.homiecenter.service;
 
+import net.vrfun.homiecenter.ApplicationProperties;
 import net.vrfun.homiecenter.model.*;
 import net.vrfun.homiecenter.service.comm.*;
 import net.vrfun.homiecenter.testutils.UserTestUtils;
@@ -41,8 +42,12 @@ public class RestServiceUserTest {
     @Mock
     private PasswordEncoder passwordEncoder;
 
+    @Mock
+    private ApplicationProperties applicationProperties;
+
     private AccessUtils accessUtils;
 
+    private final String EXPECTED_APP_VERSION = "X.Y.Z";
 
     @Before
     public void setup() {
@@ -50,7 +55,13 @@ public class RestServiceUserTest {
 
         userTestUtils = new UserTestUtils(userRepository);
         accessUtils = new AccessUtils(userRepository);
-        restServiceUser = new RestServiceUser(userRepository, passwordEncoder, accessUtils);
+        restServiceUser = new RestServiceUser(
+                userRepository,
+                passwordEncoder,
+                accessUtils,
+                applicationProperties);
+
+        when(applicationProperties.getAppVersion()).thenReturn(EXPECTED_APP_VERSION);
     }
 
     @Test
@@ -277,6 +288,7 @@ public class RestServiceUserTest {
 
         RespUserStatus status = response.block();
 
+        assertThat(status.getAppVersion()).isEqualTo(EXPECTED_APP_VERSION);
         assertThat(status.getRole()).isEqualTo("ADMIN");
         assertThat(status.getName()).isEqualTo("admin-user");
     }
@@ -289,6 +301,7 @@ public class RestServiceUserTest {
 
         RespUserStatus status = response.block();
 
+        assertThat(status.getAppVersion()).isEqualTo(EXPECTED_APP_VERSION);
         assertThat(status.getRole()).isEqualTo("USER");
         assertThat(status.isAuthenticated()).isEqualTo(false);
         assertThat(status.getName()).isEqualTo("user");

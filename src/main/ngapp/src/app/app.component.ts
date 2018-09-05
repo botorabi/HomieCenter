@@ -19,12 +19,7 @@ export class AppComponent implements OnInit {
   ngOnInit(): void {
     this.appInfoService.refreshLogoutTimer();
     this.apiUserService.getStatus((userStatus: UserStatus) => {
-      if (userStatus.authenticated) {
-        this.appInfoService.setUserStatus(userStatus);
-      }
-      else {
-        this.appInfoService.setUserStatus(null);
-      }
+      this.appInfoService.setUserStatus(userStatus);
     });
 
     this.router.events.subscribe((event) => {

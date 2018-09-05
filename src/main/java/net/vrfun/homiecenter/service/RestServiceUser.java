@@ -7,6 +7,7 @@
  */
 package net.vrfun.homiecenter.service;
 
+import net.vrfun.homiecenter.ApplicationProperties;
 import net.vrfun.homiecenter.model.*;
 import net.vrfun.homiecenter.service.comm.*;
 import org.h2.util.StringUtils;
@@ -37,14 +38,18 @@ public class RestServiceUser {
 
     private AccessUtils accessUtils;
 
+    private ApplicationProperties applicationProperties;
+
     @Autowired
     public RestServiceUser(@NotNull UserRepository userRepository,
                            @NotNull PasswordEncoder passwordEncoder,
-                           @NotNull AccessUtils accessUtils) {
+                           @NotNull AccessUtils accessUtils,
+                           @NotNull ApplicationProperties applicationProperties) {
 
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.accessUtils = accessUtils;
+        this.applicationProperties = applicationProperties;
     }
 
     /**
@@ -155,11 +160,13 @@ public class RestServiceUser {
     @GetMapping("/api/user/status")
     public Mono<RespUserStatus> getStatus(Mono<Authentication> authentication) {
         return authentication
-                .map(a -> new RespUserStatus(((User) a.getPrincipal()).getUsername(),
+                .map(a -> new RespUserStatus(
+                        applicationProperties.getAppVersion(),
+                        ((User) a.getPrincipal()).getUsername(),
                         a.isAuthenticated(),
                         accessUtils.requestingUserIsAdmin(a) ? "ADMIN" : "USER"
                         )
                 )
-                .switchIfEmpty(Mono.just(new RespUserStatus()));
+                .switchIfEmpty(Mono.just(new RespUserStatus(applicationProperties.getAppVersion())));
     }
 }

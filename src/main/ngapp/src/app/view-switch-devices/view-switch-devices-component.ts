@@ -103,9 +103,8 @@ export class ViewSwitchDevicesComponent implements OnInit {
     }
 
     let summary = '';
-    summary += device.on ? 'On' : 'Off';
     if (device.on) {
-      summary += ' / ' + this.getPower(device) + ' Watt';
+      summary += this.getPower(device) + ' Watt';
     }
     summary += ' / ' + this.getTemperature(device) + '°C';
     return summary;

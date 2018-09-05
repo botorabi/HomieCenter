@@ -30,15 +30,14 @@ export class ViewAuthenticationComponent implements OnInit {
 
     this.appInfoService.setUserStatus(null);
     this.error = null;
-    let thiz = this;
     this.apiUserService.login(this.credentials.login, this.credentials.password, (userStatus) => {
       this.appInfoService.setUserStatus(userStatus);
       if (userStatus && userStatus.authenticated) {
         this.router.navigate(['/']);
       }
       else {
-        thiz.error = "Invalid Credentials!";
-        thiz.credentials.password = '';
+        this.error = "Invalid Credentials!";
+        this.credentials.password = '';
       }
     });
   }

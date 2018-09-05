@@ -124,6 +124,7 @@ export class ApiUserService {
 
   private createUserStatus(userJson: any): UserStatus {
     let userStatus = new UserStatus();
+    userStatus.appVersion = userJson.appVersion;
     userStatus.name = userJson.name;
     userStatus.authenticated = userJson.authenticated;
     userStatus.role = userJson.role;

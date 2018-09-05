@@ -7,7 +7,7 @@ import {Camera} from "./camera";
 export class AppInformationService {
 
   name: string = "Homie Center";
-  version: string = "0.9.2";
+  version: string = "";
 
   userStatus: UserStatus = null;
   logoutTimeString: string = "";
@@ -26,6 +26,7 @@ export class AppInformationService {
 
   public setUserStatus(userStatus: UserStatus) {
     this.userStatus = userStatus;
+    this.version = userStatus ? userStatus.appVersion : "";
     this.periodicLogoutTimerUpdate(userStatus);
   }
 
@@ -51,7 +52,7 @@ export class AppInformationService {
   }
 
   private periodicLogoutTimerUpdate(userStatus: UserStatus) {
-    if (userStatus) {
+    if (userStatus && userStatus.authenticated) {
       window.setTimeout(() => {
         let timeRemaining = this.getRemainingTime();
         if (timeRemaining < 0) {
