@@ -8,27 +8,30 @@
 package net.vrfun.homiecenter.model;
 
 /**
- * A home automation device is represented by this class.
+ * General device info
  *
  * @author          boto
  * Creation Date    6th June 2018
  */
-public class DeviceInfo {
+public abstract class DeviceInfo {
 
+    private String deviceType = "";
     private String id;
     private String ain;
     private String name;
     private String firmware;
     private String productName;
     private boolean present;
-    private boolean on;
-    private int voltage;
-    private int power;
-    private int energy;
-    private int temperature;
-    private int temperatureOffset;
 
     public DeviceInfo() {}
+
+    public String getDeviceType() {
+        return deviceType;
+    }
+
+    public void setDeviceType(String deviceType) {
+        this.deviceType = deviceType;
+    }
 
     public String getId() {
         return id;
@@ -76,67 +79,5 @@ public class DeviceInfo {
 
     public void setPresent(boolean present) {
         this.present = present;
-    }
-
-    public boolean isOn() {
-        return on;
-    }
-
-    public void setOn(boolean on) {
-        this.on = on;
-    }
-
-    public int getVoltage() {
-        return voltage;
-    }
-
-    public void setVoltage(int voltage) {
-        this.voltage = voltage;
-    }
-
-    public int getPower() {
-        return power;
-    }
-
-    public void setPower(int power) {
-        this.power = power;
-    }
-
-    public int getEnergy() {
-        return energy;
-    }
-
-    public void setEnergy(int energy) {
-        this.energy = energy;
-    }
-
-    public int getTemperature() {
-        return temperature;
-    }
-
-    public void setTemperature(int temperature) {
-        this.temperature = temperature;
-    }
-
-    public int getTemperatureOffset() {
-        return temperatureOffset;
-    }
-
-    public void setTemperatureOffset(int temperatureOffset) {
-        this.temperatureOffset = temperatureOffset;
-    }
-
-    @Override
-    public String toString() {
-        return "id: " + id + ", " +
-                "ain: " + ain + ", " +
-                "firmware: " + firmware + ", " +
-                "product name: " + productName + ", " +
-                "name: " + name + ", " +
-                "present: " + (present ? "on" : "off") + ", " +
-                "state: " + (on ? "on" : "off") + ", " +
-                "power: " + power + ", " +
-                "energy: " + energy + ", " +
-                "temperature: " + temperature;
     }
 }

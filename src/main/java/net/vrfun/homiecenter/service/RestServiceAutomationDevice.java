@@ -25,7 +25,7 @@ import java.util.List;
  * Creation Date    7th June 2018
  */
 @RestController
-public class RestServiceSwitchDevice {
+public class RestServiceAutomationDevice {
 
     private final Logger LOGGER = LoggerFactory.getLogger(this.getClass());
 
@@ -33,11 +33,11 @@ public class RestServiceSwitchDevice {
 
 
     @Autowired
-    public RestServiceSwitchDevice(@NotNull FRITZBox fritzBox) {
+    public RestServiceAutomationDevice(@NotNull FRITZBox fritzBox) {
         this.fritzBox = fritzBox;
     }
 
-    @GetMapping("/api/switchdevice")
+    @GetMapping("/api/device")
     public ResponseEntity<List<DeviceInfo>> getDevices() {
         try {
             return new ResponseEntity<>(fritzBox.getDevices(), HttpStatus.OK);
@@ -48,7 +48,7 @@ public class RestServiceSwitchDevice {
         }
     }
 
-    @GetMapping("/api/switchdevice/{id}")
+    @GetMapping("/api/device/{id}")
     public ResponseEntity<DeviceInfo> getDevice(@PathVariable Long id) {
         try {
             return new ResponseEntity<>(fritzBox.getDevice(id), HttpStatus.OK);
@@ -58,7 +58,7 @@ public class RestServiceSwitchDevice {
         }
     }
 
-    @GetMapping("/api/switchdevice/{id}/{command}")
+    @GetMapping("/api/device/{id}/{command}")
     public ResponseEntity<Void> executeCommand(@PathVariable Long id, @PathVariable String command) {
         try {
             fritzBox.handleDeviceCommand(id, command);

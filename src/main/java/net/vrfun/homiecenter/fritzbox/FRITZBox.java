@@ -9,7 +9,7 @@ package net.vrfun.homiecenter.fritzbox;
 
 
 import net.vrfun.homiecenter.ApplicationProperties;
-import net.vrfun.homiecenter.model.DeviceInfo;
+import net.vrfun.homiecenter.model.*;
 import org.slf4j.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.*;
@@ -37,7 +37,7 @@ public class FRITZBox {
     private final Logger LOGGER = LoggerFactory.getLogger(FRITZBox.class);
 
     private FritzBoxAuthentication fritzBoxAuthentication;
-    private ResponseHandlerSwitchDeviceList handlerDeviceList ;
+    private ResponseHandlerDeviceList handlerDeviceList ;
     private Requests requests;
 
     @Autowired
@@ -52,7 +52,7 @@ public class FRITZBox {
     public FRITZBox fritzBox() {
         FRITZBox fritzBox = new FRITZBox();
         fritzBox.fritzBoxAuthentication = new FritzBoxAuthentication(getFritzBoxURL());
-        fritzBox.handlerDeviceList = new ResponseHandlerSwitchDeviceList();
+        fritzBox.handlerDeviceList = new ResponseHandlerDeviceList();
         fritzBox.requests = new Requests();
 
         LOGGER.info("Using FRITZ!Box URL: {}", getFritzBoxURL());
@@ -73,8 +73,8 @@ public class FRITZBox {
     }
 
     @NotNull
-    public FRITZBox withResponseHandlerSwitchDeviceList(@NotNull ResponseHandlerSwitchDeviceList responseHandlerSwitchDeviceList) {
-        this.handlerDeviceList = responseHandlerSwitchDeviceList;
+    public FRITZBox withResponseHandlerSwitchDeviceList(@NotNull ResponseHandlerDeviceList responseHandlerDeviceList) {
+        this.handlerDeviceList = responseHandlerDeviceList;
         return this;
     }
 
@@ -169,23 +169,28 @@ public class FRITZBox {
     protected void switchDevice(Long deviceId, boolean on) throws Exception {
         AuthStatus authStatus = loginIfNeeded();
         DeviceInfo device = getDevice(deviceId);
+        if (!(device instanceof SwitchDeviceInfo)) {
+            throw new Exception("Could not switch the device (" + device.getAIN() + "), this is not a switch-device!");
+        }
 
-        if (device == null) {
+        SwitchDeviceInfo switchDevice = (SwitchDeviceInfo)getDevice(deviceId);
+
+        if (switchDevice == null) {
             throw new Exception("Invalid ID: " + deviceId);
         }
 
-        if (!device.isPresent()) {
-            LOGGER.debug("ignoring switch command for device ({}), it is not present!", device.getAIN());
+        if (!switchDevice.isPresent()) {
+            LOGGER.debug("ignoring switch command for device ({}), it is not present!", switchDevice.getAIN());
             return;
         }
 
-        if (device.isOn() == on) {
-            LOGGER.debug("ignoring switch command for device ({}), it is already {}!", device.getAIN(), (on ? "on": "off"));
+        if (switchDevice.isOn() == on) {
+            LOGGER.debug("ignoring switch command for device ({}), it is already {}!", switchDevice.getAIN(), (on ? "on": "off"));
             return;
         }
 
         Map<String, String> parameters = new HashMap<>();
-        parameters.put("ain", device.getAIN());
+        parameters.put("ain", switchDevice.getAIN());
         parameters.put("switchcmd", "setswitch" + (on ? "on" : "off"));
 
         ResponseEntity<String> response = requestHttpGET(
@@ -194,10 +199,10 @@ public class FRITZBox {
                 parameters);
 
         if (response.getStatusCode() != HttpStatus.OK) {
-            throw new Exception("Could not switch the device (" + device.getAIN() + ")!");
+            throw new Exception("Could not switch the device (" + switchDevice.getAIN() + ")!");
         }
 
-        LOGGER.debug("device ({}) successfully switched {}", device.getAIN(), (on ? "on": "off"));
+        LOGGER.debug("device ({}) successfully switched {}", switchDevice.getAIN(), (on ? "on": "off"));
     }
 
     @NotNull
