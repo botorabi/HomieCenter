@@ -9,9 +9,10 @@ language: java
 
 before_install:
   - cd src/main/ngapp
+  - npm i -g npm 
+  - npm update -g
   - npm install @angular/cli
-  - npm update
-  - cd ../../
+  - cd ../../..
   - cd misc/spring.webflux-v5.0.7-RELEASE-patch/
   - ./install-webflux-package.sh
   - cd ../../
