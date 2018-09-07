@@ -14,9 +14,11 @@ export class AppInformationService {
   logoutTimer: Date;
   selectedCamera: Camera = null;
   switchDeviceCount = 0;
+  heatControllerDeviceCount = 0;
   cameraCount = 0;
   camerasExpanded = true;
-  switchDevicesExpanded = true;
+  devicesSwitchExpanded = true;
+  devicesHeatControllerExpanded = true;
 
   private LogoutTimeoutSec = 30 * 60;
 
@@ -44,6 +46,10 @@ export class AppInformationService {
 
   public setSwitchDeviceCount(count: number) {
     this.switchDeviceCount = count;
+  }
+
+  public setHeatControllerDeviceCount(count: number) {
+    this.heatControllerDeviceCount = count;
   }
 
   public refreshLogoutTimer() {

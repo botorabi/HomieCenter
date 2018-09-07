@@ -1,10 +1,10 @@
 import {Device} from "../service/device";
 
-export class DeviceWidgetUpdater {
+export abstract class DeviceWidgetUpdater {
 
   public devices: Array<Device>;
 
-  constructor(devices: Array<Device>) {
+  protected constructor(devices: Array<Device>) {
     this.devices = devices;
   }
 
@@ -23,6 +23,14 @@ export class DeviceWidgetUpdater {
         this.devices.push(device);
       }
     });
+  }
+
+  protected copyDeviceData(source: Device, destination: Device) : void {
+    this.copyDeviceFieldIfChanged(source, destination, 'ain');
+    this.copyDeviceFieldIfChanged(source, destination, 'id');
+    this.copyDeviceFieldIfChanged(source, destination, 'name');
+    this.copyDeviceFieldIfChanged(source, destination, 'present');
+    this.copyDeviceFieldIfChanged(source, destination, 'firmware');
   }
 
   protected removeDeletedDevices(devices: Array<Device>) : void {
@@ -45,20 +53,6 @@ export class DeviceWidgetUpdater {
       }
     }
     return null;
-  }
-
-  protected copyDeviceData(source: Device, destination: Device) : void {
-    this.copyDeviceFieldIfChanged(source, destination, 'ain');
-    this.copyDeviceFieldIfChanged(source, destination, 'id');
-    this.copyDeviceFieldIfChanged(source, destination, 'name');
-    this.copyDeviceFieldIfChanged(source, destination, 'present');
-    this.copyDeviceFieldIfChanged(source, destination, 'firmware');
-    this.copyDeviceFieldIfChanged(source, destination, 'power');
-    this.copyDeviceFieldIfChanged(source, destination, 'voltage');
-    this.copyDeviceFieldIfChanged(source, destination, 'energy');
-    this.copyDeviceFieldIfChanged(source, destination, 'on');
-    this.copyDeviceFieldIfChanged(source, destination, 'temperature');
-    this.copyDeviceFieldIfChanged(source, destination, 'temperatureOffset');
   }
 
   protected copyDeviceFieldIfChanged(source: Device, destination: Device, fieldName: string) : boolean {

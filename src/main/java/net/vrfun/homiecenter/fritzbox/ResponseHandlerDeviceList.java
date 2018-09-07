@@ -41,8 +41,8 @@ public class ResponseHandlerDeviceList extends ResponseHandler<List<DeviceInfo>>
     protected Node readNextNode(@NotNull final List<DeviceInfo> devices, @NotNull final Node deviceNode) {
         DeviceInfo deviceInfo;
         if (isHeatController(deviceNode)) {
-            deviceInfo = new HeatControllerInfo();
-            getHeadControllerInfo(deviceNode, (HeatControllerInfo) deviceInfo);
+            deviceInfo = new HeatControllerDeviceInfo();
+            getHeadControllerInfo(deviceNode, (HeatControllerDeviceInfo) deviceInfo);
         }
         else {
             deviceInfo = new SwitchDeviceInfo();
@@ -80,7 +80,7 @@ public class ResponseHandlerDeviceList extends ResponseHandler<List<DeviceInfo>>
         device.setTemperatureOffset(convertToInteger(getNodeValue(deviceNode, "offset", "0")));
     }
 
-    protected void getHeadControllerInfo(@NotNull final Node deviceNode, @NotNull final HeatControllerInfo device) {
+    protected void getHeadControllerInfo(@NotNull final Node deviceNode, @NotNull final HeatControllerDeviceInfo device) {
         device.setBatteryLow(convertToBoolean(getNodeValue(deviceNode, "batterylow", "0")));
         device.setBatteryLevel(convertToInteger(getNodeValue(deviceNode, "battery", "0")));
         device.setComfortTemperature(convertToInteger(getNodeValue(deviceNode, "komfort", "0")));

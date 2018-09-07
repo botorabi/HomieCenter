@@ -1,9 +1,11 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {ApiDeviceService} from "../service/api-device.service";
 import {Device} from "../service/device";
-import {AppInformationService} from "../service/app-information.service";
 import {animate, style, transition, trigger} from "@angular/animations";
-import {DeviceWidgetUpdater} from "./device-widget-updater";
+import {SwitchWidgetUpdater} from "./switch-widget-updater";
+import {DeviceSwitch} from "../service/device-switch";
+import {AppInformationService} from "../service/app-information.service";
+import {ViewDevicesComponent} from "../view-devices/view-devices.component";
 
 
 @Component({
@@ -25,66 +27,55 @@ import {DeviceWidgetUpdater} from "./device-widget-updater";
 })
 export class ViewSwitchDevicesComponent implements OnInit {
 
-  public devices: Array<Device> = new Array<Device>();
+  public devices: Array<DeviceSwitch> = new Array<DeviceSwitch>();
   public error;
 
-  private UPDATE_INTERVAL = 30 * 1000;
-
+  private devicesComponent: ViewDevicesComponent;
   private collapsedWidgets = new Map<string, boolean>();
-  private deviceWidgetUpdater: DeviceWidgetUpdater;
+  private deviceWidgetUpdater: SwitchWidgetUpdater;
 
   constructor(private apiDeviceService: ApiDeviceService,
               private appInfoService: AppInformationService) {
 
-    this.deviceWidgetUpdater = new DeviceWidgetUpdater(this.devices);
+    this.deviceWidgetUpdater = new SwitchWidgetUpdater(this.devices);
   }
 
   ngOnInit() {
-    this.appInfoService.refreshLogoutTimer();
-    this.periodicUpdate();
   }
 
-  private periodicUpdate() : void {
-    this.updateDevices();
-    setTimeout(() => {
-      this.periodicUpdate();
-    }, this.UPDATE_INTERVAL);
+  public setDevicesComponent(devicesComponent: ViewDevicesComponent) : void {
+    this.devicesComponent = devicesComponent;
   }
 
-  private updateDevices() : void {
-    this.error = null;
-    this.apiDeviceService.deviceList((devices: Array<Device>, errorStatus: string) => {
-      if (devices === null) {
-        this.error = errorStatus;
-      }
-      else {
-        this.deviceWidgetUpdater.updateDevices(devices);
-        this.appInfoService.setSwitchDeviceCount(this.devices.length);
-      }
-    });
+  public updateDevices(devices: Array<DeviceSwitch>) {
+    this.deviceWidgetUpdater.updateDevices(devices);
+    this.appInfoService.setSwitchDeviceCount(this.devices.length);
   }
 
-  public getVoltage(device: Device) : string {
+  public getVoltage(device: DeviceSwitch) : string {
     return (device.voltage / 1000).toFixed(1);
   }
 
-  public getPower(device: Device) : string {
+  public getPower(device: DeviceSwitch) : string {
     return (device.power / 1000).toFixed(1);
   }
 
-  public getTemperature(device: Device) : string {
+  public getTemperature(device: DeviceSwitch) : string {
     return ((device.temperature + device.temperatureOffset) / 10).toFixed(1);
   }
 
-  public onToggleState(device: Device) : void {
+  public onToggleState(device: DeviceSwitch) : void {
     if (!device.present || !device.unlocked) {
       return;
     }
     device.unlocked = false;
     this.apiDeviceService.deviceSwitch(device.id, !device.on, () => {
-      setTimeout(() => {
-        this.updateDevices();
-      }, 100);
+      // trigger the device update
+      if (this.devicesComponent) {
+        window.setTimeout(() => {
+          this.devicesComponent.updateDevices();
+        }, 200);
+      }
     });
   }
 
@@ -97,7 +88,7 @@ export class ViewSwitchDevicesComponent implements OnInit {
     return name.length > 12 ? (name.substr(0, 11) + '...') : name;
   }
 
-  public getDeviceSummary(device: Device) : string {
+  public getDeviceSummary(device: DeviceSwitch) : string {
     if (!device.present) {
       return 'Device Not Available!';
     }
@@ -110,12 +101,12 @@ export class ViewSwitchDevicesComponent implements OnInit {
     return summary;
   }
 
-  public isWidgetCollapse(device): boolean {
+  public isWidgetCollapse(device: Device): boolean {
     return this.collapsedWidgets.has(device.ain) ?
       this.collapsedWidgets.get(device.ain) : true;
   }
 
-  public onToggleWidgetCollapse(device): boolean {
+  public onToggleWidgetCollapse(device: Device): boolean {
     let collapsed = this.isWidgetCollapse(device);
     this.collapsedWidgets.set(device.ain, !collapsed);
     return !collapsed;
@@ -125,7 +116,7 @@ export class ViewSwitchDevicesComponent implements OnInit {
     return this.isWidgetCollapse(device) ? 'keyboard_arrow_down' : 'keyboard_arrow_up';
   }
 
-  public getSwitchStateStyle(device: Device) : string {
+  public getSwitchStateStyle(device: DeviceSwitch) : string {
     return device.on ? 'device-state-switch-on' : 'device-state-switch-off';
   }
 }

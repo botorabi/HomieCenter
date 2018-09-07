@@ -1,0 +1,27 @@
+@import "../view-devices/view-devices.component.css";
+
+.battery {
+  float: right;
+  vertical-align: sub;
+}
+.battery-ok {
+  color: #008000;
+}
+.battery-middle {
+  color: #4d8000;
+}
+.battery-low {
+  color: #ff6e00;
+}
+.battery-alert {
+  color: red;
+}
+.temperature-btn {
+  vertical-align: sub;
+  cursor: pointer;
+}
+.error-code {
+  color: red;
+  float: right;
+  vertical-align: sub;
+}

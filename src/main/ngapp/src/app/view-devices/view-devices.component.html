@@ -1,0 +1,19 @@
+<div [hidden]="appInfoService.switchDeviceCount === 0">
+  <mat-expansion-panel [(expanded)]="appInfoService.devicesSwitchExpanded">
+    <mat-expansion-panel-header>
+      <mat-panel-title>Switch Devices ({{appInfoService.switchDeviceCount}})</mat-panel-title>
+      <mat-panel-description></mat-panel-description>
+    </mat-expansion-panel-header>
+    <app-view-switch-devices #switchView></app-view-switch-devices>
+  </mat-expansion-panel>
+</div>
+<br>
+<div [hidden]="appInfoService.heatControllerDeviceCount === 0">
+  <mat-expansion-panel [(expanded)]="appInfoService.devicesHeatControllerExpanded">
+    <mat-expansion-panel-header>
+      <mat-panel-title>Heat Controllers ({{appInfoService.heatControllerDeviceCount}})</mat-panel-title>
+      <mat-panel-description></mat-panel-description>
+    </mat-expansion-panel-header>
+    <app-view-heat-controller-devices #heatControllerView></app-view-heat-controller-devices>
+  </mat-expansion-panel>
+</div>

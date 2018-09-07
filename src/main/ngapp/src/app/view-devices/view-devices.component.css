@@ -1,0 +1,49 @@
+.switch-card {
+  width: 100%;
+}
+.switch-card-subtitle {
+  margin-bottom: -18px;
+  text-align: center;
+}
+.switch-card-content {
+  overflow: hidden;
+}
+.device-info {
+  width: 100%;
+}
+.device-info td {
+  text-align: right;
+  padding: 5px;
+}
+.device-info td + td {
+  text-align: left;
+  padding: 5px;
+  font-weight: bold;
+}
+.device-lock {
+  float: left;
+  cursor: pointer;
+}
+.device-state-present {
+  float: right;
+}
+.device-state-not-present {
+  float: right;
+  color: red;
+}
+.device-fw {
+  font-size: small;
+  text-align: center !important;
+}
+.device-widget-collapse {
+  float: left;
+  color: grey;
+  cursor: pointer;
+}
+.title-small {
+  font-size: smaller;
+  cursor: pointer;
+}
+.title-normal {
+  cursor: pointer;
+}

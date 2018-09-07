@@ -33,7 +33,7 @@ describe('ApiDeviceService', () => {
     });
 
     httpClientMock
-      .mockRequestError('/api/switchdevice', 'ERROR')
+      .mockRequestError('/api/device', 'ERROR')
       .finalize();
   });
 
@@ -46,7 +46,7 @@ describe('ApiDeviceService', () => {
     });
 
     httpClientMock
-      .mockRequest('/api/switchdevice', [{'name': 'My Device', 'id': 'Device ID'}])
+      .mockRequest('/api/device', [{'name': 'My Device', 'id': 'Device ID'}])
       .finalize();
   });
 });

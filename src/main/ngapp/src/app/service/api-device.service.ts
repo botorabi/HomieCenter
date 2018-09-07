@@ -39,6 +39,15 @@ export class ApiDeviceService {
       });
   }
 
+  public deviceHeatControllerSetTemperature(deviceId: number, temperature: number, callback: any) {
+    this.http.get('/api/device/' + deviceId + "/" + "temperature=" + temperature)
+      .subscribe(response => {
+        if (callback) {
+          callback();
+        }
+      });
+  }
+
   public cameraList(callback: any) {
     this.http.get('/api/camera')
       .subscribe(

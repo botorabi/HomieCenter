@@ -5,7 +5,8 @@
         <mat-icon class="device-widget-collapse" title="Details" (click)="onToggleWidgetCollapse(device)">{{getWidgetCollapseSymbol(device)}}</mat-icon>
         <span class="title-small" (click)="onToggleWidgetCollapse(device)" title="{{device.name}}">&nbsp;{{getTrimmedDeviceName(device)}}&nbsp;</span>
         <mat-icon *ngIf="!device.present" class="device-state-not-present" title="Not available!">link_off</mat-icon>
-        <span *ngIf="device.present" class="{{getSwitchStateStyle(device)}}"><mat-icon>wb_incandescent</mat-icon></span>
+        <span *ngIf="device.present" class="battery {{getBatterySymbolStyle(device)}}" title="{{device.batteryLevel}}%"><mat-icon>{{getBatterySymbol(device)}}</mat-icon></span>
+        <span *ngIf="device.errorCode" class="error-code" title="Error: E{{device.errorCode}}"><mat-icon>warning</mat-icon></span>
       </mat-card-title>
       <mat-card-subtitle class="switch-card-subtitle">
         {{getDeviceSummary(device)}}
@@ -19,20 +20,26 @@
             </td>
           </tr>
           <tr>
+            <td>Desired Temperature</td>
             <td>
-              <mat-icon *ngIf="device.present && !device.unlocked" color="primary" class="device-lock" title="Unlock" (click)="onToggleLock(device)">lock</mat-icon>
-              <mat-icon *ngIf="device.present && device.unlocked" color="primary" class="device-lock" title="Lock" (click)="onToggleLock(device)">lock_open</mat-icon>
-              State
+              <span>
+                <mat-icon color="primary" class="temperature-btn" (click)="decrementTemperature(device)">remove_circle</mat-icon>
+                {{getSetTemperature(device)}}°C
+                <mat-icon color="primary" class="temperature-btn" (click)="incrementTemperature(device)">add_circle</mat-icon>
+              </span>
             </td>
-            <td>Off <mat-slide-toggle color="primary" [(disabled)]="!device.present || !device.unlocked" [(ngModel)]="device.on" (click)="onToggleState(device)"></mat-slide-toggle> On</td>
           </tr>
           <tr>
-            <td>Power</td>
-            <td>{{getPower(device)}} Watt</td>
+            <td>Comfort Temperature</td>
+            <td>{{getComfortTemperature(device)}}°C</td>
           </tr>
           <tr>
-            <td>Temperature</td>
-            <td>{{getTemperature(device)}}°C</td>
+            <td>Economy Temperature</td>
+            <td>{{getEconomyTemperature(device)}}°C</td>
+          </tr>
+          <tr>
+            <td>Window Open?</td>
+            <td>{{device.windowOpen ? "Yes!" : "No"}}</td>
           </tr>
           <tr>
             <td colspan="2" class="device-fw">

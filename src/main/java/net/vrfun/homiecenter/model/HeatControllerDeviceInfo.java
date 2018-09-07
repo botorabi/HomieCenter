@@ -13,7 +13,7 @@ package net.vrfun.homiecenter.model;
  * @author          boto
  * Creation Date    6th September 2018
  */
-public class HeatControllerInfo extends DeviceInfo {
+public class HeatControllerDeviceInfo extends DeviceInfo {
 
     public final static String DEVICE_TPYE = "HEATCONTROLLER";
 
@@ -27,7 +27,7 @@ public class HeatControllerInfo extends DeviceInfo {
     private int errorCode;
 
 
-    public HeatControllerInfo() {
+    public HeatControllerDeviceInfo() {
         setDeviceType(DEVICE_TPYE);
     }
 
