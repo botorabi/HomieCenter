@@ -13,16 +13,19 @@
 }
 .device-info td {
   text-align: right;
+  vertical-align: text-bottom;
   padding: 5px;
 }
 .device-info td + td {
   text-align: left;
+  vertical-align: sub;
   padding: 5px;
   font-weight: bold;
 }
 .device-lock {
   float: left;
   cursor: pointer;
+  vertical-align: sub;
 }
 .device-state-present {
   float: right;

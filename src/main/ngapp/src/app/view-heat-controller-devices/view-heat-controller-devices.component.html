@@ -12,7 +12,7 @@
         {{getDeviceSummary(device)}}
       </mat-card-subtitle>
       <br>
-      <mat-card-content class="switch-card-content" *ngIf="!isWidgetCollapse(device)" [@detailsFading]>
+      <mat-card-content class="switch-card-content" *ngIf="!isWidgetCollapse(device)" [@widgetSpan]>
         <table class="device-info">
           <tr>
             <td colspan="2">
@@ -20,25 +20,31 @@
             </td>
           </tr>
           <tr>
-            <td>Desired Temperature</td>
+            <td colspan="2" class="temperature-header">Temperature:</td>
+          </tr>
+          <tr>
+            <td class="updating-text">
+              <mat-icon *ngIf="device.updating" class="updating-icon" [@iconRotation] color="primary" title="Updating...">autorenew</mat-icon>
+              <span>Desired</span>
+            </td>
             <td>
               <span>
-                <mat-icon color="primary" class="temperature-btn" (click)="decrementTemperature(device)">remove_circle</mat-icon>
-                {{getSetTemperature(device)}}°C
-                <mat-icon color="primary" class="temperature-btn" (click)="incrementTemperature(device)">add_circle</mat-icon>
+                <span class="spin-box spin-box-handle-left" (click)="decrementTemperature(device)">-</span>
+                <span class="spin-box spin-box-value">{{getSetTemperature(device)}}°C</span>
+                <span class="spin-box spin-box-handle-right" (click)="incrementTemperature(device)">+</span>
               </span>
             </td>
           </tr>
           <tr>
-            <td>Comfort Temperature</td>
+            <td>Comfort</td>
             <td>{{getComfortTemperature(device)}}°C</td>
           </tr>
           <tr>
-            <td>Economy Temperature</td>
+            <td>Economy</td>
             <td>{{getEconomyTemperature(device)}}°C</td>
           </tr>
           <tr>
-            <td>Window Open?</td>
+            <td class="window-open">Window Open?</td>
             <td>{{device.windowOpen ? "Yes!" : "No"}}</td>
           </tr>
           <tr>

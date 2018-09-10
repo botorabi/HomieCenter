@@ -5,23 +5,15 @@ import {AppInformationService} from "../service/app-information.service";
 import {Device} from "../service/device";
 import {DeviceHeatController} from "../service/device-heat-controller";
 import {HeatControllerWidgetUpdater} from "./heat-controller-widget-updater";
-import {animate, style, transition, trigger} from "@angular/animations";
+import {AnimationRotation, AnimationWidgetSpan} from "../material.module";
 
 @Component({
   selector: 'app-view-heat-controller-devices',
   templateUrl: './view-heat-controller-devices.component.html',
   styleUrls: ['./view-heat-controller-devices.component.css'],
   animations: [
-    trigger('detailsFading', [
-      transition('void => *', [
-        style({height: '0'}),
-        animate(150, style({height: '*'}))
-      ]),
-      transition('* => void', [
-        style({height: '*'}),
-        animate(250, style({height: '0'}))
-      ])
-    ])
+    AnimationWidgetSpan,
+    AnimationRotation
   ]
 })
 export class ViewHeatControllerDevicesComponent implements OnInit {
@@ -148,21 +140,29 @@ export class ViewHeatControllerDevicesComponent implements OnInit {
   }
 
   public setTemperature(device: Device, temperature: number) : void {
+    device.updating = true;
     this.apiDeviceService.deviceHeatControllerSetTemperature(device.id, temperature, () => {
       // trigger the device update
       if (this.devicesComponent) {
         window.setTimeout(() => {
           this.devicesComponent.updateDevices();
+          device.updating = false;
         }, 200);
       }
     });
   }
 
   public incrementTemperature(device: DeviceHeatController) : void {
+    if (device.updating) {
+      return;
+    }
     this.setTemperature(device, device.setTemperature + 1);
   }
 
   public decrementTemperature(device: DeviceHeatController) : void {
+    if (device.updating) {
+      return;
+    }
     this.setTemperature(device, device.setTemperature - 1);
   }
 

@@ -10,3 +10,9 @@
   float: right;
   vertical-align: sub;
 }
+.switching-icon {
+  float: left;
+}
+.switch-left-column {
+  min-width: 100px;
+}

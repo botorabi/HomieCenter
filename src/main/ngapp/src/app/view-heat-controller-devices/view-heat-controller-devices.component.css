@@ -5,7 +5,6 @@
   vertical-align: sub;
 }
 .battery-ok {
-  color: #008000;
 }
 .battery-middle {
   color: #4d8000;
@@ -16,9 +15,21 @@
 .battery-alert {
   color: red;
 }
+.updating-icon {
+  float: left;
+}
+.updating-text {
+  height: 1.8em;
+}
 .temperature-btn {
   vertical-align: sub;
   cursor: pointer;
+}
+.temperature-header {
+  text-align: left !important;
+}
+.window-open {
+  text-align: left !important;
 }
 .error-code {
   color: red;

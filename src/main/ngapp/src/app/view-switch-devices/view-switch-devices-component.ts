@@ -1,11 +1,11 @@
 import {Component, OnInit} from '@angular/core';
 import {ApiDeviceService} from "../service/api-device.service";
 import {Device} from "../service/device";
-import {animate, style, transition, trigger} from "@angular/animations";
 import {SwitchWidgetUpdater} from "./switch-widget-updater";
 import {DeviceSwitch} from "../service/device-switch";
 import {AppInformationService} from "../service/app-information.service";
 import {ViewDevicesComponent} from "../view-devices/view-devices.component";
+import {AnimationRotation, AnimationWidgetSpan} from "../material.module";
 
 
 @Component({
@@ -13,16 +13,8 @@ import {ViewDevicesComponent} from "../view-devices/view-devices.component";
   templateUrl: './view-switch-devices-component.html',
   styleUrls: ['./view-switch-devices-component.css'],
   animations: [
-    trigger('detailsFading', [
-      transition('void => *', [
-        style({height: '0'}),
-        animate(150, style({height: '*'}))
-      ]),
-      transition('* => void', [
-        style({height: '*'}),
-        animate(250, style({height: '0'}))
-      ])
-    ])
+    AnimationWidgetSpan,
+    AnimationRotation
   ]
 })
 export class ViewSwitchDevicesComponent implements OnInit {
@@ -69,11 +61,13 @@ export class ViewSwitchDevicesComponent implements OnInit {
       return;
     }
     device.unlocked = false;
+    device.updating = true;
     this.apiDeviceService.deviceSwitch(device.id, !device.on, () => {
       // trigger the device update
       if (this.devicesComponent) {
         window.setTimeout(() => {
           this.devicesComponent.updateDevices();
+          device.updating = false;
         }, 200);
       }
     });

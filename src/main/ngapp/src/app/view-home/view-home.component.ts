@@ -18,7 +18,9 @@ export class ViewHomeComponent implements OnInit {
   ngOnInit() {
     this.apiUserService.getStatus((userStatus) => {
       this.appInfoService.setUserStatus(userStatus);
-      this.pageReady = true;
+      window.setTimeout(() => {
+        this.pageReady = true;
+      }, 500);
     });
   }
 }

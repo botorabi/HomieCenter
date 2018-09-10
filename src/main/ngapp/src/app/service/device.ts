@@ -4,6 +4,9 @@ export class Device {
   id: number;
   ain = "";
   firmware = "";
-  present: boolean;
-  unlocked: boolean;
+  present = false;
+
+  /* Following states are used for UI handling */
+  unlocked = false;
+  updating = false;
 }
