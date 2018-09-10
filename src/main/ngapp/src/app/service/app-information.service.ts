@@ -7,16 +7,18 @@ import {Camera} from "./camera";
 export class AppInformationService {
 
   name: string = "Homie Center";
-  version: string = "0.9.2";
+  version: string = "";
 
   userStatus: UserStatus = null;
   logoutTimeString: string = "";
   logoutTimer: Date;
   selectedCamera: Camera = null;
   switchDeviceCount = 0;
+  heatControllerDeviceCount = 0;
   cameraCount = 0;
   camerasExpanded = true;
-  switchDevicesExpanded = true;
+  devicesSwitchExpanded = true;
+  devicesHeatControllerExpanded = true;
 
   private LogoutTimeoutSec = 30 * 60;
 
@@ -26,6 +28,7 @@ export class AppInformationService {
 
   public setUserStatus(userStatus: UserStatus) {
     this.userStatus = userStatus;
+    this.version = userStatus ? userStatus.appVersion : "";
     this.periodicLogoutTimerUpdate(userStatus);
   }
 
@@ -45,13 +48,17 @@ export class AppInformationService {
     this.switchDeviceCount = count;
   }
 
+  public setHeatControllerDeviceCount(count: number) {
+    this.heatControllerDeviceCount = count;
+  }
+
   public refreshLogoutTimer() {
     this.logoutTimer = new Date();
     this.logoutTimeString = this.formatTime(this.getRemainingTime());
   }
 
   private periodicLogoutTimerUpdate(userStatus: UserStatus) {
-    if (userStatus) {
+    if (userStatus && userStatus.authenticated) {
       window.setTimeout(() => {
         let timeRemaining = this.getRemainingTime();
         if (timeRemaining < 0) {

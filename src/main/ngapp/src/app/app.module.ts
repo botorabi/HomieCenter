@@ -22,13 +22,17 @@ import {ViewUserComponent} from "./view-user/view-user.component";
 import {ViewUserEditComponent} from "./view-user-edit/view-user-edit.component";
 import {AppHttpInterceptorService} from "./service/app-http-interceptor.service";
 import {ViewErrorPageComponent} from "./view-error-page/view-error-page.component";
+import {ViewDevicesComponent} from "./view-devices/view-devices.component";
+import {ViewHeatControllerDevicesComponent} from "./view-heat-controller-devices/view-heat-controller-devices.component";
 
 
 @NgModule({
   declarations: [
     AppComponent,
     ViewAuthenticationComponent,
+    ViewDevicesComponent,
     ViewSwitchDevicesComponent,
+    ViewHeatControllerDevicesComponent,
     ViewCameraComponent,
     ViewCameraDetailsComponent,
     ViewCameraEditComponent,

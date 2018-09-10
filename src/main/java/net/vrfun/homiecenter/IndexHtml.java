@@ -7,15 +7,10 @@
  */
 package net.vrfun.homiecenter;
 
-import org.slf4j.*;
-import org.springframework.core.io.ClassPathResource;
+import net.vrfun.homiecenter.utils.StaticResourceLoader;
 import org.springframework.http.*;
 import org.springframework.stereotype.Controller;
-import org.springframework.util.FileCopyUtils;
 import org.springframework.web.bind.annotation.*;
-
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 
 
 /**
@@ -28,14 +23,12 @@ import java.nio.charset.StandardCharsets;
 @Controller
 public class IndexHtml {
 
-    private final Logger LOGGER = LoggerFactory.getLogger(this.getClass());
-
     private static final String INDEX_HTML_FILE = "static/index.html";
 
     private static String content;
 
     @RequestMapping(value = "/", method = RequestMethod.GET)
-    public ResponseEntity<String> home() throws IOException {
+    public ResponseEntity<String> home() {
         return new ResponseEntity<>(getIndexHtmlContent(), HttpStatus.OK);
     }
 
@@ -43,22 +36,18 @@ public class IndexHtml {
      * Make Angular's router happy.
      */
     @RequestMapping(value = "/nav/**", method = RequestMethod.GET)
-    public ResponseEntity<String> angularPaths() throws IOException {
+    public ResponseEntity<String> angularPaths() {
         return new ResponseEntity<>(getIndexHtmlContent(), HttpStatus.OK);
     }
 
-    private String getIndexHtmlContent() throws IOException {
+    protected String getIndexHtmlContent() {
         if (content != null) {
             return content;
         }
 
-        ClassPathResource resource = new ClassPathResource(INDEX_HTML_FILE);
-        try {
-            content = new String(FileCopyUtils.copyToByteArray(resource.getInputStream()), StandardCharsets.UTF_8);
-        } catch (IOException ex) {
-            LOGGER.error("Could not get static resource index.html");
-            throw ex;
-        }
+        StaticResourceLoader staticResourceLoader = new StaticResourceLoader();
+        content = staticResourceLoader.getTextResource(INDEX_HTML_FILE);
+
         return content;
     }
 }

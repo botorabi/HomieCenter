@@ -7,7 +7,7 @@
  */
 package net.vrfun.homiecenter.fritzbox;
 
-import net.vrfun.homiecenter.model.DeviceInfo;
+import net.vrfun.homiecenter.model.*;
 import org.junit.*;
 import org.junit.runner.RunWith;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -19,9 +19,9 @@ import java.util.*;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @RunWith(SpringRunner.class)
-public class ResponseHandlerSwitchDeviceListTest {
+public class ResponseHandlerDeviceListTest {
 
-    private ResponseHandlerSwitchDeviceList responseHandlerSwitchDeviceList;
+    private ResponseHandlerDeviceList responseHandlerDeviceList;
 
     private static final String XML_INPUT_TWO_DEVICES =
                     "<devicelist version=\"1\">" +
@@ -67,12 +67,12 @@ public class ResponseHandlerSwitchDeviceListTest {
 
     @Before
     public void setup() {
-        responseHandlerSwitchDeviceList = new ResponseHandlerSwitchDeviceList();
+        responseHandlerDeviceList = new ResponseHandlerDeviceList();
     }
 
     private Document createDocument(final String content) {
         try {
-            return responseHandlerSwitchDeviceList.parseResponse(content);
+            return responseHandlerDeviceList.parseResponse(content);
         }
         catch(Throwable throwable) {
         }
@@ -87,41 +87,42 @@ public class ResponseHandlerSwitchDeviceListTest {
 
     @Test
     public void readModel() throws Exception {
-        List<DeviceInfo> deviceInfoList = readInput(false, XML_INPUT_TWO_DEVICES);
+        List<DeviceInfo> switchDeviceInfoList = readInput(false, XML_INPUT_TWO_DEVICES);
 
-        assertThat(deviceInfoList.size()).isEqualTo(2);
+        assertThat(switchDeviceInfoList.size()).isEqualTo(2);
 
-        DeviceInfo deviceInfo1 = deviceInfoList.get(0);
-        assertThat(deviceInfo1.isOn()).isEqualTo(true);
-        assertThat(deviceInfo1.getAIN()).isEqualTo("08761 0475688");
-        assertThat(deviceInfo1.getId()).isEqualTo("16");
-        assertThat(deviceInfo1.getName()).isEqualTo("Küche");
-        assertThat(deviceInfo1.getProductName()).isEqualTo("FRITZ!DECT 200");
-        assertThat(deviceInfo1.getFirmware()).isEqualTo("04.06");
-        assertThat(deviceInfo1.getEnergy()).isEqualTo(20);
-        assertThat(deviceInfo1.getPower()).isEqualTo(10);
-        assertThat(deviceInfo1.getVoltage()).isEqualTo(228956);
-        assertThat(deviceInfo1.getTemperature()).isEqualTo(310);
-        assertThat(deviceInfo1.getTemperatureOffset()).isEqualTo(5);
+        SwitchDeviceInfo switchDeviceInfo1 = (SwitchDeviceInfo)switchDeviceInfoList.get(0);
 
-        DeviceInfo deviceInfo2 = deviceInfoList.get(1);
-        assertThat(deviceInfo2.isOn()).isEqualTo(false);
-        assertThat(deviceInfo2.getAIN()).isEqualTo("08761 0475689");
-        assertThat(deviceInfo2.getId()).isEqualTo("17");
-        assertThat(deviceInfo2.getName()).isEqualTo("FRITZ!DECT 200 #2");
-        assertThat(deviceInfo2.getProductName()).isEqualTo("FRITZ!DECT 200");
-        assertThat(deviceInfo2.getFirmware()).isEqualTo("04.06");
-        assertThat(deviceInfo2.getEnergy()).isEqualTo(200);
-        assertThat(deviceInfo2.getPower()).isEqualTo(100);
-        assertThat(deviceInfo2.getVoltage()).isEqualTo(228956);
-        assertThat(deviceInfo2.getTemperature()).isEqualTo(315);
-        assertThat(deviceInfo2.getTemperatureOffset()).isEqualTo(10);
+        assertThat(switchDeviceInfo1.isOn()).isEqualTo(true);
+        assertThat(switchDeviceInfo1.getAIN()).isEqualTo("08761 0475688");
+        assertThat(switchDeviceInfo1.getId()).isEqualTo("16");
+        assertThat(switchDeviceInfo1.getName()).isEqualTo("Küche");
+        assertThat(switchDeviceInfo1.getProductName()).isEqualTo("FRITZ!DECT 200");
+        assertThat(switchDeviceInfo1.getFirmware()).isEqualTo("04.06");
+        assertThat(switchDeviceInfo1.getEnergy()).isEqualTo(20);
+        assertThat(switchDeviceInfo1.getPower()).isEqualTo(10);
+        assertThat(switchDeviceInfo1.getVoltage()).isEqualTo(228956);
+        assertThat(switchDeviceInfo1.getTemperature()).isEqualTo(310);
+        assertThat(switchDeviceInfo1.getTemperatureOffset()).isEqualTo(5);
+
+        SwitchDeviceInfo switchDeviceInfo2 = (SwitchDeviceInfo)switchDeviceInfoList.get(1);
+        assertThat(switchDeviceInfo2.isOn()).isEqualTo(false);
+        assertThat(switchDeviceInfo2.getAIN()).isEqualTo("08761 0475689");
+        assertThat(switchDeviceInfo2.getId()).isEqualTo("17");
+        assertThat(switchDeviceInfo2.getName()).isEqualTo("FRITZ!DECT 200 #2");
+        assertThat(switchDeviceInfo2.getProductName()).isEqualTo("FRITZ!DECT 200");
+        assertThat(switchDeviceInfo2.getFirmware()).isEqualTo("04.06");
+        assertThat(switchDeviceInfo2.getEnergy()).isEqualTo(200);
+        assertThat(switchDeviceInfo2.getPower()).isEqualTo(100);
+        assertThat(switchDeviceInfo2.getVoltage()).isEqualTo(228956);
+        assertThat(switchDeviceInfo2.getTemperature()).isEqualTo(315);
+        assertThat(switchDeviceInfo2.getTemperatureOffset()).isEqualTo(10);
     }
 
     private List<DeviceInfo> readInput(final boolean caseSensitive, @NotNull final String inputString) throws Exception {
         List<DeviceInfo> deviceInfoList = new ArrayList<>();
-        responseHandlerSwitchDeviceList.setUseCaseSensitiveNames(caseSensitive);
-        responseHandlerSwitchDeviceList.read(inputString, deviceInfoList);
+        responseHandlerDeviceList.setUseCaseSensitiveNames(caseSensitive);
+        responseHandlerDeviceList.read(inputString, deviceInfoList);
         return deviceInfoList;
     }
 }

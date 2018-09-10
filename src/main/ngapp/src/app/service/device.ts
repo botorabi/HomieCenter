@@ -1,15 +1,12 @@
 export class Device {
+  deviceType = "";
   name = "";
   id: number;
   ain = "";
   firmware = "";
-  present: boolean;
-  on: boolean;
-  voltage: number;
-  power: number;
-  energy: number;
-  temperature: number;
-  temperatureOffset: number;
+  present = false;
 
-  unlocked: boolean;
+  /* Following states are used for UI handling */
+  unlocked = false;
+  updating = false;
 }

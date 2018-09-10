@@ -19,21 +19,35 @@ import javax.validation.constraints.NotNull;
  */
 public class RespUserStatus {
 
+    private String appVersion;
+
     private String name;
 
     private boolean authenticated;
 
     private String role;
 
-    public RespUserStatus() {
+    public RespUserStatus(@NotNull final String appVersion) {
+        this.appVersion = appVersion;
     }
 
-    public RespUserStatus(@NotNull final String name,
+    public RespUserStatus(@NotNull final String appVersion,
+                          @NotNull final String name,
                           boolean authenticated,
                           @NotNull final String role) {
+        this.appVersion = appVersion;
         this.name = name;
         this.authenticated = authenticated;
         this.role = role;
+    }
+
+    public String getAppVersion() {
+        return appVersion;
+    }
+
+    @JsonProperty("appVersion")
+    public void setAppVersion(String appVersion) {
+        this.appVersion = appVersion;
     }
 
     public String getName() {

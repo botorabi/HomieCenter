@@ -7,17 +7,10 @@
  */
 package net.vrfun.homiecenter.fritzbox;
 
-import net.vrfun.homiecenter.model.DeviceInfo;
-import net.vrfun.homiecenter.utils.HashGenerator;
 import org.junit.*;
 import org.junit.runner.RunWith;
 import org.mockito.*;
-import org.springframework.http.*;
 import org.springframework.test.context.junit4.SpringRunner;
-
-import javax.validation.constraints.NotNull;
-
-import java.util.List;
 
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -32,7 +25,7 @@ public class FRITZBoxTest {
     private FritzBoxAuthentication fritzBoxAuthentication;
 
     @Mock
-    private ResponseHandlerSwitchDeviceList responseHandlerSwitchDeviceList;
+    private ResponseHandlerDeviceList responseHandlerDeviceList;
 
     @Mock
     private Requests requests;
@@ -45,7 +38,7 @@ public class FRITZBoxTest {
         fritzBox
                 .withRequests(requests)
                 .withFritzBoxAuthentication(fritzBoxAuthentication)
-                .withResponseHandlerSwitchDeviceList(responseHandlerSwitchDeviceList);
+                .withResponseHandlerSwitchDeviceList(responseHandlerDeviceList);
     }
 
     @Test

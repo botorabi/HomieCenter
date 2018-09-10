@@ -18,7 +18,6 @@ import org.springframework.stereotype.Component;
  * @author          boto
  * Creation Date    25th June 2018
  */
-
 @Component
 public class GatewayRoutesRefresher implements ApplicationEventPublisherAware {
 

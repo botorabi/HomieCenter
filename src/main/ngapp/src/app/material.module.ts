@@ -21,6 +21,7 @@ import {
 } from "@angular/material";
 import {ReactiveFormsModule} from "@angular/forms";
 import {BrowserAnimationsModule} from "@angular/platform-browser/animations";
+import {animate, state, style, transition, trigger} from "@angular/animations";
 
 const modules = [
   MatButtonModule,
@@ -50,3 +51,28 @@ const modules = [
   exports: [modules]
 })
 export class MaterialModule { }
+
+export const AnimationRotation = trigger(
+  'iconRotation',
+  [
+    transition('void => *', [
+      style({transform: 'rotate(-3600deg)'}),
+      animate('17500ms ease-out')
+    ]),
+    transition('* => void', animate('1ms ease-in'))
+  ]
+);
+
+export const AnimationWidgetSpan = trigger(
+  'widgetSpan',
+  [
+    transition('void => *', [
+      style({height: '0'}),
+      animate(150, style({height: '*'}))
+    ]),
+    transition('* => void', [
+      style({height: '*'}),
+      animate(250, style({height: '0'}))
+    ])
+  ]
+);

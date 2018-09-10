@@ -1,0 +1,38 @@
+@import "../view-devices/view-devices.component.css";
+
+.battery {
+  float: right;
+  vertical-align: sub;
+}
+.battery-ok {
+}
+.battery-middle {
+  color: #4d8000;
+}
+.battery-low {
+  color: #ff6e00;
+}
+.battery-alert {
+  color: red;
+}
+.updating-icon {
+  float: left;
+}
+.updating-text {
+  height: 1.8em;
+}
+.temperature-btn {
+  vertical-align: sub;
+  cursor: pointer;
+}
+.temperature-header {
+  text-align: left !important;
+}
+.window-open {
+  text-align: left !important;
+}
+.error-code {
+  color: red;
+  float: right;
+  vertical-align: sub;
+}

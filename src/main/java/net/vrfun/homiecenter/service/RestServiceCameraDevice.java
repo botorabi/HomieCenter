@@ -48,7 +48,7 @@ public class RestServiceCameraDevice {
         this.accessUtils = accessUtils;
     }
 
-    @GetMapping("/api/cameradevice")
+    @GetMapping("/api/camera")
     public ResponseEntity<List<CameraInfo>> getCameras(Authentication authentication) {
         List<CameraInfo> cameras = new ArrayList<>();
         cameraInfoRepository.findAll().forEach(camera -> {
@@ -91,7 +91,7 @@ public class RestServiceCameraDevice {
     /**
      * Access is restricted to admin user.
      */
-    @PostMapping("/api/cameradevice/create")
+    @PostMapping("/api/camera/create")
     public ResponseEntity<CameraInfo> createCamera(@RequestBody CameraInfo reqCreateCamera, Authentication authentication) {
         if (!accessUtils.requestingUserIsAdmin(authentication)) {
             return new ResponseEntity<>(HttpStatus.FORBIDDEN);
@@ -109,7 +109,7 @@ public class RestServiceCameraDevice {
     /**
      * Access is restricted to admin user.
      */
-    @PutMapping("/api/cameradevice/update")
+    @PutMapping("/api/camera/update")
     public ResponseEntity<CameraInfo> updateCamera(@RequestBody CameraInfo reqCreateCamera, Authentication authentication) {
         if (!accessUtils.requestingUserIsAdmin(authentication)) {
             return new ResponseEntity<>(HttpStatus.FORBIDDEN);
@@ -149,7 +149,7 @@ public class RestServiceCameraDevice {
     /**
      * Access is restricted to admin user.
      */
-    @PostMapping("/api/cameradevice/delete/{id}")
+    @PostMapping("/api/camera/delete/{id}")
     public ResponseEntity<Void> deleteCamera(@PathVariable Long id, Authentication authentication) {
         if (!accessUtils.requestingUserIsAdmin(authentication)) {
             return new ResponseEntity<>(HttpStatus.FORBIDDEN);

@@ -9,7 +9,7 @@ package net.vrfun.homiecenter.fritzbox;
 
 
 import net.vrfun.homiecenter.ApplicationProperties;
-import net.vrfun.homiecenter.model.DeviceInfo;
+import net.vrfun.homiecenter.model.*;
 import org.slf4j.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.*;
@@ -37,7 +37,7 @@ public class FRITZBox {
     private final Logger LOGGER = LoggerFactory.getLogger(FRITZBox.class);
 
     private FritzBoxAuthentication fritzBoxAuthentication;
-    private ResponseHandlerSwitchDeviceList handlerDeviceList ;
+    private ResponseHandlerDeviceList handlerDeviceList ;
     private Requests requests;
 
     @Autowired
@@ -52,7 +52,7 @@ public class FRITZBox {
     public FRITZBox fritzBox() {
         FRITZBox fritzBox = new FRITZBox();
         fritzBox.fritzBoxAuthentication = new FritzBoxAuthentication(getFritzBoxURL());
-        fritzBox.handlerDeviceList = new ResponseHandlerSwitchDeviceList();
+        fritzBox.handlerDeviceList = new ResponseHandlerDeviceList();
         fritzBox.requests = new Requests();
 
         LOGGER.info("Using FRITZ!Box URL: {}", getFritzBoxURL());
@@ -73,8 +73,8 @@ public class FRITZBox {
     }
 
     @NotNull
-    public FRITZBox withResponseHandlerSwitchDeviceList(@NotNull ResponseHandlerSwitchDeviceList responseHandlerSwitchDeviceList) {
-        this.handlerDeviceList = responseHandlerSwitchDeviceList;
+    public FRITZBox withResponseHandlerSwitchDeviceList(@NotNull ResponseHandlerDeviceList responseHandlerDeviceList) {
+        this.handlerDeviceList = responseHandlerDeviceList;
         return this;
     }
 
@@ -154,38 +154,89 @@ public class FRITZBox {
     }
 
     public void handleDeviceCommand(long deviceId, @NotNull final String command) throws Exception {
-        switch(command) {
-            case "on":
-                switchDevice(deviceId, true);
-                break;
-            case "off":
-                switchDevice(deviceId, false);
-                break;
-            default:
+        final String CMD_TEMPERATURE = "temperature=";
+        final String CMD_ON = "on";
+        final String CMD_OFF = "off";
+
+        if (command.startsWith(CMD_TEMPERATURE)) {
+            final String temperature = command.substring(CMD_TEMPERATURE.length());
+            if (temperature.isEmpty()) {
                 throw new Exception("Unsupported command: " + command);
+            }
+            try {
+                final int desiredTemperature = Integer.parseInt(temperature);
+                heatControlDeviceSetTemperature(deviceId, desiredTemperature);
+            }
+            catch(NumberFormatException exception) {
+                throw new Exception("Invalid temperature in command: " + command);
+            }
+        }
+        else {
+            switch (command) {
+                case CMD_ON:
+                    switchDevice(deviceId, true);
+                    break;
+                case CMD_OFF:
+                    switchDevice(deviceId, false);
+                    break;
+                default:
+                    throw new Exception("Unsupported command: " + command);
+            }
         }
     }
 
-    protected void switchDevice(Long deviceId, boolean on) throws Exception {
+    protected void heatControlDeviceSetTemperature(long deviceId, int desiredTemperature) throws Exception {
         AuthStatus authStatus = loginIfNeeded();
         DeviceInfo device = getDevice(deviceId);
-
-        if (device == null) {
-            throw new Exception("Invalid ID: " + deviceId);
+        if (!(device instanceof HeatControllerDeviceInfo)) {
+            throw new Exception("Could not set temperature (" + device.getAIN() + "), this is not a heat controller device!");
         }
 
-        if (!device.isPresent()) {
-            LOGGER.debug("ignoring switch command for device ({}), it is not present!", device.getAIN());
-            return;
-        }
+        HeatControllerDeviceInfo heatControllerDeviceInfo = (HeatControllerDeviceInfo)device;
 
-        if (device.isOn() == on) {
-            LOGGER.debug("ignoring switch command for device ({}), it is already {}!", device.getAIN(), (on ? "on": "off"));
+        if (!heatControllerDeviceInfo.isPresent()) {
+            LOGGER.debug("ignoring set temperature command for device ({}), it is not present!", heatControllerDeviceInfo.getAIN());
             return;
         }
 
         Map<String, String> parameters = new HashMap<>();
-        parameters.put("ain", device.getAIN());
+        parameters.put("ain", heatControllerDeviceInfo.getAIN());
+        parameters.put("switchcmd", "sethkrtsoll");
+        parameters.put("param", "" + desiredTemperature);
+
+        ResponseEntity<String> response = requestHttpGET(
+                authStatus.getSID(),
+                "webservices/homeautoswitch.lua",
+                parameters);
+
+        if (response.getStatusCode() != HttpStatus.OK) {
+            throw new Exception("Could not set temperature for the device (" + heatControllerDeviceInfo.getAIN() + ")!");
+        }
+
+        LOGGER.debug("device ({}) successfully set temperature {}", heatControllerDeviceInfo.getAIN(), desiredTemperature);
+    }
+
+    protected void switchDevice(long deviceId, boolean on) throws Exception {
+        AuthStatus authStatus = loginIfNeeded();
+        DeviceInfo device = getDevice(deviceId);
+        if (!(device instanceof SwitchDeviceInfo)) {
+            throw new Exception("Could not switch the device (" + device.getAIN() + "), this is not a switch-device!");
+        }
+
+        SwitchDeviceInfo switchDeviceInfo = (SwitchDeviceInfo)device;
+
+        if (!switchDeviceInfo.isPresent()) {
+            LOGGER.debug("ignoring switch command for device ({}), it is not present!", switchDeviceInfo.getAIN());
+            return;
+        }
+
+        if (switchDeviceInfo.isOn() == on) {
+            LOGGER.debug("ignoring switch command for device ({}), it is already {}!", switchDeviceInfo.getAIN(), (on ? "on": "off"));
+            return;
+        }
+
+        Map<String, String> parameters = new HashMap<>();
+        parameters.put("ain", switchDeviceInfo.getAIN());
         parameters.put("switchcmd", "setswitch" + (on ? "on" : "off"));
 
         ResponseEntity<String> response = requestHttpGET(
@@ -194,10 +245,10 @@ public class FRITZBox {
                 parameters);
 
         if (response.getStatusCode() != HttpStatus.OK) {
-            throw new Exception("Could not switch the device (" + device.getAIN() + ")!");
+            throw new Exception("Could not switch the device (" + switchDeviceInfo.getAIN() + ")!");
         }
 
-        LOGGER.debug("device ({}) successfully switched {}", device.getAIN(), (on ? "on": "off"));
+        LOGGER.debug("device ({}) successfully switched {}", switchDeviceInfo.getAIN(), (on ? "on": "off"));
     }
 
     @NotNull
