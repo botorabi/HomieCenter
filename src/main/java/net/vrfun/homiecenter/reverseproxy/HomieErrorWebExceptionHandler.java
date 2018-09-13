@@ -12,8 +12,10 @@ import org.springframework.boot.autoconfigure.web.ResourceProperties;
 import org.springframework.boot.autoconfigure.web.reactive.error.AbstractErrorWebExceptionHandler;
 import org.springframework.boot.web.reactive.error.ErrorAttributes;
 import org.springframework.context.ApplicationContext;
-import org.springframework.core.io.buffer.*;
-import org.springframework.http.MediaType;
+import org.springframework.context.annotation.Bean;
+import org.springframework.core.annotation.Order;
+import org.springframework.core.io.buffer.DataBuffer;
+import org.springframework.http.*;
 import org.springframework.http.server.reactive.ServerHttpResponse;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.server.*;
@@ -29,6 +31,7 @@ import java.nio.charset.StandardCharsets;
  * @author          boto
  * Creation Date    5th September 2018
  */
+
 @Component
 public class HomieErrorWebExceptionHandler extends AbstractErrorWebExceptionHandler {
 
@@ -37,6 +40,16 @@ public class HomieErrorWebExceptionHandler extends AbstractErrorWebExceptionHand
     private static final String IMAGE_FILE = "static/assets/link_off.svg";
 
     private static String errorResponse;
+
+    @Bean
+    @Order(-1)
+    public HomieErrorWebExceptionHandler createHomieErrorWebExceptionHandler(
+            ErrorAttributes errorAttributes,
+            ResourceProperties resourceProperties,
+            ApplicationContext applicationContext) {
+
+        return new HomieErrorWebExceptionHandler(errorAttributes, resourceProperties, applicationContext);
+    }
 
     public HomieErrorWebExceptionHandler(ErrorAttributes errorAttributes,
                                          ResourceProperties resourceProperties,
@@ -59,19 +72,32 @@ public class HomieErrorWebExceptionHandler extends AbstractErrorWebExceptionHand
         final ServerHttpResponse response = exchange.getResponse();
         final String path = exchange.getRequest().getPath().value();
 
-        if (path.startsWith(CameraProxyRoutes.getProxyPath())) {
+        response.setStatusCode(HttpStatus.NOT_FOUND);
+        response.getHeaders().setContentType(MediaType.TEXT_HTML);
 
-            response.getHeaders().setContentType(MediaType.TEXT_HTML);
-            DataBufferFactory factory = response.bufferFactory();
-            DataBuffer dataBuffer = factory.allocateBuffer().write(createPage());
+        byte[] content = path.startsWith(CameraProxyRoutes.getProxyPath()) ?
+                createMissingCameraPage() : createMissingResource(path);
 
-            return response.writeWith(Mono.just(dataBuffer));
-        }
+        DataBuffer dataBuffer = response.bufferFactory().allocateBuffer().write(content);
 
-        return response.setComplete();
+        return response.writeWith(Mono.just(dataBuffer));
     }
 
-    protected byte[] createPage() {
+    protected byte[] createMissingResource(@NotNull final String url) {
+        String content =
+                "<!doctype html>\n<html lang=\"en\">\n<head>\n</head>\n" +
+                        "<body>\n" + getMissingResourceHint(url) + "</body>\n</html>";
+
+        return content.getBytes(StandardCharsets.UTF_8);
+    }
+
+    protected String getMissingResourceHint(@NotNull final String resourceUrl) {
+        String hint = "<p>Requested resource with URL <i>" + resourceUrl + "</i> does not exist!</p>";
+        hint += "<p><a href='/'>Return to main page.</a></p>";
+        return hint;
+    }
+
+    protected byte[] createMissingCameraPage() {
         String content =
                 "<!doctype html>\n<html lang=\"en\">\n<head>\n</head>\n" +
                         "<body>\n" + getResourceImage() + "</body>\n</html>";

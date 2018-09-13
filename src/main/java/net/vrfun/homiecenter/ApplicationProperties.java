@@ -7,7 +7,6 @@
  */
 package net.vrfun.homiecenter;
 
-import org.slf4j.*;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.*;
 import org.springframework.stereotype.Service;
@@ -16,8 +15,6 @@ import org.springframework.stereotype.Service;
 @Service
 @PropertySource("file:homiecenter.properties")
 public class ApplicationProperties {
-
-    private final Logger LOGGER = LoggerFactory.getLogger(this.getClass());
 
     @Value("${build.version}")
     private String appVersion;

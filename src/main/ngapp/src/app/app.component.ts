@@ -86,8 +86,9 @@ export class AppComponent implements OnInit {
   }
 
   onLogout() {
-    this.apiUserService.logout(null);
-    window.location.href = '/';
+    this.apiUserService.logout(() => {
+      window.location.href = '/';
+    });
   }
 
   onCreateCamera() {

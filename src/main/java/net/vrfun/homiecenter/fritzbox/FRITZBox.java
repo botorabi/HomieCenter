@@ -73,8 +73,14 @@ public class FRITZBox {
     }
 
     @NotNull
-    public FRITZBox withResponseHandlerSwitchDeviceList(@NotNull ResponseHandlerDeviceList responseHandlerDeviceList) {
+    public FRITZBox withResponseHandlerDeviceList(@NotNull ResponseHandlerDeviceList responseHandlerDeviceList) {
         this.handlerDeviceList = responseHandlerDeviceList;
+        return this;
+    }
+
+    @NotNull
+    public FRITZBox withApplicationProperties(ApplicationProperties applicationProperties) {
+        this.applicationProperties = applicationProperties;
         return this;
     }
 
@@ -137,7 +143,10 @@ public class FRITZBox {
                 parameters);
 
         List<DeviceInfo> devices = new ArrayList<>();
-        handlerDeviceList.read(response.getBody(), devices);
+
+        if (response.getStatusCode() == HttpStatus.OK) {
+            handlerDeviceList.read(response.getBody(), devices);
+        }
 
         return devices;
     }

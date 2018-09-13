@@ -13,7 +13,7 @@ import org.slf4j.*;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.core.io.*;
-import org.springframework.http.HttpMethod;
+import org.springframework.http.*;
 import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity;
 import org.springframework.security.config.web.server.ServerHttpSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -22,6 +22,7 @@ import org.springframework.security.web.server.SecurityWebFilterChain;
 import org.springframework.security.web.server.header.XFrameOptionsServerHttpHeadersWriter;
 import org.springframework.security.web.server.util.matcher.ServerWebExchangeMatchers;
 import org.springframework.web.reactive.function.server.*;
+import reactor.core.publisher.Mono;
 
 import java.io.File;
 
@@ -91,6 +92,11 @@ public class WebSecurityConfig {
                     .requiresAuthenticationMatcher(ServerWebExchangeMatchers.pathMatchers(HttpMethod.POST, "/login"))
                 .and()
                 .logout()
+                    .logoutUrl("/logout")
+                    .logoutSuccessHandler((exchange, authentication) -> {
+                        exchange.getExchange().getResponse().setStatusCode(HttpStatus.OK);
+                        return Mono.empty();
+                    })
                 .and()
                 .build();
     }

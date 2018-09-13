@@ -63,7 +63,7 @@ export class AppInformationService {
         let timeRemaining = this.getRemainingTime();
         if (timeRemaining < 0) {
           this.apiUserService.logout(null);
-          window.location.href = "/";
+          window.location.href = '';
         }
         else {
           this.logoutTimeString = this.formatTime(timeRemaining);
