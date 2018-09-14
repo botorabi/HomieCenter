@@ -196,7 +196,7 @@ public class FRITZBoxTest {
         doAnswer((invocation) -> {
 
             String url = invocation.getArgument(0);
-            Map<String, String> urlParams = (HashMap<String, String>)invocation.getArgument(1);
+            Map<String, String> urlParams = invocation.getArgument(1);
 
             assertThat(url).isEqualTo(FRITZBOX_URL + "/" + RELATIVE_URL);
             assertThat(urlParams).containsKey("sid");

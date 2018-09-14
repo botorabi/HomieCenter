@@ -1,7 +1,8 @@
 @import "../view-devices/view-devices.component.css";
 
 .battery {
-  float: right;
+  position: absolute;
+  right: 1em;
   vertical-align: sub;
 }
 .battery-ok {

@@ -111,7 +111,7 @@ public class HomieErrorWebExceptionHandler extends AbstractErrorWebExceptionHand
         }
 
         StaticResourceLoader staticResourceLoader = new StaticResourceLoader();
-        byte[] image = staticResourceLoader.getBinaryResource(IMAGE_FILE);
+        final byte[] image = staticResourceLoader.getBinaryResource(IMAGE_FILE);
 
         errorResponse = (image != null) ? createImageElement(image) : ERROR_TEXT;
 

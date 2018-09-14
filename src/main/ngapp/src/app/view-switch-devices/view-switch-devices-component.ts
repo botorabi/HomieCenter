@@ -6,6 +6,8 @@ import {DeviceSwitch} from "../service/device-switch";
 import {AppInformationService} from "../service/app-information.service";
 import {ViewDevicesComponent} from "../view-devices/view-devices.component";
 import {AnimationRotation, AnimationWidgetSpan} from "../material.module";
+import {MatDialog} from "@angular/material";
+import {DialogTwoButtonsComponent} from "../dialog-two-buttons/dialog-two-buttons.component";
 
 
 @Component({
@@ -27,7 +29,8 @@ export class ViewSwitchDevicesComponent implements OnInit {
   private deviceWidgetUpdater: SwitchWidgetUpdater;
 
   constructor(private apiDeviceService: ApiDeviceService,
-              private appInfoService: AppInformationService) {
+              private appInfoService: AppInformationService,
+              private dialog: MatDialog) {
 
     this.deviceWidgetUpdater = new SwitchWidgetUpdater(this.devices);
   }
@@ -57,10 +60,26 @@ export class ViewSwitchDevicesComponent implements OnInit {
   }
 
   public onToggleState(device: DeviceSwitch) : void {
-    if (!device.present || !device.unlocked) {
-      return;
+    if (device.present) {
+      this.openDialogConfirmSwitching(device);
     }
-    device.unlocked = false;
+  }
+
+  private openDialogConfirmSwitching(device: DeviceSwitch) : void {
+    const dialogRef = this.dialog.open(DialogTwoButtonsComponent);
+    let dialog = dialogRef.componentInstance;
+    dialog.setTitle('Turn On/Off ' + device.name);
+    dialog.setContent('Do you want to turn ' + (device.on ? 'off ': 'on ') + device.name + '?');
+    dialog.setButton1Text("No");
+    dialog.setButton2Text("Yes");
+    dialogRef.afterClosed().subscribe(result => {
+      if (result === "Yes") {
+        this.toggleSwitch(device);
+      }
+    });
+  }
+
+  private toggleSwitch(device: DeviceSwitch) {
     device.updating = true;
     this.apiDeviceService.deviceSwitch(device.id, !device.on, () => {
       // trigger the device update
@@ -73,10 +92,6 @@ export class ViewSwitchDevicesComponent implements OnInit {
     });
   }
 
-  public onToggleLock(device: Device) : void {
-    device.unlocked = !device.unlocked;
-  }
-
   public getTrimmedDeviceName(device: Device) : string {
     let name = device.name;
     return name.length > 12 ? (name.substr(0, 11) + '...') : name;
@@ -87,11 +102,10 @@ export class ViewSwitchDevicesComponent implements OnInit {
       return 'Device Not Available!';
     }
 
-    let summary = '';
+    let summary = this.getTemperature(device) + '°C';
     if (device.on) {
-      summary += this.getPower(device) + ' Watt / ';
+      summary += ' / ' + this.getPower(device) + ' Watt';
     }
-    summary += this.getTemperature(device) + '°C';
     return summary;
   }
 

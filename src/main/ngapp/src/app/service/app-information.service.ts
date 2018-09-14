@@ -9,6 +9,9 @@ export class AppInformationService {
   name: string = "Homie Center";
   version: string = "";
 
+  deviceInfoReady = false;
+  cameraInfoReady = false;
+
   userStatus: UserStatus = null;
   logoutTimeString: string = "";
   logoutTimer: Date;
@@ -26,7 +29,19 @@ export class AppInformationService {
     this.refreshLogoutTimer();
   }
 
-  public setUserStatus(userStatus: UserStatus) {
+  public setDeviceInfoReady(ready: boolean) : void {
+    this.deviceInfoReady = ready;
+  }
+
+  public setCameraInfoReady(ready: boolean) : void {
+    this.cameraInfoReady = ready;
+  }
+
+  public isAppInitialized() : boolean {
+    return this.deviceInfoReady && this.cameraInfoReady;
+  }
+
+  public setUserStatus(userStatus: UserStatus) : void {
     this.userStatus = userStatus;
     this.version = userStatus ? userStatus.appVersion : "";
     this.periodicLogoutTimerUpdate(userStatus);
@@ -36,28 +51,28 @@ export class AppInformationService {
     return this.userStatus && this.userStatus.authenticated;
   }
 
-  public setSelectedCamera(camera: Camera) {
+  public setSelectedCamera(camera: Camera) : void {
     this.selectedCamera = camera;
   }
 
-  public setCameraCount(count: number) {
+  public setCameraCount(count: number) : void {
     this.cameraCount = count;
   }
 
-  public setSwitchDeviceCount(count: number) {
+  public setSwitchDeviceCount(count: number) : void {
     this.switchDeviceCount = count;
   }
 
-  public setHeatControllerDeviceCount(count: number) {
+  public setHeatControllerDeviceCount(count: number) : void {
     this.heatControllerDeviceCount = count;
   }
 
-  public refreshLogoutTimer() {
+  public refreshLogoutTimer() : void {
     this.logoutTimer = new Date();
     this.logoutTimeString = this.formatTime(this.getRemainingTime());
   }
 
-  private periodicLogoutTimerUpdate(userStatus: UserStatus) {
+  private periodicLogoutTimerUpdate(userStatus: UserStatus) : void {
     if (userStatus && userStatus.authenticated) {
       window.setTimeout(() => {
         let timeRemaining = this.getRemainingTime();

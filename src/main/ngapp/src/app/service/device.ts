@@ -7,6 +7,5 @@ export class Device {
   present = false;
 
   /* Following states are used for UI handling */
-  unlocked = false;
   updating = false;
 }

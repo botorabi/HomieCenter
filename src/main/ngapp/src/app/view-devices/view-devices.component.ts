@@ -53,6 +53,7 @@ export class ViewDevicesComponent implements OnInit {
         this.updateSwitchDevices(devices);
         this.updateHeatControllerDevices(devices);
       }
+      this.appInfoService.setDeviceInfoReady(true);
     });
   }
 

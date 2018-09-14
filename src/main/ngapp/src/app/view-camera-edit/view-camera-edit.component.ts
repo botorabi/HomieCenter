@@ -3,6 +3,8 @@ import {Router} from "@angular/router";
 import {ApiDeviceService} from "../service/api-device.service";
 import {Camera} from "../service/camera";
 import {AppInformationService} from "../service/app-information.service";
+import {DialogTwoButtonsComponent} from "../dialog-two-buttons/dialog-two-buttons.component";
+import {MatDialog} from "@angular/material";
 
 @Component({
   selector: 'app-view-camera-edit',
@@ -16,7 +18,8 @@ export class ViewCameraEditComponent implements OnInit {
 
   constructor(private router: Router,
               private appInfoService: AppInformationService,
-              private apiDeviceService: ApiDeviceService) {
+              private apiDeviceService: ApiDeviceService,
+              private dialog: MatDialog) {
   }
 
   ngOnInit() {
@@ -29,7 +32,7 @@ export class ViewCameraEditComponent implements OnInit {
     this.appInfoService.refreshLogoutTimer();
   }
 
-  onApply() {
+  public onApply() {
     this.apiDeviceService.cameraCreateOrUpdate(this.camera,(camera: Camera, error: string) => {
       if (error) {
         this.error = error;
@@ -39,8 +42,26 @@ export class ViewCameraEditComponent implements OnInit {
       });
   }
 
-  onDelete() {
-    this.apiDeviceService.cameraDelete(this.camera, (success: boolean) => {
+  public onDelete() {
+    this.openDialogConfirmDeletion(this.camera);
+  }
+
+  private openDialogConfirmDeletion(camera: Camera) : void {
+    const dialogRef = this.dialog.open(DialogTwoButtonsComponent);
+    let dialog = dialogRef.componentInstance;
+    dialog.setTitle('Delete ' + camera.name);
+    dialog.setContent('Do you really want to delete the camera?');
+    dialog.setButton1Text("No");
+    dialog.setButton2Text("Yes");
+    dialogRef.afterClosed().subscribe(result => {
+      if (result === "Yes") {
+        this.deleteCamera(camera);
+      }
+    });
+  }
+
+  private deleteCamera(camera: Camera) {
+    this.apiDeviceService.cameraDelete(camera, (success: boolean) => {
       if (!success) {
         this.error = "Could not delete Camera!";
       }

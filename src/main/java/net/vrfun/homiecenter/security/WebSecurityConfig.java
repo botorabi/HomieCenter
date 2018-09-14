@@ -12,6 +12,7 @@ import net.vrfun.homiecenter.reverseproxy.CameraProxyRoutes;
 import org.slf4j.*;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
+import org.springframework.core.annotation.Order;
 import org.springframework.core.io.*;
 import org.springframework.http.*;
 import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity;
@@ -56,19 +57,16 @@ public class WebSecurityConfig {
     }
 
     /**
-     * Reactive web needs the static path explicitly.
+     * Reactive web seems to need the static path explicitly.
      * In addition we provide a filesystem resource folder during development, it eases the work with Angular.
      */
     @Bean
     public RouterFunction<ServerResponse> staticResourceRouter(){
         if (developmentModeEnabled && useFileSystemResources) {
-
-            //! TODO: Check this! Some resource caching mechanism seems to prevent us from proper file system serving!
-
             File file = new File("");
-            String resourceFolder = "file:" + file.getAbsolutePath() + "/src/main/resources/static/";
+            String resourceFolder = file.getAbsolutePath() + "/src/main/resources/static/";
             LOGGER.info("Dev run: using filesystem resource folder: {}", resourceFolder);
-            return RouterFunctions.resources("/*", new FileSystemResource(resourceFolder));
+            return RouterFunctions.resources("/**", new FileSystemResource(resourceFolder));
         }
 
         return RouterFunctions.resources("/*", new ClassPathResource("static/"));

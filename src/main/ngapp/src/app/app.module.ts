@@ -24,6 +24,7 @@ import {AppHttpInterceptorService} from "./service/app-http-interceptor.service"
 import {ViewErrorPageComponent} from "./view-error-page/view-error-page.component";
 import {ViewDevicesComponent} from "./view-devices/view-devices.component";
 import {ViewHeatControllerDevicesComponent} from "./view-heat-controller-devices/view-heat-controller-devices.component";
+import {DialogTwoButtonsComponent} from "./dialog-two-buttons/dialog-two-buttons.component";
 
 
 @NgModule({
@@ -41,7 +42,11 @@ import {ViewHeatControllerDevicesComponent} from "./view-heat-controller-devices
     ViewAboutComponent,
     ViewHomeComponent,
     ViewErrorPageComponent,
+    DialogTwoButtonsComponent,
     SafePipe
+  ],
+  entryComponents: [
+    DialogTwoButtonsComponent
   ],
   imports: [
     RouterModule.forRoot(appRoutes, {onSameUrlNavigation:"reload"}),
