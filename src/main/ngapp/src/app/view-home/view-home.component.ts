@@ -9,8 +9,6 @@ import {ApiUserService} from "../service/api-user.service";
 })
 export class ViewHomeComponent implements OnInit {
 
-  pageReady = false;
-
   constructor(public appInfoService: AppInformationService,
               private apiUserService: ApiUserService) {
   }
@@ -18,9 +16,6 @@ export class ViewHomeComponent implements OnInit {
   ngOnInit() {
     this.apiUserService.getStatus((userStatus) => {
       this.appInfoService.setUserStatus(userStatus);
-      window.setTimeout(() => {
-        this.pageReady = true;
-      }, 500);
     });
   }
 }

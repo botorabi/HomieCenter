@@ -24,7 +24,9 @@ On a fresh clone of the repository use the script **ngapp-setup.sh** for install
 The Maven rule for packaging (mvn package) will build the entire web application along the Spring Boot and Angular projects. During the development you may want to 
 also use the following scripts:
 
-Use the **ngapp-dev-serve.sh** to start the Angular development web server. Finally, use the **ngapp-build.sh** to build the Angular project for production.
+Use the **ngapp-build-dev.sh** for building the Angular project during development. Finally, use the **ngapp-build.sh** to build the Angular project for production.
+
+Use the script **distribute-package.sh** in directory distribution in order to build the application and create a complete package ready for distribution.
 
 
 # Running the Web Application
@@ -35,4 +37,23 @@ As expected from a Spring Boot application, running it is as simple as issuing t
 
 
 The application settings such as a custom FRITZ!Box URL can be set in file 'homiecenter.properties' which must be located in the execution directory.
+
+
+# Screenshots
+
+Here are a few screenshots showing Homie Center's user interface.
+
+**An earlier version of the UI.**
+
+![Screenshot 1](https://user-images.githubusercontent.com/11502867/45612070-0946db00-ba62-11e8-98f4-774b60e96581.png)
+
+
+**New version of the UI showing the support for Heat Controller**
+
+![Screenshot 2](https://user-images.githubusercontent.com/11502867/45612071-0946db00-ba62-11e8-9e41-2ad34bbe0ac7.png)
+
+
+**A piece of mobile view**
+
+![Screenshot 3](https://user-images.githubusercontent.com/11502867/45612072-0946db00-ba62-11e8-8199-31377908f522.png)
 

@@ -2,17 +2,18 @@
 
 .device-state-switch-on {
   color: gold;
-  float: right;
-  vertical-align: sub;
 }
 .device-state-switch-off {
   color: grey;
-  float: right;
+}
+.switch-state-icons {
+  position: absolute;
+  right: 2em;
+  cursor: pointer;
   vertical-align: sub;
 }
-.switching-icon {
-  float: left;
-}
-.switch-left-column {
-  min-width: 100px;
+.switch-state-icon {
+  position: absolute;
+  top: 0;
+  left: 0;
 }

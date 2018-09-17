@@ -25,6 +25,7 @@ export class ViewCameraComponent implements OnInit {
       if (this.cameras) {
         this.appInfoService.setCameraCount(this.cameras.length);
       }
+      this.appInfoService.setCameraInfoReady(true);
     });
     this.appInfoService.refreshLogoutTimer();
   }

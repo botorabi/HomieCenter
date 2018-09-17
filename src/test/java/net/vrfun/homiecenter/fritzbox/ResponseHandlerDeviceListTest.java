@@ -23,7 +23,7 @@ public class ResponseHandlerDeviceListTest {
 
     private ResponseHandlerDeviceList responseHandlerDeviceList;
 
-    private static final String XML_INPUT_TWO_DEVICES =
+    protected static final String XML_INPUT_TWO_SWITCH_DEVICES =
                     "<devicelist version=\"1\">" +
                     "  <device identifier=\"08761 0475688\" id=\"16\" functionbitmask=\"2944\" fwversion=\"04.06\" manufacturer=\"AVM\" productname=\"FRITZ!DECT 200\">" +
                     "    <present>1</present>" +
@@ -65,6 +65,105 @@ public class ResponseHandlerDeviceListTest {
                     "  </device>" +
                     "</devicelist>";
 
+    protected static final String XML_INPUT_ONE_HC_DEVICE =
+            "<devicelist version=\"1\">" +
+                    "  <device identifier=\"08761 0475656\" id=\"20\" functionbitmask=\"320\" fwversion=\"04.70\" manufacturer=\"AVM\" productname=\"FRITZ!DECT 301\">" +
+                    "    <present>1</present>" +
+                    "    <name>Heat Controller Room 1</name>" +
+                    "    <temperature>" +
+                    "       <celsius>310</celsius>" +
+                    "       <offset>5</offset>" +
+                    "    </temperature>" +
+                    "    <hkr>" +
+                    "        <tist>56</tist>" +
+                    "        <tsoll>53</tsoll>" +
+                    "        <absenk>32</absenk>" +
+                    "        <komfort>42</komfort>" +
+                    "        <lock>0</lock>" +
+                    "        <devicelock>0</devicelock>" +
+                    "        <errorcode>0</errorcode>" +
+                    "        <batterylow>0</batterylow>" +
+                    "        <windowopenactiv>0</windowopenactiv>" +
+                    "        <battery>100</battery>" +
+                    "        <nextchange>" +
+                    "            <endperiod>1536595200</endperiod>" +
+                    "            <tchange>42</tchange>" +
+                    "        </nextchange>" +
+                    "        <summeractive>0</summeractive>" +
+                    "        <holidayactive>0</holidayactive>" +
+                    "    </hkr>" +
+                    "  </device>" +
+                    "</devicelist>";
+
+
+    protected static final String XML_INPUT_THREE_MIXED_DEVICES =
+            "<devicelist version=\"1\">" +
+                    "  <device identifier=\"08761 0475688\" id=\"16\" functionbitmask=\"2944\" fwversion=\"04.06\" manufacturer=\"AVM\" productname=\"FRITZ!DECT 200\">" +
+                    "    <present>1</present>" +
+                    "    <name>Küche</name>" +
+                    "    <switch>" +
+                    "      <state>1</state>" +
+                    "      <mode>manuell</mode>" +
+                    "      <lock>0</lock>" +
+                    "      <devicelock>0</devicelock>" +
+                    "    </switch>" +
+                    "    <powermeter>" +
+                    "      <voltage>228956</voltage>" +
+                    "      <power>10</power>" +
+                    "      <energy>20</energy>" +
+                    "    </powermeter>" +
+                    "    <temperature>" +
+                    "       <celsius>310</celsius>" +
+                    "       <offset>5</offset>" +
+                    "    </temperature>" +
+                    "  </device>" +
+                    "  <device identifier=\"08761 0475689\" id=\"17\" functionbitmask=\"2944\" fwversion=\"04.06\" manufacturer=\"AVM\" productname=\"FRITZ!DECT 200\">" +
+                    "    <present>1</present>" +
+                    "    <name>FRITZ!DECT 200 #2</name>" +
+                    "    <switch>" +
+                    "      <state></state>" +
+                    "      <mode>manuell</mode>" +
+                    "      <lock></lock>" +
+                    "      <devicelock>0</devicelock>" +
+                    "    </switch>" +
+                    "    <powermeter>" +
+                    "      <voltage>228956</voltage>" +
+                    "      <power>100</power>" +
+                    "      <energy>200</energy>" +
+                    "    </powermeter>" +
+                    "    <temperature>" +
+                    "       <celsius>315</celsius>" +
+                    "       <offset>10</offset>" +
+                    "    </temperature>" +
+                    "  </device>" +
+                    "  <device identifier=\"08761 0475656\" id=\"20\" functionbitmask=\"320\" fwversion=\"04.70\" manufacturer=\"AVM\" productname=\"FRITZ!DECT 301\">" +
+                    "    <present>1</present>" +
+                    "    <name>Heat Controller Room 1</name>" +
+                    "    <temperature>" +
+                    "       <celsius>310</celsius>" +
+                    "       <offset>5</offset>" +
+                    "    </temperature>" +
+                    "    <hkr>" +
+                    "        <tist>56</tist>" +
+                    "        <tsoll>53</tsoll>" +
+                    "        <absenk>32</absenk>" +
+                    "        <komfort>42</komfort>" +
+                    "        <lock>0</lock>" +
+                    "        <devicelock>0</devicelock>" +
+                    "        <errorcode>0</errorcode>" +
+                    "        <batterylow>0</batterylow>" +
+                    "        <windowopenactiv>0</windowopenactiv>" +
+                    "        <battery>100</battery>" +
+                    "        <nextchange>" +
+                    "            <endperiod>1536595200</endperiod>" +
+                    "            <tchange>42</tchange>" +
+                    "        </nextchange>" +
+                    "        <summeractive>0</summeractive>" +
+                    "        <holidayactive>0</holidayactive>" +
+                    "    </hkr>" +
+                    "  </device>" +
+                    "</devicelist>";
+
     @Before
     public void setup() {
         responseHandlerDeviceList = new ResponseHandlerDeviceList();
@@ -86,8 +185,8 @@ public class ResponseHandlerDeviceListTest {
     }
 
     @Test
-    public void readModel() throws Exception {
-        List<DeviceInfo> switchDeviceInfoList = readInput(false, XML_INPUT_TWO_DEVICES);
+    public void readModelSwitchDevice() throws Exception {
+        List<DeviceInfo> switchDeviceInfoList = readInput(false, XML_INPUT_TWO_SWITCH_DEVICES);
 
         assertThat(switchDeviceInfoList.size()).isEqualTo(2);
 
@@ -124,5 +223,46 @@ public class ResponseHandlerDeviceListTest {
         responseHandlerDeviceList.setUseCaseSensitiveNames(caseSensitive);
         responseHandlerDeviceList.read(inputString, deviceInfoList);
         return deviceInfoList;
+    }
+
+    @Test
+    public void readModelHeatController() throws Exception {
+        List<DeviceInfo> heatControllerInfoList = readInput(false, XML_INPUT_ONE_HC_DEVICE);
+
+        assertThat(heatControllerInfoList.size()).isEqualTo(1);
+
+        HeatControllerDeviceInfo heatControllerInfo = (HeatControllerDeviceInfo) heatControllerInfoList.get(0);
+
+        assertThat(heatControllerInfo.getAIN()).isEqualTo("08761 0475656");
+        assertThat(heatControllerInfo.getId()).isEqualTo("20");
+        assertThat(heatControllerInfo.getName()).isEqualTo("Heat Controller Room 1");
+        assertThat(heatControllerInfo.getProductName()).isEqualTo("FRITZ!DECT 301");
+        assertThat(heatControllerInfo.getFirmware()).isEqualTo("04.70");
+        assertThat(heatControllerInfo.getComfortTemperature()).isEqualTo(42);
+        assertThat(heatControllerInfo.getEconomyTemperature()).isEqualTo(32);
+        assertThat(heatControllerInfo.getSetTemperature()).isEqualTo(53);
+        assertThat(heatControllerInfo.getCurrentTemperature()).isEqualTo(56);
+        assertThat(heatControllerInfo.isBatteryLow()).isFalse();
+        assertThat(heatControllerInfo.getBatteryLevel()).isEqualTo(100);
+        assertThat(heatControllerInfo.getErrorCode()).isEqualTo(0);
+    }
+
+    @Test
+    public void readModelMixedDevices() throws Exception {
+        List<DeviceInfo> deviceInfoList = readInput(false, XML_INPUT_THREE_MIXED_DEVICES);
+
+        int countSwitches = 0;
+        int countHeatControllers = 0;
+        for (DeviceInfo deviceInfo: deviceInfoList) {
+            if (deviceInfo.getDeviceType().equals(SwitchDeviceInfo.DEVICE_TPYE)) {
+                countSwitches++;
+            }
+            else if (deviceInfo.getDeviceType().equals(HeatControllerDeviceInfo.DEVICE_TPYE)) {
+                countHeatControllers++;
+            }
+        }
+
+        assertThat(countSwitches).isEqualTo(2);
+        assertThat(countHeatControllers).isEqualTo(1);
     }
 }

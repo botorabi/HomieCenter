@@ -13,15 +13,15 @@ import {
   MatMenuModule,
   MatNativeDateModule,
   MatPaginatorModule,
-  MatProgressSpinnerModule,
-  MatStepperModule,
+  MatProgressBarModule,
   MatSlideToggleModule,
+  MatStepperModule,
   MatTableModule,
   MatToolbarModule
 } from "@angular/material";
 import {ReactiveFormsModule} from "@angular/forms";
 import {BrowserAnimationsModule} from "@angular/platform-browser/animations";
-import {animate, state, style, transition, trigger} from "@angular/animations";
+import {animate, style, transition, trigger} from "@angular/animations";
 
 const modules = [
   MatButtonModule,
@@ -35,7 +35,7 @@ const modules = [
   MatListModule,
   MatTableModule,
   MatPaginatorModule,
-  MatProgressSpinnerModule,
+  MatProgressBarModule,
   MatIconModule,
   MatDialogModule,
   MatExpansionModule,

@@ -22,7 +22,7 @@
       </mat-header-cell>
       <mat-cell *matCellDef="let user" class="user-list-icon">
         <a mat-icon-button class="mat-small" color="primary" title="Edit" [routerLink]="['/nav/user-edit', user.id]" routerLinkActive="active"><mat-icon>edit</mat-icon></a>
-        <a mat-icon-button *ngIf="!isOwner(user.userName)" class="mat-small" color="primary" title="Delete" (click)="onDelete(user.id)"><mat-icon>delete</mat-icon></a>
+        <a mat-icon-button *ngIf="!isOwner(user.userName)" class="mat-small" color="primary" title="Delete" (click)="onDelete(user)"><mat-icon>delete</mat-icon></a>
       </mat-cell>
     </ng-container>
 

@@ -101,7 +101,7 @@ public class HomieErrorWebExceptionHandlerTest {
 
     @Test
     public void createPage() {
-        assertThat(homieErrorWebExceptionHandler.createPage()).isNotEmpty();
+        assertThat(homieErrorWebExceptionHandler.createMissingCameraPage()).isNotEmpty();
     }
 
     @Test

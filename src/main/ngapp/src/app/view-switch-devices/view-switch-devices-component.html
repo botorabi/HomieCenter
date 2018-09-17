@@ -5,7 +5,10 @@
         <mat-icon class="device-widget-collapse" title="Details" (click)="onToggleWidgetCollapse(device)">{{getWidgetCollapseSymbol(device)}}</mat-icon>
         <span class="title-small" (click)="onToggleWidgetCollapse(device)" title="{{device.name}}">&nbsp;{{getTrimmedDeviceName(device)}}&nbsp;</span>
         <mat-icon *ngIf="!device.present" class="device-state-not-present" title="Not available!">link_off</mat-icon>
-        <span *ngIf="device.present" class="{{getSwitchStateStyle(device)}}"><mat-icon>wb_incandescent</mat-icon></span>
+        <span class="switch-state-icons">
+          <span *ngIf="device.present && !device.updating" class="switch-state-icon {{getSwitchStateStyle(device)}}" (click)="onToggleState(device)" title="Turn On/Off"><mat-icon>wb_incandescent</mat-icon></span>
+          <mat-icon *ngIf="device.updating" class="switch-state-icon" [@iconRotation] color="primary" title="Updating...">autorenew</mat-icon>
+        </span>
       </mat-card-title>
       <mat-card-subtitle class="switch-card-subtitle">
         {{getDeviceSummary(device)}}
@@ -17,17 +20,6 @@
             <td colspan="2">
               <hr>
             </td>
-          </tr>
-          <tr>
-            <td class="switch-left-column">
-              <span>
-                <mat-icon *ngIf="device.present && !device.unlocked" color="primary" class="device-lock" title="Unlock Switch" (click)="onToggleLock(device)">lock</mat-icon>
-                <mat-icon *ngIf="device.present && device.unlocked" color="primary" class="device-lock" title="Lock Switch" (click)="onToggleLock(device)">lock_open</mat-icon>
-                <mat-icon *ngIf="device.updating" class="switching-icon" [@iconRotation] color="primary" title="Updating...">autorenew</mat-icon>
-                <span>State</span>
-              </span>
-            </td>
-            <td>Off <mat-slide-toggle color="primary" [(disabled)]="!device.present || !device.unlocked" [(ngModel)]="device.on" (click)="onToggleState(device)"></mat-slide-toggle> On</td>
           </tr>
           <tr>
             <td>Power</td>

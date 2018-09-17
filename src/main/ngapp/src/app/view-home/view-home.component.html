@@ -1,5 +1,9 @@
-<div *ngIf="pageReady">
-  <div *ngIf="!appInfoService.isUserAuthenticated()">
+<div>
+  <div [hidden]="appInfoService.isAppInitialized()">
+    <mat-progress-bar class="progress-bar" mode="indeterminate"></mat-progress-bar>
+    <p>Loading...</p>
+  </div>
+  <div [hidden]="appInfoService.isUserAuthenticated()">
       <h2>Welcome to Homie Center</h2>
       <p>
         Please login to proceed.
@@ -7,7 +11,7 @@
       <br>
       <a mat-raised-button color="primary" routerLink="/nav/login" routerLinkActive="active">Login</a>
   </div>
-  <div *ngIf="appInfoService.isUserAuthenticated()">
+  <div [hidden]="!appInfoService.isUserAuthenticated()">
     <app-view-devices></app-view-devices>
     <br>
     <div [hidden]="appInfoService.cameraCount === 0">
