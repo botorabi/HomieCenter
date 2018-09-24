@@ -61,6 +61,10 @@ public class RestServiceUser {
         if (!accessUtils.requestingUserIsAdmin(authentication)) {
             return new ResponseEntity<>(HttpStatus.FORBIDDEN);
         }
+        // check if the user name was in lower-case
+        if (!userCreate.getUserName().toLowerCase().equals(userCreate.getUserName())) {
+            return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
+        }
 
         HomieCenterUser newUser = new HomieCenterUser();
         newUser.setRealName(userCreate.getRealName());

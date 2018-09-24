@@ -25,6 +25,7 @@ import {ViewErrorPageComponent} from "./view-error-page/view-error-page.componen
 import {ViewDevicesComponent} from "./view-devices/view-devices.component";
 import {ViewHeatControllerDevicesComponent} from "./view-heat-controller-devices/view-heat-controller-devices.component";
 import {DialogTwoButtonsComponent} from "./dialog-two-buttons/dialog-two-buttons.component";
+import {DialogOneButtonComponent} from "./dialog-one-button/dialog-one-button.component";
 
 
 @NgModule({
@@ -42,10 +43,12 @@ import {DialogTwoButtonsComponent} from "./dialog-two-buttons/dialog-two-buttons
     ViewAboutComponent,
     ViewHomeComponent,
     ViewErrorPageComponent,
+    DialogOneButtonComponent,
     DialogTwoButtonsComponent,
     SafePipe
   ],
   entryComponents: [
+    DialogOneButtonComponent,
     DialogTwoButtonsComponent
   ],
   imports: [

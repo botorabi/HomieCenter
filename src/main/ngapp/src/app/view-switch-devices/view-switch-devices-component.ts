@@ -67,11 +67,12 @@ export class ViewSwitchDevicesComponent implements OnInit {
 
   private openDialogConfirmSwitching(device: DeviceSwitch) : void {
     const dialogRef = this.dialog.open(DialogTwoButtonsComponent);
-    let dialog = dialogRef.componentInstance;
-    dialog.setTitle('Turn On/Off ' + device.name);
-    dialog.setContent('Do you want to turn ' + (device.on ? 'off ': 'on ') + device.name + '?');
-    dialog.setButton1Text("No");
-    dialog.setButton2Text("Yes");
+    dialogRef.componentInstance
+      .setTitle('Turn On/Off ' + device.name)
+      .setContent('Do you want to turn ' + (device.on ? 'off ': 'on ') + device.name + '?')
+      .setButton1Text("No")
+      .setButton2Text("Yes");
+
     dialogRef.afterClosed().subscribe(result => {
       if (result === "Yes") {
         this.toggleSwitch(device);

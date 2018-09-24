@@ -17,19 +17,23 @@ export class DialogTwoButtonsComponent implements OnInit {
   ngOnInit() {
   }
 
-  setTitle(title: string) : void {
+  setTitle(title: string) : DialogTwoButtonsComponent {
     this.title = title;
+    return this;
   }
 
-  setContent(content: string) : void {
+  setContent(content: string) : DialogTwoButtonsComponent {
     this.content = content;
+    return this;
   }
 
-  setButton1Text(text: string) : void {
+  setButton1Text(text: string) : DialogTwoButtonsComponent {
     this.buttonText1 = text;
+    return this;
   }
 
-  setButton2Text(text: string) : void {
+  setButton2Text(text: string) : DialogTwoButtonsComponent {
     this.buttonText2 = text;
+    return this;
   }
 }

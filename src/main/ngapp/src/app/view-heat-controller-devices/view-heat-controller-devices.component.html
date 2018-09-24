@@ -6,10 +6,10 @@
         <span class="title-small" (click)="onToggleWidgetCollapse(device)" title="{{device.name}}">&nbsp;{{getTrimmedDeviceName(device)}}&nbsp;</span>
         <mat-icon *ngIf="!device.present" class="device-state-not-present" title="Not available!">link_off</mat-icon>
         <span *ngIf="device.present" class="battery {{getBatterySymbolStyle(device)}}" title="{{device.batteryLevel}}%"><mat-icon>{{getBatterySymbol(device)}}</mat-icon></span>
-        <span *ngIf="device.errorCode" class="error-code" title="Error: E{{device.errorCode}}"><mat-icon>warning</mat-icon></span>
       </mat-card-title>
       <mat-card-subtitle class="switch-card-subtitle">
         {{getDeviceSummary(device)}}
+        <span *ngIf="device.errorCode" class="error-code" (click)="onShowError(device)" title="Error: E{{device.errorCode}}"><mat-icon>warning</mat-icon></span>
       </mat-card-subtitle>
       <br>
       <mat-card-content class="switch-card-content" *ngIf="!isWidgetCollapse(device)" [@widgetSpan]>

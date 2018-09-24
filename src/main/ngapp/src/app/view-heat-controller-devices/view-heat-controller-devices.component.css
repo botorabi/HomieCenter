@@ -36,4 +36,5 @@
   color: red;
   float: right;
   vertical-align: sub;
+  cursor: pointer;
 }
