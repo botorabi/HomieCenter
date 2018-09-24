@@ -85,7 +85,7 @@ export class ViewSwitchDevicesComponent implements OnInit {
     this.apiDeviceService.deviceSwitch(device.id, !device.on, () => {
       // trigger the device update
       if (this.devicesComponent) {
-        window.setTimeout(() => {
+        setTimeout(() => {
           this.devicesComponent.updateDevices();
           device.updating = false;
         }, 200);

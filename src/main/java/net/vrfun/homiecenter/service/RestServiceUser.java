@@ -8,9 +8,11 @@
 package net.vrfun.homiecenter.service;
 
 import net.vrfun.homiecenter.ApplicationProperties;
+import net.vrfun.homiecenter.fritzbox.FRITZBox;
 import net.vrfun.homiecenter.model.*;
 import net.vrfun.homiecenter.service.comm.*;
 import org.h2.util.StringUtils;
+import org.slf4j.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
 import org.springframework.security.core.Authentication;
@@ -31,6 +33,8 @@ import java.util.Optional;
  */
 @RestController
 public class RestServiceUser {
+
+    private final Logger LOGGER = LoggerFactory.getLogger(RestServiceUser.class);
 
     private UserRepository userRepository;
 
@@ -61,25 +65,44 @@ public class RestServiceUser {
         if (!accessUtils.requestingUserIsAdmin(authentication)) {
             return new ResponseEntity<>(HttpStatus.FORBIDDEN);
         }
-        // check if the user name was in lower-case
-        if (!userCreate.getUserName().toLowerCase().equals(userCreate.getUserName())) {
+
+        if (!validateNewUser(userCreate)) {
+            LOGGER.info("Cannot create new user, invalid login name: {}", userCreate.getUserName());
             return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
         }
 
-        HomieCenterUser newUser = new HomieCenterUser();
-        newUser.setRealName(userCreate.getRealName());
-        newUser.setUserName(userCreate.getUserName());
-        newUser.setPassword(passwordEncoder.encode(userCreate.getPassword()));
-        newUser.setAdmin(userCreate.isAdmin());
-
+        HomieCenterUser newUser;
         try {
-            newUser = userRepository.save(newUser);
+            newUser = createNewUser(userCreate);
         }
         catch(Throwable throwable) {
-            return new ResponseEntity<>(newUser, HttpStatus.NOT_ACCEPTABLE);
+            return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
         }
 
         return new ResponseEntity<>(newUser, HttpStatus.OK);
+    }
+
+    private boolean validateNewUser(@NotNull final ReqUserEdit newUser) {
+        final String userName = StringUtils.isNullOrEmpty(newUser.getUserName()) ? "" : newUser.getUserName();
+        if ((userName.length() < 5) || (!userName.toLowerCase().equals(userName))) {
+            return false;
+        }
+
+        if (StringUtils.isNullOrEmpty(newUser.getPassword())) {
+            return false;
+        }
+
+        return true;
+    }
+
+    private HomieCenterUser createNewUser(@NotNull final ReqUserEdit newUser) {
+        HomieCenterUser homieCenterUser = new HomieCenterUser();
+        homieCenterUser.setRealName(newUser.getRealName());
+        homieCenterUser.setUserName(newUser.getUserName());
+        homieCenterUser.setPassword(passwordEncoder.encode(newUser.getPassword()));
+        homieCenterUser.setAdmin(newUser.isAdmin());
+
+        return userRepository.save(homieCenterUser);
     }
 
     @PostMapping("/api/user/edit")

@@ -31,10 +31,9 @@ export class ViewAuthenticationComponent implements OnInit {
     this.error = null;
     this.appInfoService.setUserStatus(null);
     this.apiUserService.login(this.credentials.login.toLowerCase(), this.credentials.password, (userStatus) => {
-      this.appInfoService.setUserStatus(userStatus);
       if (userStatus && userStatus.authenticated) {
-        this.appInfoService.setUserStatus(userStatus);
-        window.setTimeout(() => {
+        setTimeout(() => {
+          this.appInfoService.setUserStatus(userStatus);
           this.router.navigate(['/']);
         }, 500);
       }

@@ -15,7 +15,6 @@ import org.springframework.http.*;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import javax.validation.constraints.NotNull;
-
 import java.util.*;
 
 import static org.assertj.core.api.Assertions.*;
@@ -83,7 +82,7 @@ public class FRITZBoxTest {
     public void loginFail() throws Exception {
         mockFritzBoxAuthentication(false);
 
-        assertThatThrownBy(() ->fritzBox.login("username", "password")).isInstanceOf(Exception.class);
+        assertThatThrownBy(() -> fritzBox.login("username", "password")).isInstanceOf(Exception.class);
     }
 
     @Test

@@ -74,7 +74,7 @@ export class AppInformationService {
 
   private periodicLogoutTimerUpdate(userStatus: UserStatus) : void {
     if (userStatus && userStatus.authenticated) {
-      window.setTimeout(() => {
+      setTimeout(() => {
         let timeRemaining = this.getRemainingTime();
         if (timeRemaining < 0) {
           this.apiUserService.logout(null);

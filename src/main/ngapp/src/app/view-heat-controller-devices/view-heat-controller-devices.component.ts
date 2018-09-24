@@ -40,7 +40,7 @@ export class ViewHeatControllerDevicesComponent implements OnInit {
 
   private testSymbolIcons() {
     //! Test the battery symbol
-    window.setTimeout(() => {
+    setTimeout(() => {
       if (this.devices.length > 0) {
         this.devices[0].batteryLevel -= 5;
         if (this.devices[0].batteryLevel < 10) {
@@ -147,7 +147,7 @@ export class ViewHeatControllerDevicesComponent implements OnInit {
     this.apiDeviceService.deviceHeatControllerSetTemperature(device.id, temperature, () => {
       // trigger the device update
       if (this.devicesComponent) {
-        window.setTimeout(() => {
+        setTimeout(() => {
           this.devicesComponent.updateDevices();
           device.updating = false;
         }, 200);
