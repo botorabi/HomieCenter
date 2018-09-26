@@ -27,7 +27,6 @@ import {ViewHeatControllerDevicesComponent} from "./view-heat-controller-devices
 import {DialogTwoButtonsComponent} from "./dialog-two-buttons/dialog-two-buttons.component";
 import {DialogOneButtonComponent} from "./dialog-one-button/dialog-one-button.component";
 import {DialogDeviceStatsComponent} from "./dialog-device-stats/dialog-device-stats.component";
-import {NgxChartsModule} from "@swimlane/ngx-charts";
 import {BarChartComponentComponent} from "./charts/bar-chart-component/bar-chart-component.component";
 import {ChartsModule} from "ng2-charts";
 
@@ -63,7 +62,6 @@ import {ChartsModule} from "ng2-charts";
     BrowserModule,
     HttpClientModule,
     MaterialModule,
-    NgxChartsModule,
     ChartsModule,
     FormsModule
   ],
