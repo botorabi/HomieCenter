@@ -15,7 +15,7 @@ package net.vrfun.homiecenter.model;
  */
 public class HeatControllerDeviceInfo extends DeviceInfo {
 
-    public final static String DEVICE_TPYE = "HEATCONTROLLER";
+    public final static String DEVICE_TYPE = "HEATCONTROLLER";
 
     private boolean batteryLow;
     private int batteryLevel;
@@ -28,7 +28,7 @@ public class HeatControllerDeviceInfo extends DeviceInfo {
 
 
     public HeatControllerDeviceInfo() {
-        setDeviceType(DEVICE_TPYE);
+        setDeviceType(DEVICE_TYPE);
     }
 
     public boolean isBatteryLow() {

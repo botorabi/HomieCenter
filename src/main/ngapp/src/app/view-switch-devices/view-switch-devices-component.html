@@ -30,6 +30,12 @@
             <td>{{getTemperature(device)}}°C</td>
           </tr>
           <tr>
+            <td>Stats</td>
+            <td>
+              <mat-icon title="Device Statistics" color="primary" class="stats-icon" (click)="onStats(device)">insert_chart_outlined</mat-icon>
+            </td>
+          </tr>
+          <tr>
             <td colspan="2" class="device-fw">
               <hr>
               <span>AIN: {{device.ain}}, FW: {{device.firmware}}</span>

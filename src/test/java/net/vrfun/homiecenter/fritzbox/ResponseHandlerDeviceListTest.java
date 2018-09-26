@@ -254,10 +254,10 @@ public class ResponseHandlerDeviceListTest {
         int countSwitches = 0;
         int countHeatControllers = 0;
         for (DeviceInfo deviceInfo: deviceInfoList) {
-            if (deviceInfo.getDeviceType().equals(SwitchDeviceInfo.DEVICE_TPYE)) {
+            if (deviceInfo.getDeviceType().equals(SwitchDeviceInfo.DEVICE_TYPE)) {
                 countSwitches++;
             }
-            else if (deviceInfo.getDeviceType().equals(HeatControllerDeviceInfo.DEVICE_TPYE)) {
+            else if (deviceInfo.getDeviceType().equals(HeatControllerDeviceInfo.DEVICE_TYPE)) {
                 countHeatControllers++;
             }
         }

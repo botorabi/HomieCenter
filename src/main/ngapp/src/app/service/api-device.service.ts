@@ -1,7 +1,8 @@
 import {Injectable} from '@angular/core';
-import {HttpClient, HttpHeaders} from "@angular/common/http";
+import {HttpClient, HttpHeaders, HttpParams} from "@angular/common/http";
 import {Device} from "./device";
 import {Camera} from "./camera";
+import {DeviceStats} from "./device-stats";
 
 @Injectable()
 export class ApiDeviceService {
@@ -21,6 +22,21 @@ export class ApiDeviceService {
           let devices = <Array<Device>>(response);
           if (callback) {
             callback(devices, null);
+          }
+        },
+        error => {
+          if (callback) {
+            callback(null, error.status);
+          }
+        });
+  }
+
+  public deviceStats(ain: string, callback: any) {
+    this.http.get('/api/device/stats/' + encodeURI(ain))
+      .subscribe(
+        (response: DeviceStats) => {
+          if (callback) {
+            callback(response, null);
           }
         },
         error => {

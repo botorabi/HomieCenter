@@ -1,0 +1,10 @@
+<div *ngIf="samples" class="canvas-container">
+  <canvas baseChart
+          [datasets]="samples"
+          [labels]="labels"
+          [options]="options"
+          [legend]="legend"
+          [colors]="colors"
+          [chartType]="type">
+  </canvas>
+</div>

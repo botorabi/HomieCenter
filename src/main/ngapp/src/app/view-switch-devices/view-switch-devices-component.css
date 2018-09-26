@@ -17,3 +17,7 @@
   top: 0;
   left: 0;
 }
+.stats-icon {
+  cursor: pointer;
+  vertical-align: sub;
+}

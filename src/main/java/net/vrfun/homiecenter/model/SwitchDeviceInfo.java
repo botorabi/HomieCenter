@@ -15,7 +15,7 @@ package net.vrfun.homiecenter.model;
  */
 public class SwitchDeviceInfo extends DeviceInfo {
 
-    public final static String DEVICE_TPYE = "SWITCH";
+    public final static String DEVICE_TYPE = "SWITCH";
 
     private boolean on;
     private int voltage;
@@ -25,7 +25,7 @@ public class SwitchDeviceInfo extends DeviceInfo {
     private int temperatureOffset;
 
     public SwitchDeviceInfo() {
-        setDeviceType(DEVICE_TPYE);
+        setDeviceType(DEVICE_TYPE);
     }
 
     public boolean isOn() {

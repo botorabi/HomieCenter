@@ -8,6 +8,8 @@ import {ViewDevicesComponent} from "../view-devices/view-devices.component";
 import {AnimationRotation, AnimationWidgetSpan} from "../material.module";
 import {MatDialog} from "@angular/material";
 import {DialogTwoButtonsComponent} from "../dialog-two-buttons/dialog-two-buttons.component";
+import {DeviceStats} from "../service/device-stats";
+import {DialogDeviceStatsComponent} from "../dialog-device-stats/dialog-device-stats.component";
 
 
 @Component({
@@ -45,6 +47,19 @@ export class ViewSwitchDevicesComponent implements OnInit {
   public updateDevices(devices: Array<DeviceSwitch>) {
     this.deviceWidgetUpdater.updateDevices(devices);
     this.appInfoService.setSwitchDeviceCount(this.devices.length);
+  }
+
+  public onStats(device: DeviceSwitch) : void {
+    const dialogRef = this.dialog.open(DialogDeviceStatsComponent);
+    dialogRef.componentInstance
+      .setTitle(device.name)
+      .setButtonText("Ok");
+
+    this.apiDeviceService.deviceStats(device.ain, (deviceStats: DeviceStats, error: string) => {
+      if (!error) {
+        dialogRef.componentInstance.setStats(deviceStats);
+      }
+    });
   }
 
   public getVoltage(device: DeviceSwitch) : string {

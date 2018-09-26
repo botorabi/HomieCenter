@@ -33,7 +33,7 @@ public class DeviceInfoTest {
         switchDeviceInfo.setId("MyID");
         switchDeviceInfo.setAIN("MyAIN");
 
-        assertThat(switchDeviceInfo.getDeviceType()).isEqualTo(SwitchDeviceInfo.DEVICE_TPYE);
+        assertThat(switchDeviceInfo.getDeviceType()).isEqualTo(SwitchDeviceInfo.DEVICE_TYPE);
         assertThat(switchDeviceInfo.toString()).contains("MyID");
         assertThat(switchDeviceInfo.toString()).contains("MyAIN");
 
@@ -49,7 +49,7 @@ public class DeviceInfoTest {
         heatControllerDeviceInfo.setAIN("MyAIN");
         heatControllerDeviceInfo.setWindowOpen(true);
 
-        assertThat(heatControllerDeviceInfo.getDeviceType()).isEqualTo(HeatControllerDeviceInfo.DEVICE_TPYE);
+        assertThat(heatControllerDeviceInfo.getDeviceType()).isEqualTo(HeatControllerDeviceInfo.DEVICE_TYPE);
         assertThat(heatControllerDeviceInfo.toString()).contains("MyID");
         assertThat(heatControllerDeviceInfo.toString()).contains("MyAIN");
         assertThat(heatControllerDeviceInfo.isWindowOpen()).isTrue();

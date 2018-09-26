@@ -17,6 +17,7 @@ import {
   MatSlideToggleModule,
   MatStepperModule,
   MatTableModule,
+  MatTabsModule,
   MatToolbarModule
 } from "@angular/material";
 import {ReactiveFormsModule} from "@angular/forms";
@@ -34,6 +35,7 @@ const modules = [
   MatNativeDateModule,
   MatListModule,
   MatTableModule,
+  MatTabsModule,
   MatPaginatorModule,
   MatProgressBarModule,
   MatIconModule,
