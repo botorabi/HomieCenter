@@ -64,6 +64,7 @@ public class RestServiceAutomationDevice {
             return new ResponseEntity<>(fritzBox.getDeviceStats(ain), HttpStatus.OK);
         }
         catch (Exception exception) {
+            LOGGER.debug("Problem occurred while retrieving the device stats ({}), reason: {}", ain, exception.getMessage());
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
