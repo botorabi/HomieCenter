@@ -8,6 +8,9 @@ import {HeatControllerWidgetUpdater} from "./heat-controller-widget-updater";
 import {AnimationRotation, AnimationWidgetSpan} from "../material.module";
 import {MatDialog} from "@angular/material";
 import {DialogOneButtonComponent} from "../dialog-one-button/dialog-one-button.component";
+import {DeviceSwitch} from "../service/device-switch";
+import {DialogDeviceStatsComponent} from "../dialog-device-stats/dialog-device-stats.component";
+import {DeviceStats} from "../service/device-stats";
 
 @Component({
   selector: 'app-view-heat-controller-devices',
@@ -224,5 +227,20 @@ export class ViewHeatControllerDevicesComponent implements OnInit {
       .setTitle('Error Description')
       .setContent(message)
       .setButtonText("Ok");
+  }
+
+  public onStats(device: DeviceSwitch) : void {
+    const dialogRef = this.dialog.open(DialogDeviceStatsComponent);
+    dialogRef.componentInstance
+      .setTitle(device.name)
+      .setButtonText("Ok")
+      .enableEnergyDisplay(false)
+      .enableTemperatureDisplay(true);
+
+    this.apiDeviceService.deviceStats(device.ain, (deviceStats: DeviceStats, error: string) => {
+      if (!error) {
+        dialogRef.componentInstance.setStats(deviceStats);
+      }
+    });
   }
 }

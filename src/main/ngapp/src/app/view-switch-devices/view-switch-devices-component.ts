@@ -53,7 +53,9 @@ export class ViewSwitchDevicesComponent implements OnInit {
     const dialogRef = this.dialog.open(DialogDeviceStatsComponent);
     dialogRef.componentInstance
       .setTitle(device.name)
-      .setButtonText("Ok");
+      .setButtonText("Ok")
+      .enableEnergyDisplay(true)
+      .enableTemperatureDisplay(true);
 
     this.apiDeviceService.deviceStats(device.ain, (deviceStats: DeviceStats, error: string) => {
       if (!error) {

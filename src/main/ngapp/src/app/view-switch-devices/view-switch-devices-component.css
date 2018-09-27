@@ -19,5 +19,5 @@
 }
 .stats-icon {
   cursor: pointer;
-  vertical-align: sub;
+  vertical-align: text-bottom;
 }

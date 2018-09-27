@@ -10,11 +10,11 @@
           <mat-icon *ngIf="device.updating" class="switch-state-icon" [@iconRotation] color="primary" title="Updating...">autorenew</mat-icon>
         </span>
       </mat-card-title>
-      <mat-card-subtitle class="switch-card-subtitle">
+      <mat-card-subtitle class="device-card-subtitle">
         {{getDeviceSummary(device)}}
       </mat-card-subtitle>
       <br>
-      <mat-card-content class="switch-card-content" *ngIf="!isWidgetCollapse(device)" [@widgetSpan]>
+      <mat-card-content class="device-card-content" *ngIf="!isWidgetCollapse(device)" [@widgetSpan]>
         <table class="device-info">
           <tr>
             <td colspan="2">
@@ -30,7 +30,7 @@
             <td>{{getTemperature(device)}}°C</td>
           </tr>
           <tr>
-            <td>Stats</td>
+            <td>Statistics</td>
             <td>
               <mat-icon title="Device Statistics" color="primary" class="stats-icon" (click)="onStats(device)">insert_chart_outlined</mat-icon>
             </td>

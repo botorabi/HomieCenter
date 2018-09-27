@@ -38,6 +38,9 @@ export class DialogDeviceStatsComponent implements OnInit {
   selectedTemperature = 0;
   selectionTemperature = new Array<TimeSpanSelection>();
 
+  energyDisplay = false;
+  temperatureDisplay = false;
+
   @ViewChild("energyChart")
   private energyChart : BarChartComponentComponent;
 
@@ -60,6 +63,16 @@ export class DialogDeviceStatsComponent implements OnInit {
     return this;
   }
 
+  enableEnergyDisplay(enable: boolean) : DialogDeviceStatsComponent {
+    this.energyDisplay = enable;
+    return this;
+  }
+
+  enableTemperatureDisplay(enable: boolean) : DialogDeviceStatsComponent {
+    this.temperatureDisplay = enable;
+    return this;
+  }
+
   setStats(deviceStats: DeviceStats) : DialogDeviceStatsComponent {
     this.deviceStats = deviceStats;
     this.setupDataSelection();
@@ -72,20 +85,24 @@ export class DialogDeviceStatsComponent implements OnInit {
       return;
     }
 
-    let indexMonths = this.getNextGridIndex(this.deviceStats.energy.stats, 2678400 /*31 days*/);
-    let indexHours = this.getNextGridIndex(this.deviceStats.energy.stats, 86400 /*24 hours*/);
-    this.selectionEnergy = new Array<TimeSpanSelection>();
-    if (indexMonths >= 0) {
-      this.selectionEnergy.push(new TimeSpanSelection(indexMonths, "Months"));
-    }
-    if (indexHours >= 0) {
-      this.selectionEnergy.push(new TimeSpanSelection(indexHours, "Days"));
+    if (this.energyDisplay) {
+      let indexMonths = this.getNextGridIndex(this.deviceStats.energy.stats, 2678400 /*31 days*/);
+      let indexHours = this.getNextGridIndex(this.deviceStats.energy.stats, 86400 /*24 hours*/);
+      this.selectionEnergy = new Array<TimeSpanSelection>();
+      if (indexMonths >= 0) {
+        this.selectionEnergy.push(new TimeSpanSelection(indexMonths, "Months"));
+      }
+      if (indexHours >= 0) {
+        this.selectionEnergy.push(new TimeSpanSelection(indexHours, "Days"));
+      }
     }
 
-    indexHours = this.getNextGridIndex(this.deviceStats.temperature.stats, 900);
-    this.selectionTemperature = new Array<TimeSpanSelection>();
-    if (indexHours >= 0) {
-      this.selectionTemperature.push(new TimeSpanSelection(0, "Hours"));
+    if (this.temperatureDisplay) {
+      let indexHours = this.getNextGridIndex(this.deviceStats.temperature.stats, 900);
+      this.selectionTemperature = new Array<TimeSpanSelection>();
+      if (indexHours >= 0) {
+        this.selectionTemperature.push(new TimeSpanSelection(0, "Hour / 15 Minutes"));
+      }
     }
   }
 
@@ -101,8 +118,12 @@ export class DialogDeviceStatsComponent implements OnInit {
   }
 
   private setupData() : void {
-    this.setupEnergyData();
-    this.setupTemperatureData();
+    if (this.energyDisplay) {
+      this.setupEnergyData();
+    }
+    if (this.temperatureDisplay) {
+      this.setupTemperatureData();
+    }
   }
 
   private setupEnergyData() : void {

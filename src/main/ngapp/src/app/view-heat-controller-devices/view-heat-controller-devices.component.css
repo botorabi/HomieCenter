@@ -31,6 +31,14 @@
 }
 .window-open {
   text-align: left !important;
+  min-width: 90px;
+}
+.stats-icon {
+  cursor: pointer;
+  vertical-align: text-bottom;
+}
+.stats-label {
+  float: left;
 }
 .error-code {
   color: red;

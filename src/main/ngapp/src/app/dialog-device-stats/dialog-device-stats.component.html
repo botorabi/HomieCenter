@@ -4,7 +4,7 @@
   </div>
   <mat-dialog-content class="mat-typography">
     <mat-tab-group>
-      <mat-tab>
+      <mat-tab *ngIf="energyDisplay">
         <ng-template mat-tab-label>Energy</ng-template>
         <app-bar-chart-component #energyChart></app-bar-chart-component>
         <div class="time-span">
@@ -19,7 +19,7 @@
         </div>
       </mat-tab>
 
-      <mat-tab>
+      <mat-tab *ngIf="temperatureDisplay">
         <ng-template mat-tab-label>Temperature</ng-template>
         <app-bar-chart-component #temperatureChart></app-bar-chart-component>
         <div class="time-span">
