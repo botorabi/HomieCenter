@@ -18,7 +18,7 @@
       </button>
       <span class="center">{{getMenuTitle()}}</span>
       <span style="flex: 1 1 auto;"></span>
-      <button mat-icon-button (click)="onHome()"><img src="/favicon.ico" height="48" width="48"></button>
+      <button mat-icon-button (click)="onHome()"><img src="favicon.ico" height="48" width="48"></button>
     </mat-toolbar-row>
   </mat-toolbar>
 
@@ -33,7 +33,7 @@
   <footer class="app-footer">
     <mat-toolbar color="primary">
       <span class="mat-small">
-        Homie Center v{{appInfoService.version}}
+        <a class="about-link" routerLink="/nav/about" routerLinkActive="active">Homie Center v{{appInfoService.version}}</a>
         <br>
         <small>Copyright 2018</small>
       </span>

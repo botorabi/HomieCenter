@@ -2,3 +2,27 @@
   float: right;
   vertical-align: sub;
 }
+.time-span {
+  width: 90%;
+  text-align: left;
+  vertical-align: sub;
+}
+.time-span-label {
+  font-size: small;
+  font-weight: bold;
+  margin-right: 2em;
+}
+.time-span-selection {
+  width: 30% !important;
+}
+.time-stamp {
+  font-size: small;
+  font-weight: normal;
+  float: right;
+}
+.time-stamp-label {
+  font-size: small;
+  font-weight: bold;
+  margin-right: 0.5em;
+  margin-left: 1.5em;
+}

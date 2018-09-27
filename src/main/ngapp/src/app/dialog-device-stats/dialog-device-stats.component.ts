@@ -1,10 +1,22 @@
 import {Component, OnInit, ViewChild} from '@angular/core';
-import {DeviceStats, Stats} from "../service/device-stats";
+import {DeviceStats, Stats, StatsValues} from "../service/device-stats";
 import {AnimationRotation} from "../material.module";
 import {
   BarChartComponentComponent,
   BarChartSamples
 } from "../charts/bar-chart-component/bar-chart-component.component";
+
+
+export class TimeSpanSelection {
+  value: number = 0;
+  label: string = "";
+
+  constructor(value: number, label: string) {
+    this.value = value;
+    this.label = label;
+  }
+}
+
 
 @Component({
   selector: 'app-dialog-device-stats',
@@ -19,6 +31,12 @@ export class DialogDeviceStatsComponent implements OnInit {
   title = "[Title]";
   buttonText = "[Button]";
   deviceStats: DeviceStats;
+
+  timeStamp = new Date();
+  selectedEnergy = 0;
+  selectionEnergy = new Array<TimeSpanSelection>();
+  selectedTemperature = 0;
+  selectionTemperature = new Array<TimeSpanSelection>();
 
   @ViewChild("energyChart")
   private energyChart : BarChartComponentComponent;
@@ -44,34 +62,78 @@ export class DialogDeviceStatsComponent implements OnInit {
 
   setStats(deviceStats: DeviceStats) : DialogDeviceStatsComponent {
     this.deviceStats = deviceStats;
+    this.setupDataSelection();
     this.setupData();
     return this;
   }
 
+  private setupDataSelection() : void {
+    if (!this.deviceStats) {
+      return;
+    }
+
+    let indexMonths = this.getNextGridIndex(this.deviceStats.energy.stats, 2678400 /*31 days*/);
+    let indexHours = this.getNextGridIndex(this.deviceStats.energy.stats, 86400 /*24 hours*/);
+    this.selectionEnergy = new Array<TimeSpanSelection>();
+    if (indexMonths >= 0) {
+      this.selectionEnergy.push(new TimeSpanSelection(indexMonths, "Months"));
+    }
+    if (indexHours >= 0) {
+      this.selectionEnergy.push(new TimeSpanSelection(indexHours, "Days"));
+    }
+
+    indexHours = this.getNextGridIndex(this.deviceStats.temperature.stats, 900);
+    this.selectionTemperature = new Array<TimeSpanSelection>();
+    if (indexHours >= 0) {
+      this.selectionTemperature.push(new TimeSpanSelection(0, "Hours"));
+    }
+  }
+
+  private getNextGridIndex(stats: Array<StatsValues>, seconds: number): number {
+    let index = -1;
+    let minDiff = 1000;
+    for (let i = 0; i < stats.length; ++i) {
+      if (Math.abs(stats[i].grid - seconds) < minDiff) {
+        index = i;
+      }
+    }
+    return index;
+  }
+
   private setupData() : void {
+    this.setupEnergyData();
+    this.setupTemperatureData();
+  }
+
+  private setupEnergyData() : void {
     if (!this.deviceStats) {
       return;
     }
 
     let labels = [];
-	//! TODO provide a choice for the time span! Currently we stick at the first choice which is seems to be always for one year.
-    let samples = this.createChartData(this.deviceStats.energy, 0, 0.001);
+    let samples = this.createChartData(this.deviceStats.energy, this.selectedEnergy, 0.001);
     for (let i = samples.data.length - 1; i >= 0; --i) {
       labels.push('' + (-(i + 1)));
     }
     this.energyChart
-      .setXAxisLabel('Time / ' + this.calculateSamplePeriod(this.deviceStats.energy, 0))
+      .setXAxisLabel('Time')
       .setYAxisLabel('kWh')
       .setSamples([samples])
       .setLabels(labels);
+  }
 
-    labels = [];
-    samples = this.createChartData(this.deviceStats.temperature, 0, 0.1);
+  private setupTemperatureData() : void {
+    if (!this.deviceStats) {
+      return;
+    }
+
+    let labels = [];
+    let samples = this.createChartData(this.deviceStats.temperature, this.selectedTemperature, 0.1);
     for (let i = samples.data.length - 1; i >= 0; --i) {
       labels.push('' + (-Math.floor(i/4) - 1));
     }
     this.temperatureChart
-      .setXAxisLabel('Time / ' + this.calculateSamplePeriod(this.deviceStats.temperature, 0))
+      .setXAxisLabel('Time')
       .setYAxisLabel('°C')
       .setSamples([samples])
       .setLabels(labels);
@@ -92,28 +154,11 @@ export class DialogDeviceStatsComponent implements OnInit {
     return samples;
   }
 
-  private calculateSamplePeriod(deviceStats: Stats, index: number) : string {
-    let period = 0;
-    let text = '';
-    if (deviceStats.stats.length > index) {
-      let stats = deviceStats.stats[index];
-      if (stats.grid >= 2678400) {
-        period = (stats.grid / (24 * 31 * 3600));
-        text = '' + (period > 1 ? period.toFixed(0) + ' ' : '') + 'Month';
-      }
-      else if (stats.grid >= 86400) {
-        period = (stats.grid / 3600);
-        text = '' + (period > 1 ? period.toFixed(0) + ' ' : '') + 'Hour';
-      }
-      else if (stats.grid >= 900) {
-        period = (stats.grid / 60);
-        text = '' + (period > 1 ? period.toFixed(0) + ' ' : '') + 'Minute';
-      }
-      if (period > 1) {
-        text += "s";
-      }
-    }
+  onSelectedEnergyTimeSpanChanged(event: any) : void {
+    this.setupEnergyData();
+  }
 
-    return text;
+  onSelectedTemperatureTimeSpanChanged(event: any) : void {
+    this.setupTemperatureData();
   }
 }

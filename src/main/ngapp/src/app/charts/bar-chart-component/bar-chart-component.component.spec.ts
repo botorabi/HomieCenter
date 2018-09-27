@@ -1,6 +1,8 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { BarChartComponentComponent } from './bar-chart-component.component';
+import {MaterialModule} from "../../material.module";
+import {ChartsModule} from "ng2-charts";
 
 describe('BarChartComponentComponent', () => {
   let component: BarChartComponentComponent;
@@ -8,7 +10,11 @@ describe('BarChartComponentComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ BarChartComponentComponent ]
+      declarations: [ BarChartComponentComponent ],
+      imports: [
+        MaterialModule,
+        ChartsModule
+      ]
     })
     .compileComponents();
   }));

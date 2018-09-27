@@ -11,6 +11,7 @@ export class AppInformationService {
 
   deviceInfoReady = false;
   cameraInfoReady = false;
+  passedInitialDelay = false;
 
   userStatus: UserStatus = null;
   logoutTimeString: string = "";
@@ -41,10 +42,22 @@ export class AppInformationService {
     return this.deviceInfoReady && this.cameraInfoReady;
   }
 
+  public showNoDeviceHint() : boolean {
+    let noDevices = this.cameraCount === 0 && this.switchDeviceCount === 0 && this.heatControllerDeviceCount === 0;
+    return noDevices && this.passedInitialDelay;
+  }
+
   public setUserStatus(userStatus: UserStatus) : void {
     this.userStatus = userStatus;
     this.version = userStatus ? userStatus.appVersion : "";
     this.periodicLogoutTimerUpdate(userStatus);
+
+    this.passedInitialDelay = false;
+    if (userStatus && userStatus.authenticated) {
+      setTimeout(() => {
+        this.passedInitialDelay = true;
+      }, 5000);
+    }
   }
 
   public isUserAuthenticated() : boolean {

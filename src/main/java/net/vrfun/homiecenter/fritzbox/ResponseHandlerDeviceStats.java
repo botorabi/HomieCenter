@@ -61,7 +61,7 @@ public class ResponseHandlerDeviceStats extends ResponseHandler<DeviceStats> {
         while (node != null) {
             try {
                 String grid = getAttributeValue(node, "grid", "0");
-                List<Integer> values = createIntegerValues(getNodeValue(statsNode, "stats", ""));
+                List<Integer> values = createIntegerValues(getNodeValue(node, "stats", ""));
                 stats.addStats(Integer.parseInt(grid), values);
             }
             catch(Throwable throwable) {
@@ -74,7 +74,7 @@ public class ResponseHandlerDeviceStats extends ResponseHandler<DeviceStats> {
     @NotNull
     protected List<Integer> createIntegerValues(@NotNull final String stringValues) {
         List<Integer> values = new ArrayList<>();
-        String preparedStringValues = stringValues.replaceAll("-", "-999");
+        String preparedStringValues = stringValues.replaceAll("-", "-999").trim();
         for (final String value: preparedStringValues.split(",")) {
             values.add(Integer.parseInt(value));
         }

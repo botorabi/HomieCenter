@@ -1,21 +1,42 @@
 <div>
-  <h2 mat-dialog-title>Statistics: {{title}}
-    <mat-icon *ngIf="!deviceStats" [@iconRotation] class="updating-icon" color="primary" title="Retrieving Data...">autorenew</mat-icon>
-  </h2>
+  <div mat-dialog-title>
+    {{title}} <span class="time-stamp"><span class="time-stamp-label">Time Stamp: </span>{{timeStamp | date:"d.M.yyy  H:mm:ss"}}</span>
+  </div>
   <mat-dialog-content class="mat-typography">
     <mat-tab-group>
       <mat-tab>
         <ng-template mat-tab-label>Energy</ng-template>
         <app-bar-chart-component #energyChart></app-bar-chart-component>
+        <div class="time-span">
+            <span class="time-span-label">Time Interval</span>
+            <mat-form-field class="time-span-selection">
+              <mat-select [(value)]="selectedEnergy" (selectionChange)="onSelectedEnergyTimeSpanChanged($event)">
+                <mat-option *ngFor="let sel of selectionEnergy" [value]="sel.value">
+                  {{sel.label}}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+        </div>
       </mat-tab>
+
       <mat-tab>
         <ng-template mat-tab-label>Temperature</ng-template>
         <app-bar-chart-component #temperatureChart></app-bar-chart-component>
+        <div class="time-span">
+          <span class="time-span-label">Time Interval</span>
+          <mat-form-field class="time-span-selection">
+            <mat-select [(value)]="selectedTemperature" (selectionChange)="onSelectedTemperatureTimeSpanChanged($event)">
+              <mat-option *ngFor="let sel of selectionTemperature" [value]="sel.value">
+                {{sel.label}}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
       </mat-tab>
     </mat-tab-group>
 
   </mat-dialog-content>
   <mat-dialog-actions align="end">
-    <button mat-button [mat-dialog-close]="buttonText">{{buttonText}}</button>
+    <button mat-raised-button [mat-dialog-close]="buttonText">{{buttonText}}</button>
   </mat-dialog-actions>
 </div>
