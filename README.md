@@ -54,8 +54,11 @@ Here are a few screenshots showing Homie Center's user interface.
 
 ![Screenshot 2](https://user-images.githubusercontent.com/11502867/45612071-0946db00-ba62-11e8-9e41-2ad34bbe0ac7.png)
 
+**Statistics View - Temperature sensed by a DECT 200 over the last 24 hours**
+
+![screenshot 3](https://user-images.githubusercontent.com/11502867/46213860-f70a4e00-c339-11e8-984c-f2c7f530135e.png)
 
 **A piece of mobile view**
 
-![Screenshot 3](https://user-images.githubusercontent.com/11502867/45612072-0946db00-ba62-11e8-8199-31377908f522.png)
+![Screenshot 4](https://user-images.githubusercontent.com/11502867/45612072-0946db00-ba62-11e8-8199-31377908f522.png)
 
