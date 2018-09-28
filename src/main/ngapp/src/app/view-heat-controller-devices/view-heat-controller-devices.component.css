@@ -4,8 +4,10 @@
   position: absolute;
   right: 1em;
   vertical-align: sub;
+  cursor: help;
 }
 .battery-ok {
+  color: #006000;
 }
 .battery-middle {
   color: #4d8000;
