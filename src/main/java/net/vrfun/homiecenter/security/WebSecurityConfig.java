@@ -84,7 +84,7 @@ public class WebSecurityConfig {
                 .and()
                 .authorizeExchange()
                     .pathMatchers(CameraProxyRoutes.getProxyPath() + "**").authenticated()
-                    .pathMatchers("/*", "/login", "/nav/login", "/nav/about", "/api/user/status").permitAll()
+                    .pathMatchers("/*", "/assets/**", "/login", "/nav/login", "/nav/about", "/api/user/status").permitAll()
                     .anyExchange().authenticated()
                 .and()
                 .formLogin()

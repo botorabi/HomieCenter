@@ -1,24 +1,20 @@
-.time-span {
-  width: 90%;
-  text-align: left;
-  vertical-align: sub;
-}
-.time-span-label {
-  font-size: small;
-  font-weight: bold;
-  margin-right: 2em;
-}
-.time-span-selection {
-  width: 30% !important;
-}
 .time-stamp {
-  font-size: small;
+  font-size: 0.6em;
   font-weight: normal;
+  margin: 0;
   float: right;
 }
-.time-stamp-label {
-  font-size: small;
-  font-weight: bold;
-  margin-right: 0.5em;
-  margin-left: 1.5em;
+.time {
+  width: 100%;
+  text-align: left;
+  vertical-align: sub;
+  margin-top: 0.5em;
+  margin-bottom: -1.5em;
+}
+.time-label {
+  font-weight: normal;
+}
+.time-selection {
+  max-width: 50% !important;
+  margin-left: 1em;
 }

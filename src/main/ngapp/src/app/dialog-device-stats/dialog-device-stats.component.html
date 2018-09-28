@@ -1,15 +1,15 @@
 <div>
   <div mat-dialog-title>
-    {{title}} <span class="time-stamp"><span class="time-stamp-label">Time Stamp: </span>{{timeStamp | date:"d.M.yyy  H:mm:ss"}}</span>
+    {{title}}
+    <p class="time-stamp">{{timeStamp | date:"d.M.yyy  H:mm:ss"}}</p>
   </div>
   <mat-dialog-content class="mat-typography">
     <mat-tab-group>
       <mat-tab *ngIf="energyDisplay">
         <ng-template mat-tab-label>Energy</ng-template>
-        <app-bar-chart-component #energyChart></app-bar-chart-component>
-        <div class="time-span">
-            <span class="time-span-label">Time Interval</span>
-            <mat-form-field class="time-span-selection">
+        <div class="time">
+            <span class="time-label">Time Interval</span>
+            <mat-form-field class="time-selection">
               <mat-select [(value)]="selectedEnergy" (selectionChange)="onSelectedEnergyTimeSpanChanged($event)">
                 <mat-option *ngFor="let sel of selectionEnergy" [value]="sel.value">
                   {{sel.label}}
@@ -17,14 +17,14 @@
               </mat-select>
             </mat-form-field>
         </div>
+        <app-bar-chart-component #energyChart></app-bar-chart-component>
       </mat-tab>
 
       <mat-tab *ngIf="temperatureDisplay">
         <ng-template mat-tab-label>Temperature</ng-template>
-        <app-bar-chart-component #temperatureChart></app-bar-chart-component>
-        <div class="time-span">
-          <span class="time-span-label">Time Interval</span>
-          <mat-form-field class="time-span-selection">
+        <div class="time">
+          <span class="time-label">Time Interval</span>
+          <mat-form-field class="time-selection">
             <mat-select [(value)]="selectedTemperature" (selectionChange)="onSelectedTemperatureTimeSpanChanged($event)">
               <mat-option *ngFor="let sel of selectionTemperature" [value]="sel.value">
                 {{sel.label}}
@@ -32,6 +32,7 @@
             </mat-select>
           </mat-form-field>
         </div>
+        <app-bar-chart-component #temperatureChart></app-bar-chart-component>
       </mat-tab>
     </mat-tab-group>
 
