@@ -41,7 +41,6 @@ export class ViewUserEditComponent implements OnInit, OnDestroy {
       this.error = "Passwords mismatch!";
       return;
     }
-
     this.error = null;
     this.apiUserService.editUser(this.user, (user: User) => {
       if (user == null) {
@@ -59,6 +58,11 @@ export class ViewUserEditComponent implements OnInit, OnDestroy {
       this.error = "Passwords mismatch!";
       return;
     }
+    else if (this.user.userName.toLowerCase() != this.user.userName) {
+      this.error = "Use only lower case letters for User Name!";
+      return;
+    }
+
     this.error = null;
     this.apiUserService.createUser(this.user, (user: User) => {
       if (user == null) {

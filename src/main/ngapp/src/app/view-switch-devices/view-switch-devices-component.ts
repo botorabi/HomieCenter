@@ -8,6 +8,8 @@ import {ViewDevicesComponent} from "../view-devices/view-devices.component";
 import {AnimationRotation, AnimationWidgetSpan} from "../material.module";
 import {MatDialog} from "@angular/material";
 import {DialogTwoButtonsComponent} from "../dialog-two-buttons/dialog-two-buttons.component";
+import {DeviceStats} from "../service/device-stats";
+import {DialogDeviceStatsComponent} from "../dialog-device-stats/dialog-device-stats.component";
 
 
 @Component({
@@ -47,6 +49,21 @@ export class ViewSwitchDevicesComponent implements OnInit {
     this.appInfoService.setSwitchDeviceCount(this.devices.length);
   }
 
+  public onStats(device: DeviceSwitch) : void {
+    const dialogRef = this.dialog.open(DialogDeviceStatsComponent);
+    dialogRef.componentInstance
+      .setTitle(device.name)
+      .setButtonText("Ok")
+      .enableEnergyDisplay(true)
+      .enableTemperatureDisplay(true);
+
+    this.apiDeviceService.deviceStats(device.ain, (deviceStats: DeviceStats, error: string) => {
+      if (!error) {
+        dialogRef.componentInstance.setStats(deviceStats);
+      }
+    });
+  }
+
   public getVoltage(device: DeviceSwitch) : string {
     return (device.voltage / 1000).toFixed(1);
   }
@@ -67,11 +84,12 @@ export class ViewSwitchDevicesComponent implements OnInit {
 
   private openDialogConfirmSwitching(device: DeviceSwitch) : void {
     const dialogRef = this.dialog.open(DialogTwoButtonsComponent);
-    let dialog = dialogRef.componentInstance;
-    dialog.setTitle('Turn On/Off ' + device.name);
-    dialog.setContent('Do you want to turn ' + (device.on ? 'off ': 'on ') + device.name + '?');
-    dialog.setButton1Text("No");
-    dialog.setButton2Text("Yes");
+    dialogRef.componentInstance
+      .setTitle('Turn On/Off ' + device.name)
+      .setContent('Do you want to turn ' + (device.on ? 'off ': 'on ') + device.name + '?')
+      .setButton1Text("No")
+      .setButton2Text("Yes");
+
     dialogRef.afterClosed().subscribe(result => {
       if (result === "Yes") {
         this.toggleSwitch(device);
@@ -84,7 +102,7 @@ export class ViewSwitchDevicesComponent implements OnInit {
     this.apiDeviceService.deviceSwitch(device.id, !device.on, () => {
       // trigger the device update
       if (this.devicesComponent) {
-        window.setTimeout(() => {
+        setTimeout(() => {
           this.devicesComponent.updateDevices();
           device.updating = false;
         }, 200);

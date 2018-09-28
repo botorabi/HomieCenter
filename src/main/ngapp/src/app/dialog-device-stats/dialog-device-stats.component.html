@@ -1,0 +1,43 @@
+<div>
+  <div mat-dialog-title>
+    {{title}}
+    <p class="time-stamp">{{timeStamp | date:"d.M.yyy  H:mm:ss"}}</p>
+  </div>
+  <mat-dialog-content class="mat-typography">
+    <mat-tab-group>
+      <mat-tab *ngIf="energyDisplay">
+        <ng-template mat-tab-label>Energy</ng-template>
+        <div class="time">
+            <span class="time-label">Time Interval</span>
+            <mat-form-field class="time-selection">
+              <mat-select [(value)]="selectedEnergy" (selectionChange)="onSelectedEnergyTimeSpanChanged($event)">
+                <mat-option *ngFor="let sel of selectionEnergy" [value]="sel.value">
+                  {{sel.label}}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+        </div>
+        <app-bar-chart-component #energyChart></app-bar-chart-component>
+      </mat-tab>
+
+      <mat-tab *ngIf="temperatureDisplay">
+        <ng-template mat-tab-label>Temperature</ng-template>
+        <div class="time">
+          <span class="time-label">Time Interval</span>
+          <mat-form-field class="time-selection">
+            <mat-select [(value)]="selectedTemperature" (selectionChange)="onSelectedTemperatureTimeSpanChanged($event)">
+              <mat-option *ngFor="let sel of selectionTemperature" [value]="sel.value">
+                {{sel.label}}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+        <app-bar-chart-component #temperatureChart></app-bar-chart-component>
+      </mat-tab>
+    </mat-tab-group>
+
+  </mat-dialog-content>
+  <mat-dialog-actions align="end">
+    <button mat-raised-button [mat-dialog-close]="buttonText">{{buttonText}}</button>
+  </mat-dialog-actions>
+</div>

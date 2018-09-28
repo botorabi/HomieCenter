@@ -162,6 +162,31 @@ public class FritzBoxAuthenticationTest {
     }
 
     @Test
+    public void authenticateFRITZBoxConnectionProblem() throws Exception {
+        ResponseEntity<String> response = new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        doReturn(response).when(requests).get(anyString(), anyMap());
+
+        assertThatThrownBy(() -> fritzBoxAuthentication.authenticate("", "", "")).isInstanceOf(Exception.class);
+    }
+
+    @Test
+    public void authenticateWithInvalidSID() throws Exception {
+        ResponseEntity<String> response = new ResponseEntity<>(HttpStatus.OK);
+        doReturn(response).when(requests).get(anyString(), anyMap());
+
+        AuthStatus result = fritzBoxAuthentication.authenticate("", "", "");
+
+        assertThat(result.hasValidSID()).isFalse();
+    }
+
+    @Test
+    public void connectionStateWithException() throws Exception {
+        doThrow(new Exception()).when(requests).get(any(), any());
+
+        assertThatThrownBy(() -> fritzBoxAuthentication.getConnectionState()).isInstanceOf(Exception.class);
+    }
+
+    @Test
     public void preparePassword() {
         assertThat(fritzBoxAuthentication.preparePassword("My Über Passwärt")).isEqualTo("My .ber Passw.rt");
     }
@@ -171,7 +196,7 @@ public class FritzBoxAuthenticationTest {
         final String challenge = "The Response Challenge";
         final String password = "My Password";
         final String expectedResponse = challenge + "-" + HashGenerator.createMD5(
-                    (challenge + "-" + fritzBoxAuthentication.preparePassword(password)).getBytes("UTF-16LE"));
+                (challenge + "-" + fritzBoxAuthentication.preparePassword(password)).getBytes("UTF-16LE"));
 
         assertThat(fritzBoxAuthentication.createResponse(challenge, password)).isEqualTo(expectedResponse);
     }

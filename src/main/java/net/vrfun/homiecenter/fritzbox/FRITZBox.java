@@ -37,7 +37,8 @@ public class FRITZBox {
     private final Logger LOGGER = LoggerFactory.getLogger(FRITZBox.class);
 
     private FritzBoxAuthentication fritzBoxAuthentication;
-    private ResponseHandlerDeviceList handlerDeviceList ;
+    private ResponseHandlerDeviceList responseHandlerDeviceList;
+    private ResponseHandlerDeviceStats responseHandlerDeviceStats;
     private Requests requests;
 
     @Autowired
@@ -52,7 +53,8 @@ public class FRITZBox {
     public FRITZBox fritzBox() {
         FRITZBox fritzBox = new FRITZBox();
         fritzBox.fritzBoxAuthentication = new FritzBoxAuthentication(getFritzBoxURL());
-        fritzBox.handlerDeviceList = new ResponseHandlerDeviceList();
+        fritzBox.responseHandlerDeviceList = new ResponseHandlerDeviceList();
+        fritzBox.responseHandlerDeviceStats = new ResponseHandlerDeviceStats();
         fritzBox.requests = new Requests();
 
         LOGGER.info("Using FRITZ!Box URL: {}", getFritzBoxURL());
@@ -74,7 +76,13 @@ public class FRITZBox {
 
     @NotNull
     public FRITZBox withResponseHandlerDeviceList(@NotNull ResponseHandlerDeviceList responseHandlerDeviceList) {
-        this.handlerDeviceList = responseHandlerDeviceList;
+        this.responseHandlerDeviceList = responseHandlerDeviceList;
+        return this;
+    }
+
+    @NotNull
+    public FRITZBox withResponseHandlerDeviceStats(@NotNull ResponseHandlerDeviceStats responseHandlerDeviceStats) {
+        this.responseHandlerDeviceStats = responseHandlerDeviceStats;
         return this;
     }
 
@@ -145,7 +153,7 @@ public class FRITZBox {
         List<DeviceInfo> devices = new ArrayList<>();
 
         if (response.getStatusCode() == HttpStatus.OK) {
-            handlerDeviceList.read(response.getBody(), devices);
+            responseHandlerDeviceList.read(response.getBody(), devices);
         }
 
         return devices;
@@ -160,6 +168,29 @@ public class FRITZBox {
             }
         }
         return null;
+    }
+
+    @Nullable
+    public DeviceStats getDeviceStats(@NotNull final String deviceAIN) throws Exception {
+        AuthStatus authStatus = loginIfNeeded();
+
+        Map<String, String> parameters = new HashMap<>();
+        parameters.put("switchcmd", "getbasicdevicestats");
+        parameters.put("ain", deviceAIN);
+
+        ResponseEntity<String> response = requestHttpGET(
+                authStatus.getSID(),
+                "webservices/homeautoswitch.lua",
+                parameters);
+
+        DeviceStats deviceStats = new DeviceStats();
+        deviceStats.setAIN(deviceAIN);
+
+        if (response.getStatusCode() == HttpStatus.OK) {
+            responseHandlerDeviceStats.read(response.getBody(), deviceStats);
+        }
+
+        return deviceStats;
     }
 
     public void handleDeviceCommand(long deviceId, @NotNull final String command) throws Exception {

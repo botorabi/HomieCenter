@@ -8,6 +8,7 @@
 package net.vrfun.homiecenter.fritzbox;
 
 import net.vrfun.homiecenter.ApplicationProperties;
+import net.vrfun.homiecenter.model.DeviceStats;
 import org.junit.*;
 import org.junit.runner.RunWith;
 import org.mockito.*;
@@ -15,7 +16,6 @@ import org.springframework.http.*;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import javax.validation.constraints.NotNull;
-
 import java.util.*;
 
 import static org.assertj.core.api.Assertions.*;
@@ -41,7 +41,8 @@ public class FRITZBoxTest {
         fritzBox
                 .withRequests(requests)
                 .withFritzBoxAuthentication(fritzBoxAuthentication)
-                .withResponseHandlerDeviceList(new ResponseHandlerDeviceList());
+                .withResponseHandlerDeviceList(new ResponseHandlerDeviceList())
+                .withResponseHandlerDeviceStats(new ResponseHandlerDeviceStats());
 
         fritzBox = spy(fritzBox);
     }
@@ -80,10 +81,25 @@ public class FRITZBoxTest {
     }
 
     @Test
+    public void loginNonCached() throws Exception {
+        AuthStatus authStatus = new AuthStatus();
+        authStatus.setSID("");
+        doReturn(authStatus).when(fritzBox).getCachedAuthStatus();
+
+        ApplicationProperties applicationProperties = mock(ApplicationProperties.class);
+        fritzBox.withApplicationProperties(applicationProperties);
+
+        doReturn(authStatus).when(fritzBox).login(any(), any());
+
+        fritzBox.loginIfNeeded();
+        verify(fritzBox).login(any(), any());
+    }
+
+    @Test
     public void loginFail() throws Exception {
         mockFritzBoxAuthentication(false);
 
-        assertThatThrownBy(() ->fritzBox.login("username", "password")).isInstanceOf(Exception.class);
+        assertThatThrownBy(() -> fritzBox.login("username", "password")).isInstanceOf(Exception.class);
     }
 
     @Test
@@ -95,26 +111,26 @@ public class FRITZBoxTest {
 
     @Test
     public void getDevicesEmptyList() throws Exception {
-        mockFritzBoxWithDeviceList("<devicelist></devicelist>", HttpStatus.OK);
+        mockFritzBoxWithDeviceResponse("<devicelist></devicelist>", HttpStatus.OK);
 
         assertThat(fritzBox.getDevices()).isEmpty();
     }
 
     @Test
     public void getDevicesWithDevices() throws Exception {
-        mockFritzBoxWithDeviceList(ResponseHandlerDeviceListTest.XML_INPUT_TWO_SWITCH_DEVICES, HttpStatus.OK);
+        mockFritzBoxWithDeviceResponse(ResponseHandlerDeviceListTest.XML_INPUT_TWO_SWITCH_DEVICES, HttpStatus.OK);
 
         assertThat(fritzBox.getDevices().size()).isEqualTo(2);
     }
 
     @Test
     public void getDevicesWithDevicesHttpError() throws Exception {
-        mockFritzBoxWithDeviceList(ResponseHandlerDeviceListTest.XML_INPUT_TWO_SWITCH_DEVICES, HttpStatus.NOT_FOUND);
+        mockFritzBoxWithDeviceResponse(ResponseHandlerDeviceListTest.XML_INPUT_TWO_SWITCH_DEVICES, HttpStatus.NOT_FOUND);
 
         assertThat(fritzBox.getDevices().size()).isEqualTo(0);
     }
 
-    private void mockFritzBoxWithDeviceList(@NotNull final String responseBody, HttpStatus status) throws Exception {
+    private void mockFritzBoxWithDeviceResponse(@NotNull final String responseBody, HttpStatus status) throws Exception {
         mockFritzBoxAuthentication(true);
         ApplicationProperties applicationProperties = mock(ApplicationProperties.class);
         mockFritzBoxUrl("http://fritz.box");
@@ -126,21 +142,32 @@ public class FRITZBoxTest {
 
     @Test
     public void getDeviceNotExisting() throws Exception {
-        mockFritzBoxWithDeviceList(ResponseHandlerDeviceListTest.XML_INPUT_TWO_SWITCH_DEVICES, HttpStatus.OK);
+        mockFritzBoxWithDeviceResponse(ResponseHandlerDeviceListTest.XML_INPUT_TWO_SWITCH_DEVICES, HttpStatus.OK);
 
         assertThat(fritzBox.getDevice(0)).isNull();
     }
 
     @Test
     public void getDevice() throws Exception {
-        mockFritzBoxWithDeviceList(ResponseHandlerDeviceListTest.XML_INPUT_TWO_SWITCH_DEVICES, HttpStatus.OK);
+        mockFritzBoxWithDeviceResponse(ResponseHandlerDeviceListTest.XML_INPUT_TWO_SWITCH_DEVICES, HttpStatus.OK);
 
         assertThat(fritzBox.getDevice(16)).isNotNull();
     }
 
     @Test
+    public void getDeviceStats() throws Exception {
+        mockFritzBoxWithDeviceResponse(ResponseHandlerDeviceStatsTest.XML_INPUT, HttpStatus.OK);
+
+        DeviceStats deviceStats = fritzBox.getDeviceStats("MyAIN");
+        assertThat(deviceStats).isNotNull();
+        assertThat(deviceStats.getTemperature().getStats().size()).isNotZero();
+        assertThat(deviceStats.getPower().getStats().size()).isNotZero();
+        assertThat(deviceStats.getEnergy().getStats().size()).isNotZero();
+    }
+
+    @Test
     public void handleSwitchCommand() throws Exception {
-        mockFritzBoxWithDeviceList(ResponseHandlerDeviceListTest.XML_INPUT_TWO_SWITCH_DEVICES, HttpStatus.OK);
+        mockFritzBoxWithDeviceResponse(ResponseHandlerDeviceListTest.XML_INPUT_TWO_SWITCH_DEVICES, HttpStatus.OK);
 
         fritzBox.handleDeviceCommand(16, "on");
         fritzBox.handleDeviceCommand(16, "off");
@@ -148,14 +175,14 @@ public class FRITZBoxTest {
 
     @Test
     public void handleInvalidSwitchCommand() throws Exception {
-        mockFritzBoxWithDeviceList(ResponseHandlerDeviceListTest.XML_INPUT_TWO_SWITCH_DEVICES, HttpStatus.OK);
+        mockFritzBoxWithDeviceResponse(ResponseHandlerDeviceListTest.XML_INPUT_TWO_SWITCH_DEVICES, HttpStatus.OK);
 
         assertThatThrownBy(() -> fritzBox.handleDeviceCommand(16, "invalid_cmd")).isInstanceOf(Exception.class);
     }
 
     @Test
     public void handleSwitchCommandInvalidDeviceType() throws Exception {
-        mockFritzBoxWithDeviceList(ResponseHandlerDeviceListTest.XML_INPUT_THREE_MIXED_DEVICES, HttpStatus.OK);
+        mockFritzBoxWithDeviceResponse(ResponseHandlerDeviceListTest.XML_INPUT_THREE_MIXED_DEVICES, HttpStatus.OK);
 
         assertThatThrownBy(() -> fritzBox.handleDeviceCommand(0, "on")).isInstanceOf(Exception.class);
         assertThatThrownBy(() -> fritzBox.handleDeviceCommand(20, "on")).isInstanceOf(Exception.class);
@@ -163,14 +190,14 @@ public class FRITZBoxTest {
 
     @Test
     public void handleHeatControllerCommand() throws Exception {
-        mockFritzBoxWithDeviceList(ResponseHandlerDeviceListTest.XML_INPUT_ONE_HC_DEVICE, HttpStatus.OK);
+        mockFritzBoxWithDeviceResponse(ResponseHandlerDeviceListTest.XML_INPUT_ONE_HC_DEVICE, HttpStatus.OK);
 
         fritzBox.handleDeviceCommand(20, "temperature=32");
     }
 
     @Test
     public void handleInvalidHeatControllerCommand() throws Exception {
-        mockFritzBoxWithDeviceList(ResponseHandlerDeviceListTest.XML_INPUT_ONE_HC_DEVICE, HttpStatus.OK);
+        mockFritzBoxWithDeviceResponse(ResponseHandlerDeviceListTest.XML_INPUT_ONE_HC_DEVICE, HttpStatus.OK);
 
         assertThatThrownBy(() -> fritzBox.handleDeviceCommand(20, "temperature=")).isInstanceOf(Exception.class);
         assertThatThrownBy(() -> fritzBox.handleDeviceCommand(20, "temperature=NotANumber")).isInstanceOf(Exception.class);
@@ -178,7 +205,7 @@ public class FRITZBoxTest {
 
     @Test
     public void handleHeatControllerCommandInvalidDeviceType() throws Exception {
-        mockFritzBoxWithDeviceList(ResponseHandlerDeviceListTest.XML_INPUT_THREE_MIXED_DEVICES, HttpStatus.OK);
+        mockFritzBoxWithDeviceResponse(ResponseHandlerDeviceListTest.XML_INPUT_THREE_MIXED_DEVICES, HttpStatus.OK);
 
         assertThatThrownBy(() -> fritzBox.handleDeviceCommand(0, "temperature=32")).isInstanceOf(Exception.class);
         assertThatThrownBy(() -> fritzBox.handleDeviceCommand(16, "temperature=32")).isInstanceOf(Exception.class);

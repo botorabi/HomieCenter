@@ -8,7 +8,7 @@
 package net.vrfun.homiecenter.service;
 
 import net.vrfun.homiecenter.fritzbox.FRITZBox;
-import net.vrfun.homiecenter.model.DeviceInfo;
+import net.vrfun.homiecenter.model.*;
 import org.slf4j.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
@@ -33,7 +33,7 @@ public class RestServiceAutomationDevice {
 
 
     @Autowired
-    public RestServiceAutomationDevice(@NotNull FRITZBox fritzBox) {
+    public RestServiceAutomationDevice(@NotNull final FRITZBox fritzBox) {
         this.fritzBox = fritzBox;
     }
 
@@ -49,7 +49,7 @@ public class RestServiceAutomationDevice {
     }
 
     @GetMapping("/api/device/{id}")
-    public ResponseEntity<DeviceInfo> getDevice(@PathVariable Long id) {
+    public ResponseEntity<DeviceInfo> getDevice(@PathVariable final Long id) {
         try {
             return new ResponseEntity<>(fritzBox.getDevice(id), HttpStatus.OK);
         }
@@ -58,8 +58,19 @@ public class RestServiceAutomationDevice {
         }
     }
 
+    @GetMapping("/api/device/stats/{ain}")
+    public ResponseEntity<DeviceStats> getDeviceStats(@PathVariable final String ain) {
+        try {
+            return new ResponseEntity<>(fritzBox.getDeviceStats(ain), HttpStatus.OK);
+        }
+        catch (Exception exception) {
+            LOGGER.debug("Problem occurred while retrieving the device stats ({}), reason: {}", ain, exception.getMessage());
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
+
     @GetMapping("/api/device/{id}/{command}")
-    public ResponseEntity<Void> executeCommand(@PathVariable Long id, @PathVariable String command) {
+    public ResponseEntity<Void> executeCommand(@PathVariable final Long id, @PathVariable final String command) {
         try {
             fritzBox.handleDeviceCommand(id, command);
             return new ResponseEntity<>(HttpStatus.OK);

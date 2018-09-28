@@ -25,6 +25,10 @@ import {ViewErrorPageComponent} from "./view-error-page/view-error-page.componen
 import {ViewDevicesComponent} from "./view-devices/view-devices.component";
 import {ViewHeatControllerDevicesComponent} from "./view-heat-controller-devices/view-heat-controller-devices.component";
 import {DialogTwoButtonsComponent} from "./dialog-two-buttons/dialog-two-buttons.component";
+import {DialogOneButtonComponent} from "./dialog-one-button/dialog-one-button.component";
+import {DialogDeviceStatsComponent} from "./dialog-device-stats/dialog-device-stats.component";
+import {BarChartComponentComponent} from "./charts/bar-chart-component/bar-chart-component.component";
+import {ChartsModule} from "ng2-charts";
 
 
 @NgModule({
@@ -42,17 +46,23 @@ import {DialogTwoButtonsComponent} from "./dialog-two-buttons/dialog-two-buttons
     ViewAboutComponent,
     ViewHomeComponent,
     ViewErrorPageComponent,
+    BarChartComponentComponent,
+    DialogOneButtonComponent,
     DialogTwoButtonsComponent,
+    DialogDeviceStatsComponent,
     SafePipe
   ],
   entryComponents: [
-    DialogTwoButtonsComponent
+    DialogOneButtonComponent,
+    DialogTwoButtonsComponent,
+    DialogDeviceStatsComponent
   ],
   imports: [
     RouterModule.forRoot(appRoutes, {onSameUrlNavigation:"reload"}),
     BrowserModule,
     HttpClientModule,
     MaterialModule,
+    ChartsModule,
     FormsModule
   ],
   providers: [

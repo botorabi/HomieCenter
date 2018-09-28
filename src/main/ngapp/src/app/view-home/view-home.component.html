@@ -1,32 +1,39 @@
 <div>
   <div [hidden]="appInfoService.isAppInitialized()">
-    <mat-progress-bar class="progress-bar" mode="indeterminate"></mat-progress-bar>
+    <mat-spinner class="progress"></mat-spinner>
+    <br>
     <p>Loading...</p>
   </div>
-  <div [hidden]="appInfoService.isUserAuthenticated()">
+  <div [hidden]="!appInfoService.isAppInitialized()">
+    <div *ngIf="!appInfoService.isUserAuthenticated()">
       <h2>Welcome to Homie Center</h2>
+      <p>Homie Center is a web application which simplifies the controlling and monitoring of your home automation devices connected to a FRITZ!Box router.
+        For more information visit the <a routerLink="/nav/about" routerLinkActive="true">About</a> page.
+      </p>
+      <br>
       <p>
         Please login to proceed.
       </p>
       <br>
       <a mat-raised-button color="primary" routerLink="/nav/login" routerLinkActive="active">Login</a>
-  </div>
-  <div [hidden]="!appInfoService.isUserAuthenticated()">
-    <app-view-devices></app-view-devices>
-    <br>
-    <div [hidden]="appInfoService.cameraCount === 0">
-      <mat-expansion-panel [(expanded)]="appInfoService.camerasExpanded">
-        <mat-expansion-panel-header>
-          <mat-panel-title>IP Cameras ({{appInfoService.cameraCount}})</mat-panel-title>
-          <mat-panel-description></mat-panel-description>
-        </mat-expansion-panel-header>
-        <app-view-camera></app-view-camera>
-      </mat-expansion-panel>
     </div>
-    <div *ngIf="appInfoService.cameraCount === 0 && appInfoService.switchDeviceCount === 0 && appInfoService.heatControllerDeviceCount === 0">
-      <p>Currently, no home automation devices seem to exist in your network.</p>
-      <p>For adding IP Cameras open the menu above and use entry <i>Add IP Camera</i>, assuming that you are logged in as an administrator.</p>
-      <p>For information about home automation devices visit AVM GmbH site at <a href="https://avm.de">https://avm.de</a></p>
+    <div [hidden]="!appInfoService.isUserAuthenticated()">
+      <app-view-devices></app-view-devices>
+      <br>
+      <div [hidden]="appInfoService.cameraCount === 0">
+        <mat-expansion-panel [(expanded)]="appInfoService.camerasExpanded">
+          <mat-expansion-panel-header>
+            <mat-panel-title>IP Cameras ({{appInfoService.cameraCount}})</mat-panel-title>
+            <mat-panel-description></mat-panel-description>
+          </mat-expansion-panel-header>
+          <app-view-camera></app-view-camera>
+        </mat-expansion-panel>
+      </div>
+      <div *ngIf="appInfoService.showNoDeviceHint()">
+        <p>Currently, no home automation devices seem to exist in your network.</p>
+        <p>For adding IP Cameras open the menu above and use entry <i>Add IP Camera</i>, assuming that you are logged in as an administrator.</p>
+        <p>For information about home automation devices visit AVM GmbH site at <a href="https://avm.de">https://avm.de</a></p>
+      </div>
     </div>
   </div>
 </div>

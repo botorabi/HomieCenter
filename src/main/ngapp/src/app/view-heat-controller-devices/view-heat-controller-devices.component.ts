@@ -6,6 +6,11 @@ import {Device} from "../service/device";
 import {DeviceHeatController} from "../service/device-heat-controller";
 import {HeatControllerWidgetUpdater} from "./heat-controller-widget-updater";
 import {AnimationRotation, AnimationWidgetSpan} from "../material.module";
+import {MatDialog} from "@angular/material";
+import {DialogOneButtonComponent} from "../dialog-one-button/dialog-one-button.component";
+import {DeviceSwitch} from "../service/device-switch";
+import {DialogDeviceStatsComponent} from "../dialog-device-stats/dialog-device-stats.component";
+import {DeviceStats} from "../service/device-stats";
 
 @Component({
   selector: 'app-view-heat-controller-devices',
@@ -26,7 +31,8 @@ export class ViewHeatControllerDevicesComponent implements OnInit {
   private deviceHeatControllerUpdater: HeatControllerWidgetUpdater;
 
   constructor(private apiDeviceService: ApiDeviceService,
-              private appInfoService: AppInformationService) {
+              private appInfoService: AppInformationService,
+              private dialog: MatDialog) {
 
     this.deviceHeatControllerUpdater = new HeatControllerWidgetUpdater(this.devices);
   }
@@ -37,7 +43,7 @@ export class ViewHeatControllerDevicesComponent implements OnInit {
 
   private testSymbolIcons() {
     //! Test the battery symbol
-    window.setTimeout(() => {
+    setTimeout(() => {
       if (this.devices.length > 0) {
         this.devices[0].batteryLevel -= 5;
         if (this.devices[0].batteryLevel < 10) {
@@ -54,7 +60,7 @@ export class ViewHeatControllerDevicesComponent implements OnInit {
     }, 1000);
   }
 
-  public setDevicesComponent(devicesComponent: ViewDevicesComponent) : void {
+  public setDevicesComponent(devicesComponent: ViewDevicesComponent): void {
     this.devicesComponent = devicesComponent;
   }
 
@@ -63,12 +69,12 @@ export class ViewHeatControllerDevicesComponent implements OnInit {
     this.appInfoService.setHeatControllerDeviceCount(this.devices.length);
   }
 
-  public getTrimmedDeviceName(device: Device) : string {
+  public getTrimmedDeviceName(device: Device): string {
     let name = device.name;
     return name.length > 16 ? (name.substr(0, 15) + '...') : name;
   }
 
-  public getDeviceSummary(device: DeviceHeatController) : string {
+  public getDeviceSummary(device: DeviceHeatController): string {
     if (!device.present) {
       return 'Device Not Available!';
     }
@@ -89,7 +95,7 @@ export class ViewHeatControllerDevicesComponent implements OnInit {
     return !collapsed;
   }
 
-  public getWidgetCollapseSymbol(device: Device) : string {
+  public getWidgetCollapseSymbol(device: Device): string {
     return this.isWidgetCollapse(device) ? 'keyboard_arrow_down' : 'keyboard_arrow_up';
   }
 
@@ -139,12 +145,12 @@ export class ViewHeatControllerDevicesComponent implements OnInit {
     return symbol;
   }
 
-  public setTemperature(device: Device, temperature: number) : void {
+  public setTemperature(device: Device, temperature: number): void {
     device.updating = true;
     this.apiDeviceService.deviceHeatControllerSetTemperature(device.id, temperature, () => {
       // trigger the device update
       if (this.devicesComponent) {
-        window.setTimeout(() => {
+        setTimeout(() => {
           this.devicesComponent.updateDevices();
           device.updating = false;
         }, 200);
@@ -152,37 +158,89 @@ export class ViewHeatControllerDevicesComponent implements OnInit {
     });
   }
 
-  public incrementTemperature(device: DeviceHeatController) : void {
+  public incrementTemperature(device: DeviceHeatController): void {
     if (device.updating) {
       return;
     }
     this.setTemperature(device, device.setTemperature + 1);
   }
 
-  public decrementTemperature(device: DeviceHeatController) : void {
+  public decrementTemperature(device: DeviceHeatController): void {
     if (device.updating) {
       return;
     }
     this.setTemperature(device, device.setTemperature - 1);
   }
 
-  private convertTemperature(temperature: number) : string {
+  private convertTemperature(temperature: number): string {
     return (temperature / 2.0).toFixed(1);
   }
 
-  public getCurrentTemperature(device: DeviceHeatController) : string {
+  public getCurrentTemperature(device: DeviceHeatController): string {
     return this.convertTemperature(device.currentTemperature);
   }
 
-  public getSetTemperature(device: DeviceHeatController) : string {
+  public getSetTemperature(device: DeviceHeatController): string {
     return this.convertTemperature(device.setTemperature);
   }
 
-  public getComfortTemperature(device: DeviceHeatController) : string {
+  public getComfortTemperature(device: DeviceHeatController): string {
     return this.convertTemperature(device.comfortTemperature);
   }
 
   public getEconomyTemperature(device: DeviceHeatController) {
     return this.convertTemperature(device.economyTemperature);
+  }
+
+  public onShowError(device: DeviceHeatController) {
+    let message = '';
+    switch (device.errorCode) {
+      case 1:
+        message = "The radiator control '@NAME@' is not ready for operation. Please make sure that the control is correctly mounted on the radiator valve.";
+        break;
+      case 2:
+        message = 'Valve lift too short or battery power too low.';
+        break;
+      case 3:
+        message = 'No valve movement possible.';
+        break;
+      case 4:
+        message = 'Preparing installation.';
+        break;
+      case 5:
+        message = 'The radiator control is in installation mode and can be mounted on the radiator valve.';
+        break;
+      case 6:
+        message = 'The radiator control is now adjusting to the radiator valve lift.';
+        break;
+    }
+
+    if (message.length > 0) {
+      message = message.replace("@NAME@", device.name);
+      this.openErrorDialog(message);
+    }
+  }
+
+  private openErrorDialog(message: string) : void {
+    const dialogRef = this.dialog.open(DialogOneButtonComponent);
+    dialogRef.componentInstance
+      .setTitle('Error Description')
+      .setContent(message)
+      .setButtonText("Ok");
+  }
+
+  public onStats(device: DeviceSwitch) : void {
+    const dialogRef = this.dialog.open(DialogDeviceStatsComponent);
+    dialogRef.componentInstance
+      .setTitle(device.name)
+      .setButtonText("Ok")
+      .enableEnergyDisplay(false)
+      .enableTemperatureDisplay(true);
+
+    this.apiDeviceService.deviceStats(device.ain, (deviceStats: DeviceStats, error: string) => {
+      if (!error) {
+        dialogRef.componentInstance.setStats(deviceStats);
+      }
+    });
   }
 }

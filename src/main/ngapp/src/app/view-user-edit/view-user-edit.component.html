@@ -10,7 +10,7 @@
   </div>
   <div>
     <mat-form-field>
-      <mat-label>Login</mat-label>
+      <mat-label>Login (use at least 5 lower case letters or numbers)</mat-label>
       <input [readonly]="user.id != 0" matInput placeholder="Login" name="userName" [(ngModel)]="user.userName">
     </mat-form-field>
   </div>
@@ -35,4 +35,4 @@
   </div>
 </form>
 <br>
-<div class="warn-text" *ngIf="error">An error occurred! Error code: {{error}}</div>
+<div class="warn-text" *ngIf="error">{{error}}</div>

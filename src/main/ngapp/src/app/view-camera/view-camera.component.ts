@@ -20,13 +20,16 @@ export class ViewCameraComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.apiDeviceService.cameraList((cameras: Array<Camera>, error: string) => {
-      this.cameras = cameras;
-      if (this.cameras) {
-        this.appInfoService.setCameraCount(this.cameras.length);
-      }
-      this.appInfoService.setCameraInfoReady(true);
-    });
+    setTimeout(() => {
+      this.apiDeviceService.cameraList((cameras: Array<Camera>, error: string) => {
+        this.cameras = cameras;
+        if (this.cameras) {
+          this.appInfoService.setCameraCount(this.cameras.length);
+        }
+      });
+    }, 500);
+
+    this.appInfoService.setCameraInfoReady(true);
     this.appInfoService.refreshLogoutTimer();
   }
 

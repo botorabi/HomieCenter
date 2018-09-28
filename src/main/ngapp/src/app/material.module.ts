@@ -14,9 +14,12 @@ import {
   MatNativeDateModule,
   MatPaginatorModule,
   MatProgressBarModule,
+  MatProgressSpinnerModule,
+  MatSelectModule,
   MatSlideToggleModule,
   MatStepperModule,
   MatTableModule,
+  MatTabsModule,
   MatToolbarModule
 } from "@angular/material";
 import {ReactiveFormsModule} from "@angular/forms";
@@ -24,24 +27,27 @@ import {BrowserAnimationsModule} from "@angular/platform-browser/animations";
 import {animate, style, transition, trigger} from "@angular/animations";
 
 const modules = [
+  MatBadgeModule,
   MatButtonModule,
   MatCardModule,
   MatCheckboxModule,
-  MatToolbarModule,
-  MatInputModule,
   MatDatepickerModule,
-  MatMenuModule,
-  MatNativeDateModule,
-  MatListModule,
-  MatTableModule,
-  MatPaginatorModule,
-  MatProgressBarModule,
-  MatIconModule,
   MatDialogModule,
   MatExpansionModule,
-  MatBadgeModule,
-  MatStepperModule,
+  MatIconModule,
+  MatInputModule,
+  MatListModule,
+  MatMenuModule,
+  MatNativeDateModule,
+  MatPaginatorModule,
+  MatProgressBarModule,
+  MatProgressSpinnerModule,
+  MatSelectModule,
   MatSlideToggleModule,
+  MatStepperModule,
+  MatTableModule,
+  MatTabsModule,
+  MatToolbarModule,
   ReactiveFormsModule,
   BrowserAnimationsModule
 ];

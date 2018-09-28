@@ -67,6 +67,8 @@ public class RestServiceUserTest {
     @Test
     public void createUser() {
         ReqUserEdit reqUserEdit = new ReqUserEdit();
+        reqUserEdit.setUserName("mylogin");
+        reqUserEdit.setPassword("mypassword");
         ResponseEntity<HomieCenterUser> response = restServiceUser.create(reqUserEdit,
                 userTestUtils.createAuthentication("admin-user", true));
 
@@ -83,7 +85,29 @@ public class RestServiceUserTest {
     }
 
     @Test
-    public void createUserWithException() {
+    public void createUserNonLowerCaseLogin() {
+        ReqUserEdit reqUserEdit = new ReqUserEdit();
+        reqUserEdit.setUserName("UpperCaseLogin1234");
+        reqUserEdit.setPassword("mypassword");
+        ResponseEntity<HomieCenterUser> response = restServiceUser.create(reqUserEdit,
+                userTestUtils.createAuthentication("admin-user", true));
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_ACCEPTABLE);
+    }
+
+    @Test
+    public void createUserTooShortLogin() {
+        ReqUserEdit reqUserEdit = new ReqUserEdit();
+        reqUserEdit.setUserName("nam");
+        reqUserEdit.setPassword("mypassword");
+        ResponseEntity<HomieCenterUser> response = restServiceUser.create(reqUserEdit,
+                userTestUtils.createAuthentication("admin-user", true));
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_ACCEPTABLE);
+    }
+
+    @Test
+    public void createUserWithRepoSaveException() {
         when(userRepository.save(any())).thenThrow(new RuntimeException(""));
 
         ReqUserEdit reqUserEdit = new ReqUserEdit();

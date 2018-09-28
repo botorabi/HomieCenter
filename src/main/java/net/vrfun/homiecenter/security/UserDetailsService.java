@@ -29,7 +29,7 @@ public class UserDetailsService {
     private UserRepository userRepository;
 
     @Autowired
-    public UserDetailsService(@NotNull UserRepository userRepository) {
+    public UserDetailsService(@NotNull final UserRepository userRepository) {
         this.userRepository = userRepository;
     }
 

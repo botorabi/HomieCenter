@@ -31,9 +31,11 @@ export class ViewDevicesComponent implements OnInit {
   ngOnInit() {
     this.switchView.setDevicesComponent(this);
     this.heatControllerView.setDevicesComponent(this);
-
     this.appInfoService.refreshLogoutTimer();
-    this.periodicUpdate();
+
+    setTimeout(() => {
+      this.periodicUpdate();
+    }, 500);
   }
 
   private periodicUpdate() : void {

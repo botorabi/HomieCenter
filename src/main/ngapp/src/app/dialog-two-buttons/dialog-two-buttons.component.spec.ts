@@ -12,7 +12,7 @@ describe('DialogTwoButtonsComponent', () => {
       declarations: [ DialogTwoButtonsComponent ],
       imports: [
         MaterialModule
-      ],
+      ]
     })
     .compileComponents();
   }));

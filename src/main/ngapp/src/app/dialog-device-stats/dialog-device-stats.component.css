@@ -1,0 +1,20 @@
+.time-stamp {
+  font-size: 0.6em;
+  font-weight: normal;
+  margin: 0;
+  float: right;
+}
+.time {
+  width: 100%;
+  text-align: left;
+  vertical-align: sub;
+  margin-top: 0.5em;
+  margin-bottom: -1.5em;
+}
+.time-label {
+  font-weight: normal;
+}
+.time-selection {
+  max-width: 50% !important;
+  margin-left: 1em;
+}

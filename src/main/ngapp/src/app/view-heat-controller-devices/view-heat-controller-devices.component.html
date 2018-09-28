@@ -5,14 +5,14 @@
         <mat-icon class="device-widget-collapse" title="Details" (click)="onToggleWidgetCollapse(device)">{{getWidgetCollapseSymbol(device)}}</mat-icon>
         <span class="title-small" (click)="onToggleWidgetCollapse(device)" title="{{device.name}}">&nbsp;{{getTrimmedDeviceName(device)}}&nbsp;</span>
         <mat-icon *ngIf="!device.present" class="device-state-not-present" title="Not available!">link_off</mat-icon>
-        <span *ngIf="device.present" class="battery {{getBatterySymbolStyle(device)}}" title="{{device.batteryLevel}}%"><mat-icon>{{getBatterySymbol(device)}}</mat-icon></span>
-        <span *ngIf="device.errorCode" class="error-code" title="Error: E{{device.errorCode}}"><mat-icon>warning</mat-icon></span>
+        <span *ngIf="device.present" class="battery {{getBatterySymbolStyle(device)}}" title="Battery Level: {{device.batteryLevel}}%"><mat-icon>{{getBatterySymbol(device)}}</mat-icon></span>
       </mat-card-title>
-      <mat-card-subtitle class="switch-card-subtitle">
+      <mat-card-subtitle class="device-card-subtitle">
         {{getDeviceSummary(device)}}
+        <span *ngIf="device.errorCode" class="error-code" (click)="onShowError(device)" title="Error: E{{device.errorCode}}"><mat-icon>warning</mat-icon></span>
       </mat-card-subtitle>
       <br>
-      <mat-card-content class="switch-card-content" *ngIf="!isWidgetCollapse(device)" [@widgetSpan]>
+      <mat-card-content class="device-card-content" *ngIf="!isWidgetCollapse(device)" [@widgetSpan]>
         <table class="device-info">
           <tr>
             <td colspan="2">
@@ -44,8 +44,14 @@
             <td>{{getEconomyTemperature(device)}}°C</td>
           </tr>
           <tr>
-            <td class="window-open">Window Open?</td>
-            <td>{{device.windowOpen ? "Yes!" : "No"}}</td>
+            <td class="window-open">Window:</td>
+            <td>{{device.windowOpen ? "open!" : "closed"}}</td>
+          </tr>
+          <tr>
+            <td class="stats-label" >Statistics:</td>
+            <td>
+              <mat-icon title="Device Statistics" color="primary" class="stats-icon" (click)="onStats(device)">insert_chart_outlined</mat-icon>
+            </td>
           </tr>
           <tr>
             <td colspan="2" class="device-fw">

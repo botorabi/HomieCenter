@@ -12,6 +12,7 @@ import {ViewCameraComponent} from "../view-camera/view-camera.component";
 import {SafePipe} from "../safe-pipe";
 import {ViewDevicesComponent} from "../view-devices/view-devices.component";
 import {ViewHeatControllerDevicesComponent} from "../view-heat-controller-devices/view-heat-controller-devices.component";
+import {RouterTestingModule} from "@angular/router/testing";
 
 describe('ViewHomeComponent', () => {
   let component: ViewHomeComponent;
@@ -30,6 +31,7 @@ describe('ViewHomeComponent', () => {
       imports: [
         MaterialModule,
         FormsModule,
+        RouterTestingModule,
         HttpClientTestingModule
       ],
       providers: [

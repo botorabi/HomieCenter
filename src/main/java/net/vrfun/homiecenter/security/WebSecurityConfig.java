@@ -12,7 +12,6 @@ import net.vrfun.homiecenter.reverseproxy.CameraProxyRoutes;
 import org.slf4j.*;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
-import org.springframework.core.annotation.Order;
 import org.springframework.core.io.*;
 import org.springframework.http.*;
 import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity;
@@ -23,6 +22,9 @@ import org.springframework.security.web.server.SecurityWebFilterChain;
 import org.springframework.security.web.server.header.XFrameOptionsServerHttpHeadersWriter;
 import org.springframework.security.web.server.util.matcher.ServerWebExchangeMatchers;
 import org.springframework.web.reactive.function.server.*;
+import org.springframework.web.reactive.socket.server.*;
+import org.springframework.web.reactive.socket.server.support.HandshakeWebSocketService;
+import org.springframework.web.reactive.socket.server.upgrade.ReactorNettyRequestUpgradeStrategy;
 import reactor.core.publisher.Mono;
 
 import java.io.File;
@@ -82,7 +84,7 @@ public class WebSecurityConfig {
                 .and()
                 .authorizeExchange()
                     .pathMatchers(CameraProxyRoutes.getProxyPath() + "**").authenticated()
-                    .pathMatchers("/*", "/login", "/nav/login", "/nav/about", "/api/user/status").permitAll()
+                    .pathMatchers("/*", "/assets/**", "/login", "/nav/login", "/nav/about", "/api/user/status").permitAll()
                     .anyExchange().authenticated()
                 .and()
                 .formLogin()
@@ -97,5 +99,13 @@ public class WebSecurityConfig {
                     })
                 .and()
                 .build();
+    }
+
+    @Bean
+    public WebSocketService webSocketService() {
+        RequestUpgradeStrategy requestUpgradeStrategy = new ReactorNettyRequestUpgradeStrategy();
+        //! NOTE this needs the newer spring-framework version!
+        //requestUpgradeStrategy.setMaxFramePayloadLength(2 * 1024 * 1024);
+        return new HandshakeWebSocketService(requestUpgradeStrategy);
     }
 }
