@@ -5,7 +5,7 @@
 
     <groupId>net.vrfun</groupId>
     <artifactId>homiecenter</artifactId>
-    <version>1.2.0-SNAPSHOT</version><!--SNAPSHOT-->
+    <version>1.2.0</version><!--SNAPSHOT-->
     <packaging>jar</packaging>
 
     <name>Homie Center</name>
