@@ -30,7 +30,12 @@
             <td>
               <span>
                 <span class="spin-box spin-box-handle-left" (click)="decrementTemperature(device)">-</span>
-                <span class="spin-box spin-box-value">{{getSetTemperature(device)}}°C</span>
+                <span class="spin-box spin-box-value">
+                  <mat-form-field class="spin-box-value-input">
+                    <input matInput name="temperature" [ngModel]="device.setTemperature | temperature" (change)="onSetTemperatureChanged(device, $event)">
+                  </mat-form-field>
+                  °C
+                </span>
                 <span class="spin-box spin-box-handle-right" (click)="incrementTemperature(device)">+</span>
               </span>
             </td>
