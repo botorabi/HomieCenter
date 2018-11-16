@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, OnInit, Pipe, PipeTransform} from '@angular/core';
 import {ViewDevicesComponent} from "../view-devices/view-devices.component";
 import {ApiDeviceService} from "../service/api-device.service";
 import {AppInformationService} from "../service/app-information.service";
@@ -11,6 +11,18 @@ import {DialogOneButtonComponent} from "../dialog-one-button/dialog-one-button.c
 import {DeviceSwitch} from "../service/device-switch";
 import {DialogDeviceStatsComponent} from "../dialog-device-stats/dialog-device-stats.component";
 import {DeviceStats} from "../service/device-stats";
+
+
+@Pipe({ name: 'temperature' })
+export class TemperaturePipe implements PipeTransform {
+
+  transform(temperature) {
+    if (temperature) {
+      temperature = (temperature / 2.0).toFixed(1);
+    }
+    return temperature;
+  }
+}
 
 @Component({
   selector: 'app-view-heat-controller-devices',
@@ -145,7 +157,7 @@ export class ViewHeatControllerDevicesComponent implements OnInit {
     return symbol;
   }
 
-  public setTemperature(device: Device, temperature: number): void {
+  public setTemperature(device: DeviceHeatController, temperature: number): void {
     device.updating = true;
     this.apiDeviceService.deviceHeatControllerSetTemperature(device.id, temperature, () => {
       // trigger the device update
@@ -180,8 +192,23 @@ export class ViewHeatControllerDevicesComponent implements OnInit {
     return this.convertTemperature(device.currentTemperature);
   }
 
-  public getSetTemperature(device: DeviceHeatController): string {
-    return this.convertTemperature(device.setTemperature);
+  public onSetTemperatureChanged(device: DeviceHeatController, event: any) {
+    let value = parseFloat(event.currentTarget.value);
+    if (isNaN(value)) {
+      event.currentTarget.value = this.convertTemperature(device.setTemperature);
+      return;
+    }
+    let temperature = parseInt('' + (value * 2.0)); /*! NOTE: don't know why Math.floor() does not work here! */
+    // temperature rage is: 8..28 °C, i.e. values are in range 16..56
+    if (temperature > 56) {
+      temperature = 56;
+    }
+    else if (temperature < 16) {
+      temperature = 16;
+    }
+    this.setTemperature(device, temperature);
+    device.setTemperature = temperature;
+    event.currentTarget.value = this.convertTemperature(temperature);
   }
 
   public getComfortTemperature(device: DeviceHeatController): string {

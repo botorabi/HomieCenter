@@ -23,7 +23,10 @@ import {ViewUserEditComponent} from "./view-user-edit/view-user-edit.component";
 import {AppHttpInterceptorService} from "./service/app-http-interceptor.service";
 import {ViewErrorPageComponent} from "./view-error-page/view-error-page.component";
 import {ViewDevicesComponent} from "./view-devices/view-devices.component";
-import {ViewHeatControllerDevicesComponent} from "./view-heat-controller-devices/view-heat-controller-devices.component";
+import {
+  TemperaturePipe,
+  ViewHeatControllerDevicesComponent
+} from "./view-heat-controller-devices/view-heat-controller-devices.component";
 import {DialogTwoButtonsComponent} from "./dialog-two-buttons/dialog-two-buttons.component";
 import {DialogOneButtonComponent} from "./dialog-one-button/dialog-one-button.component";
 import {DialogDeviceStatsComponent} from "./dialog-device-stats/dialog-device-stats.component";
@@ -50,7 +53,8 @@ import {ChartsModule} from "ng2-charts";
     DialogOneButtonComponent,
     DialogTwoButtonsComponent,
     DialogDeviceStatsComponent,
-    SafePipe
+    SafePipe,
+    TemperaturePipe
   ],
   entryComponents: [
     DialogOneButtonComponent,

@@ -253,7 +253,7 @@ public class FRITZBox {
             throw new Exception("Could not set temperature for the device (" + heatControllerDeviceInfo.getAIN() + ")!");
         }
 
-        LOGGER.debug("device ({}) successfully set temperature {}", heatControllerDeviceInfo.getAIN(), desiredTemperature);
+        LOGGER.debug("device ({}) setting temperature to {}", heatControllerDeviceInfo.getAIN(), desiredTemperature);
     }
 
     protected void switchDevice(long deviceId, boolean on) throws Exception {

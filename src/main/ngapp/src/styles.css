@@ -1,7 +1,7 @@
 @import "~@angular/material/prebuilt-themes/indigo-pink.css";
 
 html, body {
-  height: 100%;
+  height: 99%;
 }
 
 .center{
@@ -113,4 +113,8 @@ html, body {
 .spin-box-value {
   border-left-width: 0;
   border-right-width: 0;
+}
+.spin-box-value-input {
+  font-weight: bold;
+  max-width: 2em !important;
 }
