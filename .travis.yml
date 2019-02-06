@@ -29,7 +29,5 @@ jdk:
   - oraclejdk8
 
 after_script:
-  - cd src/main/java/
-  - ../../../cc-test-reporter format-coverage -t jacoco  --add-prefix src/main/java/ ../../../target/jacoco-ut/jacoco.xml
-  - cd ../../..
-  - ./cc-test-reporter upload-coverage --input src/main/java/coverage/codeclimate.json
+  - JACOCO_SOURCE_PATH=src/main/java ./cc-test-reporter format-coverage target/site/jacoco/jacoco.xml --input-type jacoco
+  - ./cc-test-reporter upload-coverage
