@@ -2,9 +2,10 @@
   flex: 0 0 50px !important;
 }
 .user-list {
-  width: 300px;
-  margin: auto;
-  text-align: left;
+  min-width: 260px;
+  max-width: 600px;
+  margin: 5vh auto auto;
+  text-align: center;
 }
 .user-list-icon {
   flex: 0 0 50px !important;

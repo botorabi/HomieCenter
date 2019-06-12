@@ -21,7 +21,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class GatewayRoutesRefresher implements ApplicationEventPublisherAware {
 
-    ApplicationEventPublisher publisher;
+    private ApplicationEventPublisher publisher;
 
     @Override
     public void setApplicationEventPublisher(ApplicationEventPublisher applicationEventPublisher) {

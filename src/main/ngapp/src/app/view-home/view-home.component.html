@@ -5,7 +5,7 @@
     <p>Loading...</p>
   </div>
   <div [hidden]="!appInfoService.isAppInitialized()">
-    <div *ngIf="!appInfoService.isUserAuthenticated()">
+    <div class="welcome-text" *ngIf="!appInfoService.isUserAuthenticated()">
       <h2>Welcome to Homie Center</h2>
       <p>Homie Center is a web application which simplifies the controlling and monitoring of your home automation devices connected to a FRITZ!Box router.
         For more information visit the <a routerLink="/nav/about" routerLinkActive="true">About</a> page.

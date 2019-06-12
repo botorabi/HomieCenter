@@ -2,7 +2,7 @@
   <div class="device-container">
     <div *ngFor="let camera of cameras">
       <mat-card class="device-item">
-        <mat-card-title><span title="{{camera.name}}">{{getCameraName(camera)}}</span></mat-card-title>
+        <mat-card-title><span class="title-small" title="{{camera.name}}">{{getCameraName(camera)}}</span></mat-card-title>
         <mat-card-subtitle>
           <a mat-icon-button class="title-button" color="primary" title="Details" [disabled]="getCameraLink(camera.urlTag) == ''" (click)="onDetails(camera)"><mat-icon>visibility</mat-icon></a>
           <a *ngIf="appInfoService.userStatus?.role=='ADMIN'" mat-icon-button class="title-button" color="primary" title="Edit" (click)="onEdit(camera)"><mat-icon>edit</mat-icon></a>
@@ -14,7 +14,7 @@
           <span class="no-preview" title="No preview available!" *ngIf="getCameraLink(camera.previewUrlTag) == ''">
             <mat-icon>photo_camera</mat-icon>
           </span>
-          <iframe class="preview-iframe" *ngIf="getCameraLink(camera.previewUrlTag) != ''" id="camera-iframe-{{camera.id}}" height="200" width="200" [src]="getCameraLink(camera.previewUrlTag) | safe"></iframe>
+          <iframe class="preview-iframe" *ngIf="getCameraLink(camera.previewUrlTag) != ''" id="camera-iframe-{{camera.id}}" height="220" width="220" [src]="getCameraLink(camera.previewUrlTag) | safe"></iframe>
         </mat-card-content>
       </mat-card>
     </div>

@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {AfterContentInit, Component, ElementRef, OnInit, ViewChild} from '@angular/core';
 import {ApiUserService} from "../service/api-user.service";
 import {AppInformationService} from "../service/app-information.service";
 import {Router} from "@angular/router";
@@ -8,10 +8,11 @@ import {Router} from "@angular/router";
   templateUrl: './view-authentication.component.html',
   styleUrls: ['./view-authentication.component.css']
 })
-export class ViewAuthenticationComponent implements OnInit {
+export class ViewAuthenticationComponent implements OnInit, AfterContentInit {
 
   error: string;
   credentials = {login: '', password: ''};
+  @ViewChild('userLogin') userLogin: ElementRef;
 
   constructor(private appInfoService: AppInformationService,
               private apiUserService: ApiUserService,
@@ -19,6 +20,10 @@ export class ViewAuthenticationComponent implements OnInit {
   }
 
   ngOnInit() {
+  }
+
+  ngAfterContentInit() {
+    this.userLogin.nativeElement.focus();
   }
 
   onLogin() {

@@ -1,19 +1,29 @@
-<h2>Please Login</h2>
-<div class="warn-text" *ngIf="error">{{error}}</div>
+<mat-card class="login-card">
+  <mat-card-title>Please Login</mat-card-title>
+  <mat-card-subtitle></mat-card-subtitle>
+  <mat-card-content>
+    <br>
+    <form class="input-form">
+      <div>
+        <mat-form-field>
+          <input matInput autofocus placeholder="User Name" name="login" [(ngModel)]="credentials.login" #userLogin>
+        </mat-form-field>
+      </div>
+      <div>
+        <mat-form-field>
+          <input matInput type="password" placeholder="Password" name="password" [(ngModel)]="credentials.password">
+        </mat-form-field>
+      </div>
+      <br>
+      <div class="input-form-buttons">
+        <span class="button-spacer"></span>
+        <button mat-raised-button type="submit" color="primary" (click)="onLogin()">Login</button>
+        <span class="button-spacer"></span>
+      </div>
+      <br>
+    </form>
+  </mat-card-content>
+</mat-card>
 <br>
-<form class="input-form">
-  <div>
-    <mat-form-field>
-      <input matInput autofocus placeholder="User Name" name="login" [(ngModel)]="credentials.login">
-    </mat-form-field>
-  </div>
-  <div>
-    <mat-form-field>
-      <input matInput type="password" placeholder="Password" name="password" [(ngModel)]="credentials.password">
-    </mat-form-field>
-  </div>
-  <br>
-  <div class="input-form-buttons">
-    <button mat-raised-button type="submit" color="primary" (click)="onLogin()">Login</button>
-  </div>
-</form>
+<div class="warn-text" *ngIf="error">{{error}}</div>
+

@@ -11,8 +11,8 @@ import org.h2.util.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.gateway.route.*;
 import org.springframework.cloud.gateway.route.builder.*;
-import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.http.*;
+import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Flux;
 
@@ -28,19 +28,18 @@ import java.net.*;
 @Component
 public class RefreshableRoutesLocator implements RouteLocator {
 
-    private RouteLocatorBuilder builder;
+    private final RouteLocatorBuilder builder;
+    private final GatewayRoutesRefresher gatewayRoutesRefresher;
+
     private RouteLocatorBuilder.Builder routesBuilder;
     private Flux<Route> route;
 
     @Autowired
-    GatewayRoutesRefresher gatewayRoutesRefresher;
-
-    @Autowired
-    ConfigurableApplicationContext context;
-
-    @Autowired
-    public RefreshableRoutesLocator(RouteLocatorBuilder builder) {
+    public RefreshableRoutesLocator(@NonNull final RouteLocatorBuilder builder,
+                                    @NonNull final GatewayRoutesRefresher gatewayRoutesRefresher) {
         this.builder = builder;
+        this.gatewayRoutesRefresher = gatewayRoutesRefresher;
+
         clearRoutes();
     }
 
@@ -62,7 +61,7 @@ public class RefreshableRoutesLocator implements RouteLocator {
 
         routesBuilder.route(id, fn -> fn
                 .path(path + "/**")
-                .filters(filterSpec -> setupRouteFilters(path, filterSpec))
+                .filters(filterSpec -> setupRouteFilters(path, uri, filterSpec))
                 .uri(uri)
         );
 
@@ -70,7 +69,7 @@ public class RefreshableRoutesLocator implements RouteLocator {
     }
 
     @NotNull
-    private UriSpec setupRouteFilters(@NotNull final String path, @NotNull GatewayFilterSpec filterSpec) {
+    private UriSpec setupRouteFilters(@NotNull final String path, @NotNull final URI uri, @NotNull GatewayFilterSpec filterSpec) {
         filterSpec.stripPrefix(1);
 
         // setup the retry filter, it is important as during transitions from one page to another access problems can occur.
@@ -79,6 +78,11 @@ public class RefreshableRoutesLocator implements RouteLocator {
             config.setStatuses(HttpStatus.INTERNAL_SERVER_ERROR);
             config.setMethods(HttpMethod.GET, HttpMethod.POST, HttpMethod.PUT, HttpMethod.DELETE);
         });
+
+        String prefixPath = uri.getPath();
+        if (!StringUtils.isNullOrEmpty(prefixPath)) {
+            filterSpec.setPath(prefixPath);
+        }
 
         // handle redirects coming from a routed service
         //  the service may be aware of request header 'X-Forwarded-Prefix'

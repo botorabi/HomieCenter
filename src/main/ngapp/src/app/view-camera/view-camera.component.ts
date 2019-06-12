@@ -59,7 +59,7 @@ export class ViewCameraComponent implements OnInit {
     let width = 0;
     let height = 0;
     let doc = iframe.contentDocument.documentElement;
-    if (iframe.height == "200") {
+    if (iframe.height == "220") {
       if (doc.scrollWidth > doc.scrollHeight) {
         width = 640;
         height = 480;
@@ -70,7 +70,7 @@ export class ViewCameraComponent implements OnInit {
       }
     }
     else {
-      height = width = 200;
+      height = width = 220;
     }
     this.adaptIFrameSize(iframe, width, height);
   }

@@ -12,7 +12,7 @@ import net.vrfun.homiecenter.utils.HashGenerator;
 import org.h2.util.StringUtils;
 import org.slf4j.*;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.lang.Nullable;
+import org.springframework.lang.*;
 import org.springframework.stereotype.Service;
 
 import javax.validation.constraints.NotNull;
@@ -34,16 +34,16 @@ public class CameraProxyRoutes {
 
     private final static String PROXY_PATH = "/camera";
 
-    private CameraInfoRepository cameraInfoRepository;
+    private final CameraInfoRepository cameraInfoRepository;
 
-    private RefreshableRoutesLocator refreshableRoutesLocator;
+    private final RefreshableRoutesLocator refreshableRoutesLocator;
 
     private Map<String /*Tag*/, String /*Path*/> routes = new ConcurrentHashMap<>();
 
 
     @Autowired
-    public CameraProxyRoutes(CameraInfoRepository cameraInfoRepository,
-                             RefreshableRoutesLocator refreshableRoutesLocator) {
+    public CameraProxyRoutes(@NonNull final CameraInfoRepository cameraInfoRepository,
+                             @NonNull final RefreshableRoutesLocator refreshableRoutesLocator) {
 
         this.cameraInfoRepository = cameraInfoRepository;
         this.refreshableRoutesLocator = refreshableRoutesLocator;
