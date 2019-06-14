@@ -103,11 +103,4 @@ public class WebSecurityConfig {
                 .and()
                 .build();
     }
-
-    @Bean
-    public WebSocketService homieCenterWebSocketService() {
-        ReactorNettyRequestUpgradeStrategy requestUpgradeStrategy = new ReactorNettyRequestUpgradeStrategy();
-        requestUpgradeStrategy.setMaxFramePayloadLength(WEBSOCKET_MAX_FRAME_PAYLOAD);
-        return new HandshakeWebSocketService(requestUpgradeStrategy);
-    }
 }
