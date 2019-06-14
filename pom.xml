@@ -26,6 +26,16 @@
     </properties>
 
     <dependencies>
+
+        <!-- NOTE This is patched version of spring-webflux
+                  See README.md in project's directory misc/spring.webflux-v5.1.8-RELEASE-patch
+        -->
+        <dependency>
+            <groupId>spring-webflux-boto</groupId>
+            <artifactId>reactive-websocket</artifactId>
+            <version>5.1.8</version>
+        </dependency>
+
         <dependency>
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter</artifactId>
