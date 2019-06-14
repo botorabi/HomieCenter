@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018 by Botorabi. All rights reserved.
+ * Copyright (c) 2018 - 2019 by Botorabi. All rights reserved.
  * https://github.com/botorabi/HomieCenter
  *
  * License: MIT License (MIT), read the LICENSE text in
@@ -17,6 +17,7 @@ import org.springframework.core.annotation.Order;
 import org.springframework.core.io.buffer.DataBuffer;
 import org.springframework.http.*;
 import org.springframework.http.server.reactive.ServerHttpResponse;
+import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.server.*;
 import org.springframework.web.server.ServerWebExchange;
@@ -44,16 +45,16 @@ public class HomieErrorWebExceptionHandler extends AbstractErrorWebExceptionHand
     @Bean
     @Order(-1)
     public HomieErrorWebExceptionHandler createHomieErrorWebExceptionHandler(
-            ErrorAttributes errorAttributes,
-            ResourceProperties resourceProperties,
-            ApplicationContext applicationContext) {
+            @NonNull final ErrorAttributes errorAttributes,
+            @NonNull final ResourceProperties resourceProperties,
+            @NonNull final ApplicationContext applicationContext) {
 
         return new HomieErrorWebExceptionHandler(errorAttributes, resourceProperties, applicationContext);
     }
 
-    public HomieErrorWebExceptionHandler(ErrorAttributes errorAttributes,
-                                         ResourceProperties resourceProperties,
-                                         ApplicationContext applicationContext) {
+    public HomieErrorWebExceptionHandler(@NonNull final ErrorAttributes errorAttributes,
+                                         @NonNull final ResourceProperties resourceProperties,
+                                         @NonNull final ApplicationContext applicationContext) {
 
         super(errorAttributes, resourceProperties, applicationContext);
     }

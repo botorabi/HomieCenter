@@ -2,10 +2,12 @@
 
 html, body {
   height: 99%;
+  width: 95%;
+  max-width: 1240px;
+  margin: auto;
 }
 
 .center{
-  margin: 10px auto;
   text-align: center;
 }
 
@@ -36,40 +38,15 @@ html, body {
   font-weight: bold;
   color: red;
 }
-
-.cat-table {
-  width: 100%;
+.mat-form-field {
+  width: 80% !important;
 }
-.cat-name {
-  font-weight: normal;
-  width: 25%;
-}
-.cat-value {
-  width: 75%;
-}
-.cat-comment {
-  width: 100%;
-}
-.cat-comment textarea {
-  width: 100%;
-  border: 1px solid lightgray;
-  height: 1.4em;
-}
-.cat-apply-btn {
-  text-align: right;
-  padding-top: 2em;
-}
-
 .input-form {
-  width: 300px;
   margin: auto;
 }
+
 .input-form-buttons {
-  text-align: center;
-}
-.mat-form-field {
-  width:300px !important;
-  text-align: left;
+  display: flex;
 }
 .input-form-buttons > button {
   margin-right: 5px;
@@ -117,4 +94,15 @@ html, body {
 .spin-box-value-input {
   font-weight: bold;
   max-width: 2em !important;
+}
+.button-spacer {
+  flex: 1 0;
+}
+.title-small {
+  font-size: 0.7em;
+  cursor: pointer;
+}
+.title-normal {
+  font-size: 1.0em;
+  cursor: pointer;
 }

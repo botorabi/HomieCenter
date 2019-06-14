@@ -1,6 +1,5 @@
 <div class="app-container">
-  <mat-toolbar color="primary">
-    <mat-toolbar-row>
+  <mat-toolbar class="app-header mat-elevation-z5" color="primary">
       <mat-menu #appMenu="matMenu">
         <button mat-menu-item (click)="onHome()"><mat-icon>home</mat-icon>Home</button>
         <span *ngIf="appInfoService.isUserAuthenticated()">
@@ -13,13 +12,12 @@
         <button mat-menu-item *ngIf="!appInfoService.isUserAuthenticated()" (click)="onLogin()"><mat-icon>exit_to_app</mat-icon>Login</button>
         <button mat-menu-item (click)="onAbout()"><mat-icon>help</mat-icon>About</button>
       </mat-menu>
-      <button mat-icon-button [matMenuTriggerFor]="appMenu">
-        <mat-icon>menu</mat-icon>
-      </button>
-      <span class="center">{{getMenuTitle()}}</span>
+      <div>
+        <button mat-icon-button [matMenuTriggerFor]="appMenu"><mat-icon>menu</mat-icon></button>
+        <span class="app-bread-crumb">{{getMenuTitle()}}</span>
+      </div>
       <span style="flex: 1 1 auto;"></span>
-      <button mat-icon-button (click)="onHome()"><img src="favicon.ico" height="48" width="48"></button>
-    </mat-toolbar-row>
+      <button class="app-header-logo" mat-icon-button (click)="onHome()"><img src="favicon.ico" height="48" width="48"></button>
   </mat-toolbar>
 
   <mat-card class="app-content">
@@ -31,11 +29,11 @@
   </mat-card>
 
   <footer class="app-footer">
-    <mat-toolbar color="primary">
+    <mat-toolbar color="primary" class="app-footer-container mat-elevation-z5">
       <span class="mat-small">
         <a class="about-link" routerLink="/nav/about" routerLinkActive="active">Homie Center v{{appInfoService.version}}</a>
         <br>
-        <small>Copyright 2018</small>
+        <small>Copyright 2019</small>
       </span>
       <div class="mat-small footer-username">
         <span *ngIf="appInfoService.isUserAuthenticated()">

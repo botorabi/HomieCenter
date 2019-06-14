@@ -1,4 +1,9 @@
 .admin-checkbox {
   text-align: left;
   line-height: 4.0em;
+  margin-left: 3em;
+}
+.user-card {
+  max-width: 400px;
+  margin: 5vh auto auto;
 }

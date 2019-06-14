@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018 by Botorabi. All rights reserved.
+ * Copyright (c) 2018 - 2019 by Botorabi. All rights reserved.
  * https://github.com/botorabi/HomieCenter
  *
  * License: MIT License (MIT), read the LICENSE text in
@@ -19,10 +19,11 @@ import org.springframework.security.config.web.server.ServerHttpSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.server.SecurityWebFilterChain;
+import org.springframework.security.web.server.csrf.WebSessionServerCsrfTokenRepository;
 import org.springframework.security.web.server.header.XFrameOptionsServerHttpHeadersWriter;
 import org.springframework.security.web.server.util.matcher.ServerWebExchangeMatchers;
 import org.springframework.web.reactive.function.server.*;
-import org.springframework.web.reactive.socket.server.*;
+import org.springframework.web.reactive.socket.server.WebSocketService;
 import org.springframework.web.reactive.socket.server.support.HandshakeWebSocketService;
 import org.springframework.web.reactive.socket.server.upgrade.ReactorNettyRequestUpgradeStrategy;
 import reactor.core.publisher.Mono;
@@ -39,6 +40,8 @@ import java.io.File;
 public class WebSecurityConfig {
 
     private final Logger LOGGER = LoggerFactory.getLogger(WebSecurityConfig.class);
+
+    private final int WEBSOCKET_MAX_FRAME_PAYLOAD = 5 * 1024 * 1024;
 
     /**
      * Is development mode enabled?
@@ -80,7 +83,7 @@ public class WebSecurityConfig {
                 //.csrf().csrfTokenRepository(new WebSessionServerCsrfTokenRepository()).and()
                 .csrf().disable()
                 .headers()
-                    .frameOptions().mode(XFrameOptionsServerHttpHeadersWriter.Mode.SAMEORIGIN).and()
+                    .frameOptions().mode(XFrameOptionsServerHttpHeadersWriter.Mode.SAMEORIGIN)
                 .and()
                 .authorizeExchange()
                     .pathMatchers(CameraProxyRoutes.getProxyPath() + "**").authenticated()
@@ -99,13 +102,5 @@ public class WebSecurityConfig {
                     })
                 .and()
                 .build();
-    }
-
-    @Bean
-    public WebSocketService webSocketService() {
-        RequestUpgradeStrategy requestUpgradeStrategy = new ReactorNettyRequestUpgradeStrategy();
-        //! NOTE this needs the newer spring-framework version!
-        //requestUpgradeStrategy.setMaxFramePayloadLength(2 * 1024 * 1024);
-        return new HandshakeWebSocketService(requestUpgradeStrategy);
     }
 }

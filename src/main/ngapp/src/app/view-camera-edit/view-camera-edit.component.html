@@ -1,27 +1,35 @@
-<h2>IP Camera Access Settings</h2>
-<h3>Please enter the information about accessing your IP Camera.</h3>
-<form class="input-form">
-  <div>
-    <mat-form-field>
-      <input matInput autofocus placeholder="Name" name="name" [(ngModel)]="camera.name">
-    </mat-form-field>
-  </div>
-  <div>
-    <mat-form-field>
-      <input matInput placeholder="Camera URL, e.g. http(s)://MyCam-IP:8080" name="url" [(ngModel)]="camera.url">
-    </mat-form-field>
-  </div>
-  <div>
-    <mat-form-field>
-      <input matInput placeholder="Camera Preview URL, e.g. <Camera URL>/preview.(m)jpg" name="previewurl" [(ngModel)]="camera.previewUrl">
-    </mat-form-field>
-  </div>
-  <br>
-  <div class="input-form-buttons">
-    <button *ngIf="camera.id" mat-raised-button type="button" title="Delete the camera" color="secondary" (click)="onDelete()">Delete!</button>
-    <button mat-raised-button color="primary" type="button" routerLink="" routerLinkActive="active">Cancel</button>
-    <button mat-raised-button type="submit" color="primary" (click)="onApply()">Apply</button>
-  </div>
-</form>
+<mat-card class="camera-card">
+  <mat-card-title>IP Camera Access Settings</mat-card-title>
+  <mat-card-subtitle>Please enter the information about accessing your IP Camera.</mat-card-subtitle>
+  <mat-card-content>
+    <br>
+    <form class="input-form">
+      <div>
+        <mat-form-field>
+          <input matInput autofocus placeholder="Name" name="name" [(ngModel)]="camera.name">
+        </mat-form-field>
+      </div>
+      <div>
+        <mat-form-field>
+          <input matInput placeholder="URL, e.g. http(s)://MyCam-IP:8080" name="url" [(ngModel)]="camera.url">
+        </mat-form-field>
+      </div>
+      <div>
+        <mat-form-field>
+          <input matInput placeholder="Preview URL, e.g. <Camera URL>/picture.(m)jpg" name="previewurl" [(ngModel)]="camera.previewUrl">
+        </mat-form-field>
+      </div>
+      <br>
+      <div class="input-form-buttons">
+        <span class="button-spacer"></span>
+        <button *ngIf="camera.id" mat-raised-button type="button" title="Delete the camera" color="secondary" (click)="onDelete()">Delete!</button>
+        <button mat-raised-button color="primary" type="button" routerLink="" routerLinkActive="active">Cancel</button>
+        <button mat-raised-button type="submit" color="primary" (click)="onApply()">Apply</button>
+        <span class="button-spacer"></span>
+      </div>
+    </form>
+    <br>
+  </mat-card-content>
+</mat-card>
 <br>
 <div class="warn-text" *ngIf="error">An error occurred! Error code: {{error}}</div>

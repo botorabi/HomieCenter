@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018 by Botorabi. All rights reserved.
+ * Copyright (c) 2018 - 2019 by Botorabi. All rights reserved.
  * https://github.com/botorabi/HomieCenter
  *
  * License: MIT License (MIT), read the LICENSE text in
@@ -21,7 +21,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class GatewayRoutesRefresher implements ApplicationEventPublisherAware {
 
-    ApplicationEventPublisher publisher;
+    private ApplicationEventPublisher publisher;
 
     @Override
     public void setApplicationEventPublisher(ApplicationEventPublisher applicationEventPublisher) {
