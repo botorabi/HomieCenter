@@ -4,7 +4,7 @@ import {ApiDeviceService} from "../service/api-device.service";
 import {Camera} from "../service/camera";
 import {AppInformationService} from "../service/app-information.service";
 import {DialogTwoButtonsComponent} from "../dialog-two-buttons/dialog-two-buttons.component";
-import {MatDialog} from "@angular/material";
+import { MatDialog } from "@angular/material/dialog";
 
 @Component({
   selector: 'app-view-camera-edit',

@@ -20,6 +20,8 @@ export class BarChartComponentComponent implements OnInit {
     scaleShowVerticalLines: false,
     responsive: true,
     tooltips: false,
+    categoryPercentage: 0.9,
+    barPercentage: 1.0,
     legend: {
       onClick: function() { /* disable the default on-click behaviour!*/},
       labels: {
@@ -32,8 +34,6 @@ export class BarChartComponentComponent implements OnInit {
           display: true,
           labelString: this.xAxisLabel
         },
-        categoryPercentage: 0.9,
-        barPercentage: 1.0,
         ticks: {
           callback: function(value, index, values) {
             if (index == 0 || index == values.length || index == (values.length/2)) {

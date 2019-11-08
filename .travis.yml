@@ -5,7 +5,10 @@ cache:
   directories:
   - $HOME/.m2
 
-language: java
+language: node_js
+
+node_js:
+  - "10.16.2"
 
 before_install:
   - ./ngapp-setup.sh
@@ -22,7 +25,7 @@ script:
   - mvn clean verify
 
 jdk:
-  - oraclejdk8
+  - oraclejdk11
 
 after_script:
   - JACOCO_SOURCE_PATH=src/main/java ./cc-test-reporter format-coverage target/site/jacoco/jacoco.xml --input-type jacoco

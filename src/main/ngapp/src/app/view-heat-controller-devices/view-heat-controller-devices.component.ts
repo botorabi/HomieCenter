@@ -6,7 +6,7 @@ import {Device} from "../service/device";
 import {DeviceHeatController} from "../service/device-heat-controller";
 import {HeatControllerWidgetUpdater} from "./heat-controller-widget-updater";
 import {AnimationRotation, AnimationWidgetSpan} from "../material.module";
-import {MatDialog} from "@angular/material";
+import { MatDialog } from "@angular/material/dialog";
 import {DialogOneButtonComponent} from "../dialog-one-button/dialog-one-button.component";
 import {DeviceSwitch} from "../service/device-switch";
 import {DialogDeviceStatsComponent} from "../dialog-device-stats/dialog-device-stats.component";

@@ -16,10 +16,10 @@ export class ViewDevicesComponent implements OnInit {
 
   public error;
 
-  @ViewChild('switchView')
+  @ViewChild('switchView', { static: true })
   private switchView: ViewSwitchDevicesComponent;
 
-  @ViewChild('heatControllerView')
+  @ViewChild('heatControllerView', { static: true })
   private heatControllerView: ViewHeatControllerDevicesComponent;
 
   private UPDATE_INTERVAL = 30 * 1000;

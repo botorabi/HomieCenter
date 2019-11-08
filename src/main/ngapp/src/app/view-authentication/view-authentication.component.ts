@@ -12,7 +12,7 @@ export class ViewAuthenticationComponent implements OnInit, AfterContentInit {
 
   error: string;
   credentials = {login: '', password: ''};
-  @ViewChild('userLogin') userLogin: ElementRef;
+  @ViewChild('userLogin', { static: true }) userLogin: ElementRef;
 
   constructor(private appInfoService: AppInformationService,
               private apiUserService: ApiUserService,
