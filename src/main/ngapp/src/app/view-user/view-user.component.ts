@@ -1,7 +1,9 @@
 import {Component, OnInit, ViewChild} from '@angular/core';
 import {User} from "../service/user";
 import {ApiUserService} from "../service/api-user.service";
-import {MatDialog, MatPaginator, MatTableDataSource} from "@angular/material";
+import { MatDialog } from "@angular/material/dialog";
+import { MatPaginator } from "@angular/material/paginator";
+import { MatTableDataSource } from "@angular/material/table";
 import {AppInformationService} from "../service/app-information.service";
 import {DialogTwoButtonsComponent} from "../dialog-two-buttons/dialog-two-buttons.component";
 
@@ -14,7 +16,7 @@ export class ViewUserComponent implements OnInit {
 
   displayedColumns = ['realName', 'userName', 'link'];
   dataSource = new MatTableDataSource<User>();
-  @ViewChild(MatPaginator) paginator: MatPaginator;
+  @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
   error: string;
 
   constructor(private apiUserService: ApiUserService,

@@ -22,7 +22,7 @@ script:
   - mvn clean verify
 
 jdk:
-  - oraclejdk8
+  - oraclejdk11
 
 after_script:
   - JACOCO_SOURCE_PATH=src/main/java ./cc-test-reporter format-coverage target/site/jacoco/jacoco.xml --input-type jacoco

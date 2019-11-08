@@ -6,7 +6,7 @@ import {DeviceSwitch} from "../service/device-switch";
 import {AppInformationService} from "../service/app-information.service";
 import {ViewDevicesComponent} from "../view-devices/view-devices.component";
 import {AnimationRotation, AnimationWidgetSpan} from "../material.module";
-import {MatDialog} from "@angular/material";
+import { MatDialog } from "@angular/material/dialog";
 import {DialogTwoButtonsComponent} from "../dialog-two-buttons/dialog-two-buttons.component";
 import {DeviceStats} from "../service/device-stats";
 import {DialogDeviceStatsComponent} from "../dialog-device-stats/dialog-device-stats.component";
