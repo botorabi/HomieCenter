@@ -10,11 +10,11 @@ package net.vrfun.homiecenter.fritzbox;
 import net.vrfun.homiecenter.model.DeviceStats;
 import org.junit.*;
 import org.junit.runner.RunWith;
+import org.springframework.lang.NonNull;
 import org.springframework.lang.Nullable;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.w3c.dom.Document;
 
-import javax.validation.constraints.NotNull;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -121,7 +121,7 @@ public class ResponseHandlerDeviceStatsTest {
     }
 
     @Nullable
-    private DeviceStats readInput(final boolean caseSensitive, @NotNull final String inputString) throws Exception {
+    private DeviceStats readInput(final boolean caseSensitive, @NonNull final String inputString) throws Exception {
         DeviceStats deviceStats = new DeviceStats();
         responseHandlerDeviceStats.setUseCaseSensitiveNames(caseSensitive);
         try {

@@ -7,17 +7,19 @@
  */
 package net.vrfun.homiecenter.testutils;
 
-import net.vrfun.homiecenter.model.*;
+import net.vrfun.homiecenter.model.HomieCenterUser;
+import net.vrfun.homiecenter.model.UserRepository;
 import net.vrfun.homiecenter.service.AccessUtils;
+import org.springframework.lang.NonNull;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 
-import javax.validation.constraints.NotNull;
 import java.util.*;
 
-import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 
 
@@ -25,7 +27,7 @@ public class UserTestUtils {
 
     private UserRepository userRepository;
 
-    public UserTestUtils(@NotNull UserRepository userRepository) {
+    public UserTestUtils(@NonNull UserRepository userRepository) {
         this.userRepository = userRepository;
     }
 
@@ -33,8 +35,8 @@ public class UserTestUtils {
         when(userRepository.findByUserName(any())).thenReturn(Optional.empty());
     }
 
-    @NotNull
-    public HomieCenterUser mockUserRepositoryWithUser(boolean admin, long id, @NotNull final String userName, @NotNull final String password) {
+    @NonNull
+    public HomieCenterUser mockUserRepositoryWithUser(boolean admin, long id, @NonNull final String userName, @NonNull final String password) {
         HomieCenterUser user = new HomieCenterUser();
         user.setId(id);
         user.setAdmin(admin);
@@ -48,8 +50,8 @@ public class UserTestUtils {
         return user;
     }
 
-    @NotNull
-    public Authentication createAuthentication(@NotNull final String userName, boolean isAdmin) {
+    @NonNull
+    public Authentication createAuthentication(@NonNull final String userName, boolean isAdmin) {
         User user = new User(userName, "password",
                 isAdmin ? Arrays.asList(new SimpleGrantedAuthority(AccessUtils.ROLE_ADMIN)) : Collections.emptyList());
 
@@ -58,8 +60,8 @@ public class UserTestUtils {
         return authentication;
     }
 
-    @NotNull
-    public Optional<HomieCenterUser> createUser(@NotNull final String userName) {
+    @NonNull
+    public Optional<HomieCenterUser> createUser(@NonNull final String userName) {
         HomieCenterUser user = new HomieCenterUser();
         user.setUserName(userName);
         return Optional.of(user);

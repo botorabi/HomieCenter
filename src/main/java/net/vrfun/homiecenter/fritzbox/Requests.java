@@ -8,17 +8,19 @@
 package net.vrfun.homiecenter.fritzbox;
 
 import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
-import org.apache.http.impl.client.*;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
 import org.apache.http.ssl.TrustStrategy;
 import org.springframework.http.*;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.http.converter.StringHttpMessageConverter;
+import org.springframework.lang.NonNull;
 import org.springframework.lang.Nullable;
-import org.springframework.util.*;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
 import javax.net.ssl.SSLContext;
-import javax.validation.constraints.NotNull;
 import java.nio.charset.Charset;
 import java.security.*;
 import java.security.cert.X509Certificate;
@@ -36,7 +38,7 @@ public class Requests {
     /**
      * Request using GET method.
      */
-    public ResponseEntity<String> get(@NotNull final String url, @Nullable final Map<String, String> parameters) throws Exception {
+    public ResponseEntity<String> get(@NonNull final String url, @Nullable final Map<String, String> parameters) throws Exception {
         String finalUrl = url;
         if (parameters != null) {
             String params = "";
@@ -61,7 +63,7 @@ public class Requests {
     /**
      * Request using POST method.
      */
-    public ResponseEntity<String> post(@NotNull final String url, @Nullable final Map<String, String> parameters) throws Exception {
+    public ResponseEntity<String> post(@NonNull final String url, @Nullable final Map<String, String> parameters) throws Exception {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
 
@@ -84,7 +86,7 @@ public class Requests {
     /**
      * Create a REST template which supports UTF-8 character set in TEXT response handling.
      */
-    @NotNull
+    @NonNull
     protected RestTemplate createRestTemplate() {
         RestTemplate restTemplate = new RestTemplate();
 
@@ -97,7 +99,7 @@ public class Requests {
      * Create a RestTemplate like createRestTemplate(), but with a proper https validation mechanism.
      * As the certificate of the FRITZ!Box cannot be validated, it is simply ignored during HTTPS requests.
      */
-    @NotNull
+    @NonNull
     protected RestTemplate createRestTemplateWithoutCertificateValidation() throws KeyStoreException, NoSuchAlgorithmException, KeyManagementException {
         final TrustStrategy TRUSTING_STRATEGY = (X509Certificate[] chain, String authType) -> true;
         SSLContext sslContext = org.apache.http.ssl.SSLContexts.custom()

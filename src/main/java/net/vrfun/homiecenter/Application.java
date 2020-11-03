@@ -9,7 +9,7 @@ package net.vrfun.homiecenter;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.*;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
 
@@ -20,12 +20,19 @@ import org.springframework.context.event.EventListener;
  * @author          boto
  * Creation Date    7th June 2018
  */
-@EnableAutoConfiguration
 @SpringBootApplication
 public class Application {
 
+    final private ApplicationStartup applicationStartup;
+
+    public static void main(String[] args) {
+        SpringApplication.run(Application.class, args);
+    }
+
     @Autowired
-    private ApplicationStartup applicationStartup;
+    public Application(ApplicationStartup applicationStartup) {
+        this.applicationStartup = applicationStartup;
+    }
 
     /**
      * Put all start-up code to this method.
@@ -33,9 +40,5 @@ public class Application {
     @EventListener(ApplicationReadyEvent.class)
     public void startup() {
         applicationStartup.start();
-    }
-
-    public static void main(String[] args) {
-        SpringApplication.run(Application.class, args);
     }
 }

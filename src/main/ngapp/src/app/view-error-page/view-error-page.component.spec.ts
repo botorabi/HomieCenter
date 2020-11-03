@@ -1,4 +1,4 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import { ViewErrorPageComponent } from './view-error-page.component';
 
@@ -6,7 +6,7 @@ describe('ViewErrorPageComponent', () => {
   let component: ViewErrorPageComponent;
   let fixture: ComponentFixture<ViewErrorPageComponent>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [ ViewErrorPageComponent ]
     })

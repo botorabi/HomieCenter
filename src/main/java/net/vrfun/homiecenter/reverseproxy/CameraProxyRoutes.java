@@ -10,12 +10,13 @@ package net.vrfun.homiecenter.reverseproxy;
 import net.vrfun.homiecenter.model.CameraInfoRepository;
 import net.vrfun.homiecenter.utils.HashGenerator;
 import org.h2.util.StringUtils;
-import org.slf4j.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.lang.*;
+import org.springframework.lang.NonNull;
+import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Service;
 
-import javax.validation.constraints.NotNull;
 import java.net.*;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -49,23 +50,23 @@ public class CameraProxyRoutes {
         this.refreshableRoutesLocator = refreshableRoutesLocator;
     }
 
-    @NotNull
+    @NonNull
     public static final String getProxyPath() {
         return PROXY_PATH;
     }
 
-    @NotNull
+    @NonNull
     public final Map<String, String> getRoutes() {
         return routes;
     }
 
     @Nullable
-    public String getRouteUrl(@NotNull final String cameraTag) {
+    public String getRouteUrl(@NonNull final String cameraTag) {
         return routes.getOrDefault(cameraTag, null);
     }
 
     @Nullable
-    public String getRouteTag(@NotNull final String cameraUrl) {
+    public String getRouteTag(@NonNull final String cameraUrl) {
         for (Map.Entry<String, String> entry: routes.entrySet()) {
             if (cameraUrl.equals(entry.getValue())) {
                 return entry.getKey();
@@ -124,8 +125,8 @@ public class CameraProxyRoutes {
         refreshableRoutesLocator.buildRoutes();
     }
 
-    @NotNull
-    public String createRouteTag(@NotNull final String url) {
+    @NonNull
+    public String createRouteTag(@NonNull final String url) {
         try {
             return HashGenerator.createMD5(url.getBytes());
         }

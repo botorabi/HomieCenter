@@ -9,16 +9,21 @@ package net.vrfun.homiecenter.fritzbox;
 
 import net.vrfun.homiecenter.ApplicationProperties;
 import net.vrfun.homiecenter.model.DeviceStats;
-import org.junit.*;
+import org.junit.Before;
+import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.*;
-import org.springframework.http.*;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.lang.NonNull;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import javax.validation.constraints.NotNull;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
 
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.*;
 
 
@@ -62,7 +67,7 @@ public class FRITZBoxTest {
         doReturn(authStatus).when(fritzBoxAuthentication).login(any(), any());
     }
 
-    private void mockFritzBoxUrl(@NotNull final String url) {
+    private void mockFritzBoxUrl(@NonNull final String url) {
         doReturn(url).when(fritzBox).getFritzBoxURL();
     }
 
@@ -130,7 +135,7 @@ public class FRITZBoxTest {
         assertThat(fritzBox.getDevices().size()).isEqualTo(0);
     }
 
-    private void mockFritzBoxWithDeviceResponse(@NotNull final String responseBody, HttpStatus status) throws Exception {
+    private void mockFritzBoxWithDeviceResponse(@NonNull final String responseBody, HttpStatus status) throws Exception {
         mockFritzBoxAuthentication(true);
         ApplicationProperties applicationProperties = mock(ApplicationProperties.class);
         mockFritzBoxUrl("http://fritz.box");

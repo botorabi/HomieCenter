@@ -1,4 +1,4 @@
-import {async, TestBed} from '@angular/core/testing';
+import { TestBed, waitForAsync } from '@angular/core/testing';
 import {AppComponent} from './app.component';
 import {MaterialModule} from "./material.module";
 import {RouterModule} from "@angular/router";
@@ -20,7 +20,7 @@ describe('AppComponent', () => {
     }
   }
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [
         AppComponent
@@ -39,18 +39,18 @@ describe('AppComponent', () => {
   afterEach(() => {
   });
 
-  it('should create the app', async(() => {
+  it('should create the app', waitForAsync(() => {
     let app = new AppComponent(appInfoService, apiUserService, router);
     expect(app).toBeTruthy();
   }));
 
-  it('should have menu title Edit User', async(() => {
+  it('should have menu title Edit User', waitForAsync(() => {
     let app = new AppComponent(appInfoService, apiUserService, router);
     router.setCurrrentRoute("/nav/user-edit");
     expect(app.getMenuTitle()).toEqual('Edit User');
   }));
 
-  it('should have menu title Homie Center', async(() => {
+  it('should have menu title Homie Center', waitForAsync(() => {
     let app = new AppComponent(appInfoService, apiUserService, router);
     router.setCurrrentRoute("");
     expect(app.getMenuTitle()).toEqual('Homie Center');

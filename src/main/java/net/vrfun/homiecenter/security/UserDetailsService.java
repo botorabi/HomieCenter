@@ -7,14 +7,15 @@
  */
 package net.vrfun.homiecenter.security;
 
-import net.vrfun.homiecenter.model.*;
+import net.vrfun.homiecenter.model.HomieCenterUser;
+import net.vrfun.homiecenter.model.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
+import org.springframework.lang.NonNull;
 import org.springframework.security.core.userdetails.*;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
 
-import javax.validation.constraints.NotNull;
 import java.util.Optional;
 
 /**
@@ -29,7 +30,7 @@ public class UserDetailsService {
     private UserRepository userRepository;
 
     @Autowired
-    public UserDetailsService(@NotNull final UserRepository userRepository) {
+    public UserDetailsService(@NonNull final UserRepository userRepository) {
         this.userRepository = userRepository;
     }
 

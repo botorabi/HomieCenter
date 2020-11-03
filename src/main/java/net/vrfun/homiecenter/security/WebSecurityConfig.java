@@ -19,13 +19,9 @@ import org.springframework.security.config.web.server.ServerHttpSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.server.SecurityWebFilterChain;
-import org.springframework.security.web.server.csrf.WebSessionServerCsrfTokenRepository;
 import org.springframework.security.web.server.header.XFrameOptionsServerHttpHeadersWriter;
 import org.springframework.security.web.server.util.matcher.ServerWebExchangeMatchers;
 import org.springframework.web.reactive.function.server.*;
-import org.springframework.web.reactive.socket.server.WebSocketService;
-import org.springframework.web.reactive.socket.server.support.HandshakeWebSocketService;
-import org.springframework.web.reactive.socket.server.upgrade.ReactorNettyRequestUpgradeStrategy;
 import reactor.core.publisher.Mono;
 
 import java.io.File;
@@ -40,8 +36,6 @@ import java.io.File;
 public class WebSecurityConfig {
 
     private final Logger LOGGER = LoggerFactory.getLogger(WebSecurityConfig.class);
-
-    private final int WEBSOCKET_MAX_FRAME_PAYLOAD = 5 * 1024 * 1024;
 
     /**
      * Is development mode enabled?

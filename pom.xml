@@ -5,7 +5,7 @@
 
     <groupId>net.vrfun</groupId>
     <artifactId>homiecenter</artifactId>
-    <version>1.4.2</version><!--SNAPSHOT-->
+    <version>1.5.0</version><!--SNAPSHOT-->
     <packaging>jar</packaging>
 
     <name>Homie Center</name>
@@ -14,28 +14,18 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>2.1.5.RELEASE</version>
+        <version>2.3.4.RELEASE</version>
         <relativePath/>
     </parent>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <java.version>1.8</java.version>
-        <spring-cloud.version>Greenwich.RELEASE</spring-cloud.version>
+        <java.version>11</java.version>
+        <spring-cloud.version>Hoxton.RELEASE</spring-cloud.version>
     </properties>
 
     <dependencies>
-
-        <!-- NOTE This is patched version of spring-webflux
-                  See README.md in project's directory misc/spring.webflux-v5.1.8-RELEASE-patch
-        -->
-        <dependency>
-            <groupId>spring-webflux-boto</groupId>
-            <artifactId>reactive-websocket</artifactId>
-            <version>5.1.8</version>
-        </dependency>
-
         <dependency>
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter</artifactId>

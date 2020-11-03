@@ -1,4 +1,4 @@
-import {async, ComponentFixture, TestBed} from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import {DialogTwoButtonsComponent} from './dialog-two-buttons.component';
 import {MaterialModule} from "../material.module";
@@ -7,7 +7,7 @@ describe('DialogTwoButtonsComponent', () => {
   let component: DialogTwoButtonsComponent;
   let fixture: ComponentFixture<DialogTwoButtonsComponent>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [ DialogTwoButtonsComponent ],
       imports: [

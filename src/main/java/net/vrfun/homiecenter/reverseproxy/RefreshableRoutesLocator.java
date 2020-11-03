@@ -9,15 +9,17 @@ package net.vrfun.homiecenter.reverseproxy;
 
 import org.h2.util.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cloud.gateway.route.*;
+import org.springframework.cloud.gateway.route.Route;
+import org.springframework.cloud.gateway.route.RouteLocator;
 import org.springframework.cloud.gateway.route.builder.*;
-import org.springframework.http.*;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Flux;
 
-import javax.validation.constraints.NotNull;
-import java.net.*;
+import java.net.URI;
+import java.net.URISyntaxException;
 
 /**
  * A gateway route resolver which is used for dynamically refresh routes during the application runtime.
@@ -32,7 +34,7 @@ public class RefreshableRoutesLocator implements RouteLocator {
     private final GatewayRoutesRefresher gatewayRoutesRefresher;
 
     private RouteLocatorBuilder.Builder routesBuilder;
-    private Flux<Route> route;
+    private Flux<Route> route = Flux.empty();
 
     @Autowired
     public RefreshableRoutesLocator(@NonNull final RouteLocatorBuilder builder,
@@ -53,8 +55,8 @@ public class RefreshableRoutesLocator implements RouteLocator {
     /**
      * Add a new route. After adding all routes call 'buildRoutes'.
      */
-    @NotNull
-    public RefreshableRoutesLocator addRoute(@NotNull final String id, @NotNull final String path, @NotNull final URI uri) throws URISyntaxException {
+    @NonNull
+    public RefreshableRoutesLocator addRoute(@NonNull final String id, @NonNull final String path, @NonNull final URI uri) throws URISyntaxException {
         if (StringUtils.isNullOrEmpty(uri.getScheme())) {
             throw new URISyntaxException("Missing scheme in URI: {}", uri.toString());
         }
@@ -68,8 +70,8 @@ public class RefreshableRoutesLocator implements RouteLocator {
         return this;
     }
 
-    @NotNull
-    private UriSpec setupRouteFilters(@NotNull final String path, @NotNull final URI uri, @NotNull GatewayFilterSpec filterSpec) {
+    @NonNull
+    private UriSpec setupRouteFilters(@NonNull final String path, @NonNull final URI uri, @NonNull GatewayFilterSpec filterSpec) {
         filterSpec.stripPrefix(1);
 
         // setup the retry filter, it is important as during transitions from one page to another access problems can occur.

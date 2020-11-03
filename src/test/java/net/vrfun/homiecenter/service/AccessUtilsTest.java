@@ -7,19 +7,20 @@
  */
 package net.vrfun.homiecenter.service;
 
-import net.vrfun.homiecenter.model.*;
+import net.vrfun.homiecenter.model.UserRepository;
 import net.vrfun.homiecenter.testutils.UserTestUtils;
-import org.junit.*;
+import org.junit.Before;
+import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.*;
-import org.springframework.security.core.*;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.*;
 
-import static org.assertj.core.api.Java6Assertions.assertThat;
-
+import static org.assertj.core.api.Assertions.assertThat;
 
 @RunWith(SpringRunner.class)
 public class AccessUtilsTest {

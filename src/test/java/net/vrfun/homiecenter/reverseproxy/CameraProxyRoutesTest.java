@@ -7,14 +7,17 @@
  */
 package net.vrfun.homiecenter.reverseproxy;
 
-import net.vrfun.homiecenter.model.*;
-import org.junit.*;
+import net.vrfun.homiecenter.model.CameraInfo;
+import net.vrfun.homiecenter.model.CameraInfoRepository;
+import org.junit.Before;
+import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.*;
+import org.springframework.lang.NonNull;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import javax.validation.constraints.NotNull;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -39,7 +42,7 @@ public class CameraProxyRoutesTest {
         cameraProxyRoutes = new CameraProxyRoutes(cameraInfoRepository, refreshableRoutesLocator);
     }
 
-    @NotNull
+    @NonNull
     private List<CameraInfo> createCamerasWithInvalidURLs() {
         List<CameraInfo> cameras = new ArrayList<>();
         CameraInfo camera = createCamera("Camera_with_invalid_URLs", "h:/bla.com", "p.d@?-#");
@@ -50,7 +53,7 @@ public class CameraProxyRoutesTest {
         return cameras;
     }
 
-    @NotNull
+    @NonNull
     private List<CameraInfo> createCamerasWithValidURLs() {
         List<CameraInfo> cameras = new ArrayList<>();
         CameraInfo camera = createCamera("Camera_with_valid_URLs", VALID_CAM_URL, VALID_CAM_PREVIEW_URL);
@@ -61,9 +64,9 @@ public class CameraProxyRoutesTest {
         return cameras;
     }
 
-    private CameraInfo createCamera(@NotNull final String name,
-                                    @NotNull final String url,
-                                    @NotNull final String previewUrl) {
+    private CameraInfo createCamera(@NonNull final String name,
+                                    @NonNull final String url,
+                                    @NonNull final String previewUrl) {
 
         CameraInfo camera = new CameraInfo();
         camera.setId((long)name.hashCode());

@@ -8,13 +8,15 @@
 package net.vrfun.homiecenter.fritzbox;
 
 import net.vrfun.homiecenter.model.*;
-import org.junit.*;
+import org.junit.Before;
+import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.springframework.lang.NonNull;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.w3c.dom.Document;
 
-import javax.validation.constraints.NotNull;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -218,7 +220,7 @@ public class ResponseHandlerDeviceListTest {
         assertThat(switchDeviceInfo2.getTemperatureOffset()).isEqualTo(10);
     }
 
-    private List<DeviceInfo> readInput(final boolean caseSensitive, @NotNull final String inputString) throws Exception {
+    private List<DeviceInfo> readInput(final boolean caseSensitive, @NonNull final String inputString) throws Exception {
         List<DeviceInfo> deviceInfoList = new ArrayList<>();
         responseHandlerDeviceList.setUseCaseSensitiveNames(caseSensitive);
         responseHandlerDeviceList.read(inputString, deviceInfoList);

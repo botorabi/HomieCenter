@@ -62,7 +62,7 @@ import {ChartsModule} from "ng2-charts";
     DialogDeviceStatsComponent
   ],
   imports: [
-    RouterModule.forRoot(appRoutes, {onSameUrlNavigation:"reload"}),
+    RouterModule.forRoot(appRoutes, { onSameUrlNavigation: "reload", relativeLinkResolution: 'legacy' }),
     BrowserModule,
     HttpClientModule,
     MaterialModule,

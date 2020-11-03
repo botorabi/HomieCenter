@@ -1,4 +1,4 @@
-import {async, ComponentFixture, TestBed} from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import {ViewAuthenticationComponent} from './view-authentication.component';
 import {MaterialModule} from "../material.module";
@@ -12,7 +12,7 @@ describe('ViewAuthenticationComponent', () => {
   let component: ViewAuthenticationComponent;
   let fixture: ComponentFixture<ViewAuthenticationComponent>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [ ViewAuthenticationComponent ],
       imports: [
