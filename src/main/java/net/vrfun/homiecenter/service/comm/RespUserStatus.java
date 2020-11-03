@@ -8,8 +8,7 @@
 package net.vrfun.homiecenter.service.comm;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-
-import javax.validation.constraints.NotNull;
+import org.springframework.lang.NonNull;
 
 /**
  * Response for user data.
@@ -27,14 +26,14 @@ public class RespUserStatus {
 
     private String role;
 
-    public RespUserStatus(@NotNull final String appVersion) {
+    public RespUserStatus(@NonNull final String appVersion) {
         this.appVersion = appVersion;
     }
 
-    public RespUserStatus(@NotNull final String appVersion,
-                          @NotNull final String name,
+    public RespUserStatus(@NonNull final String appVersion,
+                          @NonNull final String name,
                           boolean authenticated,
-                          @NotNull final String role) {
+                          @NonNull final String role) {
         this.appVersion = appVersion;
         this.name = name;
         this.authenticated = authenticated;

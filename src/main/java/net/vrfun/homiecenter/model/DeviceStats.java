@@ -7,7 +7,7 @@
  */
 package net.vrfun.homiecenter.model;
 
-import javax.validation.constraints.NotNull;
+import org.springframework.lang.NonNull;
 
 /**
  * Device statistics
@@ -19,51 +19,51 @@ public class DeviceStats {
 
     private String ain = "";
 
-    @NotNull
+    @NonNull
     private DeviceStatsValues temperature = new DeviceStatsValues();
 
-    @NotNull
+    @NonNull
     private DeviceStatsValues power = new DeviceStatsValues();
 
-    @NotNull
+    @NonNull
     private DeviceStatsValues energy = new DeviceStatsValues();
 
     public DeviceStats() {
     }
 
-    @NotNull
+    @NonNull
     public String getAIN() {
         return ain;
     }
 
-    public void setAIN(@NotNull final String ain) {
+    public void setAIN(@NonNull final String ain) {
         this.ain = ain;
     }
 
-    @NotNull
+    @NonNull
     public DeviceStatsValues getTemperature() {
         return temperature;
     }
 
-    public void setTemperature(@NotNull final DeviceStatsValues temperature) {
+    public void setTemperature(@NonNull final DeviceStatsValues temperature) {
         this.temperature = temperature;
     }
 
-    @NotNull
+    @NonNull
     public DeviceStatsValues getPower() {
         return power;
     }
 
-    public void setPower(@NotNull final DeviceStatsValues power) {
+    public void setPower(@NonNull final DeviceStatsValues power) {
         this.power = power;
     }
 
-    @NotNull
+    @NonNull
     public DeviceStatsValues getEnergy() {
         return energy;
     }
 
-    public void setEnergy(@NotNull final DeviceStatsValues energy) {
+    public void setEnergy(@NonNull final DeviceStatsValues energy) {
         this.energy = energy;
     }
 

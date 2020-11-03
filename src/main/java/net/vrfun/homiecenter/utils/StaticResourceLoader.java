@@ -7,12 +7,13 @@
  */
 package net.vrfun.homiecenter.utils;
 
-import org.slf4j.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.lang.NonNull;
 import org.springframework.lang.Nullable;
 import org.springframework.util.FileCopyUtils;
 
-import javax.validation.constraints.NotNull;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 
@@ -27,7 +28,7 @@ public class StaticResourceLoader {
     private final Logger LOGGER = LoggerFactory.getLogger(StaticResourceLoader.class);
 
     @Nullable
-    public String getTextResource(@NotNull final String resourcePath) {
+    public String getTextResource(@NonNull final String resourcePath) {
         ClassPathResource resource = new ClassPathResource(resourcePath);
         try {
             return new String(FileCopyUtils.copyToByteArray(resource.getInputStream()), StandardCharsets.UTF_8);
@@ -38,7 +39,7 @@ public class StaticResourceLoader {
     }
 
     @Nullable
-    public byte[] getBinaryResource(@NotNull final String resourcePath) {
+    public byte[] getBinaryResource(@NonNull final String resourcePath) {
         ClassPathResource resource = new ClassPathResource(resourcePath);
         try {
             return FileCopyUtils.copyToByteArray(resource.getInputStream());

@@ -41,10 +41,10 @@ export class DialogDeviceStatsComponent implements OnInit {
   energyDisplay = false;
   temperatureDisplay = false;
 
-  @ViewChild("energyChart", { static: false })
+  @ViewChild("energyChart")
   private energyChart : BarChartComponentComponent;
 
-  @ViewChild("temperatureChart", { static: false })
+  @ViewChild("temperatureChart")
   private temperatureChart : BarChartComponentComponent;
 
   constructor() {

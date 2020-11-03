@@ -8,13 +8,15 @@
 package net.vrfun.homiecenter.fritzbox;
 
 import net.vrfun.homiecenter.utils.HashGenerator;
-import org.junit.*;
+import org.junit.Before;
+import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.*;
-import org.springframework.http.*;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.lang.NonNull;
 import org.springframework.test.context.junit4.SpringRunner;
-
-import javax.validation.constraints.NotNull;
 
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -51,7 +53,7 @@ public class FritzBoxAuthenticationTest {
         assertThat(fritzBoxAuthentication.getAuthStatus().isAuthenticated()).isTrue();
     }
 
-    private void mockGetAuthentication(@NotNull final String SID, @NotNull HttpStatus status) throws Exception {
+    private void mockGetAuthentication(@NonNull final String SID, @NonNull HttpStatus status) throws Exception {
         ResponseEntity<String> response = new ResponseEntity<>(status);
         doReturn(response).when(fritzBoxAuthentication).getConnectionState();
 

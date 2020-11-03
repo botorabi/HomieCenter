@@ -7,17 +7,21 @@
  */
 package net.vrfun.homiecenter.service;
 
-import net.vrfun.homiecenter.model.*;
+import net.vrfun.homiecenter.model.CameraInfo;
+import net.vrfun.homiecenter.model.CameraInfoRepository;
 import net.vrfun.homiecenter.reverseproxy.CameraProxyRoutes;
 import org.h2.util.StringUtils;
-import org.slf4j.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.*;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.lang.NonNull;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
-import javax.validation.constraints.NotNull;
-import java.net.*;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.*;
 
 
@@ -39,9 +43,9 @@ public class RestServiceCameraDevice {
     private AccessUtils accessUtils;
 
     @Autowired
-    public RestServiceCameraDevice(@NotNull CameraInfoRepository cameraInfoRepository,
-                                   @NotNull CameraProxyRoutes cameraProxyRoutes,
-                                   @NotNull AccessUtils accessUtils) {
+    public RestServiceCameraDevice(@NonNull CameraInfoRepository cameraInfoRepository,
+                                   @NonNull CameraProxyRoutes cameraProxyRoutes,
+                                   @NonNull AccessUtils accessUtils) {
 
         this.cameraInfoRepository = cameraInfoRepository;
         this.cameraProxyRoutes = cameraProxyRoutes;
@@ -62,7 +66,7 @@ public class RestServiceCameraDevice {
         return new ResponseEntity<>(cameras, HttpStatus.OK);
     }
 
-    private void updateCameraUrlTags(@NotNull CameraInfo camera) {
+    private void updateCameraUrlTags(@NonNull CameraInfo camera) {
         try {
             //validate the url
             new URL(camera.getUrl());
@@ -83,7 +87,7 @@ public class RestServiceCameraDevice {
         }
     }
 
-    private void blankCameraURLs(@NotNull CameraInfo camera) {
+    private void blankCameraURLs(@NonNull CameraInfo camera) {
         camera.setUrl("");
         camera.setPreviewUrl("");
     }
@@ -126,7 +130,7 @@ public class RestServiceCameraDevice {
         return new ResponseEntity<>(reqCreateCamera, HttpStatus.OK);
     }
 
-    private void createOrUpdateCameraInRepository(@NotNull CameraInfo reqCreateCamera) {
+    private void createOrUpdateCameraInRepository(@NonNull CameraInfo reqCreateCamera) {
         String url = reqCreateCamera.getUrl();
         if (!StringUtils.isNullOrEmpty(url) && !url.startsWith("http://") &&
                 !url.startsWith("https://")) {

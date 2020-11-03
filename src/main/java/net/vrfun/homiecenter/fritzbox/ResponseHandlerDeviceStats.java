@@ -7,13 +7,16 @@
  */
 package net.vrfun.homiecenter.fritzbox;
 
-import net.vrfun.homiecenter.model.*;
-import org.slf4j.*;
-import org.springframework.data.util.Pair;
-import org.w3c.dom.*;
+import net.vrfun.homiecenter.model.DeviceStats;
+import net.vrfun.homiecenter.model.DeviceStatsValues;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.lang.NonNull;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
-import javax.validation.constraints.NotNull;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Response handler for FRITZ!Box device list.
@@ -30,7 +33,7 @@ public class ResponseHandlerDeviceStats extends ResponseHandler<DeviceStats> {
     }
 
     @Override
-    public void setupModel(@NotNull final Node node, @NotNull DeviceStats deviceStats) {
+    public void setupModel(@NonNull final Node node, @NonNull DeviceStats deviceStats) {
         Node rootNode = findNode(node, "devicestats");
         if (rootNode != null) {
             NodeList statsNodes = rootNode.getChildNodes();
@@ -40,7 +43,7 @@ public class ResponseHandlerDeviceStats extends ResponseHandler<DeviceStats> {
         }
     }
 
-    protected void readNextNode(@NotNull final Node statsNode, @NotNull DeviceStats deviceStats) {
+    protected void readNextNode(@NonNull final Node statsNode, @NonNull DeviceStats deviceStats) {
         switch (statsNode.getNodeName()) {
             case "temperature":
                 readStats(statsNode, deviceStats.getTemperature());
@@ -56,7 +59,7 @@ public class ResponseHandlerDeviceStats extends ResponseHandler<DeviceStats> {
         }
     }
 
-    protected void readStats(@NotNull final Node statsNode, @NotNull DeviceStatsValues stats) {
+    protected void readStats(@NonNull final Node statsNode, @NonNull DeviceStatsValues stats) {
         Node node = findFirstChildNode(statsNode, "stats");
         while (node != null) {
             try {
@@ -71,8 +74,8 @@ public class ResponseHandlerDeviceStats extends ResponseHandler<DeviceStats> {
         }
     }
 
-    @NotNull
-    protected List<Integer> createIntegerValues(@NotNull final String stringValues) {
+    @NonNull
+    protected List<Integer> createIntegerValues(@NonNull final String stringValues) {
         List<Integer> values = new ArrayList<>();
         String preparedStringValues = stringValues.replaceAll("-", "-999").trim();
         for (final String value: preparedStringValues.split(",")) {

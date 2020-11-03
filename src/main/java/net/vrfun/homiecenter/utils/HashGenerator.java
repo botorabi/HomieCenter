@@ -7,17 +7,19 @@
  */
 package net.vrfun.homiecenter.utils;
 
-import org.slf4j.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.lang.NonNull;
 
-import javax.validation.constraints.NotNull;
-import java.security.*;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 
 public class HashGenerator {
 
     private final static Logger LOGGER = LoggerFactory.getLogger(HashGenerator.class);
 
-    @NotNull
-    static public String createMD5(@NotNull final byte[] content) throws Exception {
+    @NonNull
+    static public String createMD5(@NonNull final byte[] content) throws Exception {
         try {
             MessageDigest digest = MessageDigest.getInstance("MD5");
             digest.update(content);

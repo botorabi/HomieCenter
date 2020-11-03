@@ -7,9 +7,9 @@
  */
 package net.vrfun.homiecenter.fritzbox;
 
+import org.springframework.lang.NonNull;
 import org.w3c.dom.Node;
 
-import javax.validation.constraints.NotNull;
 import java.util.HashMap;
 
 /**
@@ -25,7 +25,7 @@ public class ResponseHandlerAuthStatus extends ResponseHandler<AuthStatus> {
     }
 
     @Override
-    void setupModel(@NotNull final Node node, @NotNull AuthStatus authStatus) {
+    void setupModel(@NonNull final Node node, @NonNull AuthStatus authStatus) {
         authStatus.setSID(getNodeValue(node, "SID", "0"));
         authStatus.setChallenge(getNodeValue(node, "Challenge", ""));
         authStatus.setBlockTime(convertToInteger(getNodeValue(node, "BlockTime", "0")));
@@ -36,7 +36,7 @@ public class ResponseHandlerAuthStatus extends ResponseHandler<AuthStatus> {
         }
     }
 
-    private HashMap<String, String> collectRights(@NotNull final Node rightsNode) {
+    private HashMap<String, String> collectRights(@NonNull final Node rightsNode) {
         HashMap<String, String> rights = new HashMap<>();
         Node nextNode = rightsNode.getFirstChild();
         while(nextNode != null) {

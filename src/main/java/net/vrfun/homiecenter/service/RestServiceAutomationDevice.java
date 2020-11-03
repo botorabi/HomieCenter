@@ -8,13 +8,16 @@
 package net.vrfun.homiecenter.service;
 
 import net.vrfun.homiecenter.fritzbox.FRITZBox;
-import net.vrfun.homiecenter.model.*;
-import org.slf4j.*;
+import net.vrfun.homiecenter.model.DeviceInfo;
+import net.vrfun.homiecenter.model.DeviceStats;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.*;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.lang.NonNull;
 import org.springframework.web.bind.annotation.*;
 
-import javax.validation.constraints.NotNull;
 import java.util.List;
 
 
@@ -33,7 +36,7 @@ public class RestServiceAutomationDevice {
 
 
     @Autowired
-    public RestServiceAutomationDevice(@NotNull final FRITZBox fritzBox) {
+    public RestServiceAutomationDevice(@NonNull final FRITZBox fritzBox) {
         this.fritzBox = fritzBox;
     }
 

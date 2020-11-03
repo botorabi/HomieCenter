@@ -10,13 +10,16 @@ package net.vrfun.homiecenter.service;
 import net.vrfun.homiecenter.model.*;
 import net.vrfun.homiecenter.reverseproxy.CameraProxyRoutes;
 import net.vrfun.homiecenter.testutils.UserTestUtils;
-import org.junit.*;
+import org.junit.Before;
+import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.*;
-import org.springframework.http.*;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.lang.NonNull;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import javax.validation.constraints.NotNull;
 import java.util.*;
 
 import static org.assertj.core.api.Java6Assertions.assertThat;
@@ -65,8 +68,8 @@ public class RestServiceCameraDeviceTest {
         when(cameraInfoRepository.findAll()).thenReturn(Arrays.asList(cameraInfo1, cameraInfo2));
     }
 
-    @NotNull
-    private CameraInfo createCamera(@NotNull final String name, @NotNull final String previewUrl, @NotNull final String url) {
+    @NonNull
+    private CameraInfo createCamera(@NonNull final String name, @NonNull final String previewUrl, @NonNull final String url) {
         CameraInfo camera = new CameraInfo();
         camera.setName(name);
         camera.setPreviewUrl(previewUrl);

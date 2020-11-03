@@ -1,4 +1,4 @@
-import {async, ComponentFixture, TestBed} from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import {ViewSwitchDevicesComponent} from './view-switch-devices-component';
 import {MaterialModule} from "../material.module";
@@ -12,7 +12,7 @@ describe('ViewSwitchDevicesComponent', () => {
   let component: ViewSwitchDevicesComponent;
   let fixture: ComponentFixture<ViewSwitchDevicesComponent>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [ ViewSwitchDevicesComponent ],
       imports: [

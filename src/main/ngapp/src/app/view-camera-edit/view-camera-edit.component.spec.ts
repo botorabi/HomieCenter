@@ -1,4 +1,4 @@
-import {async, ComponentFixture, TestBed} from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import {ViewCameraEditComponent} from './view-camera-edit.component';
 import {MaterialModule} from "../material.module";
@@ -13,7 +13,7 @@ describe('ViewCameraEditComponent', () => {
   let component: ViewCameraEditComponent;
   let fixture: ComponentFixture<ViewCameraEditComponent>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [ ViewCameraEditComponent ],
       imports: [

@@ -8,10 +8,10 @@
 package net.vrfun.homiecenter.fritzbox;
 
 import net.vrfun.homiecenter.model.*;
+import org.springframework.lang.NonNull;
 import org.springframework.lang.Nullable;
 import org.w3c.dom.Node;
 
-import javax.validation.constraints.NotNull;
 import java.util.List;
 
 /**
@@ -27,7 +27,7 @@ public class ResponseHandlerDeviceList extends ResponseHandler<List<DeviceInfo>>
     }
 
     @Override
-    public void setupModel(@NotNull final Node node, @NotNull List<DeviceInfo> devices) {
+    public void setupModel(@NonNull final Node node, @NonNull List<DeviceInfo> devices) {
         Node rootNode = findNode(node, "devicelist");
         if (rootNode != null) {
             Node deviceNode = findFirstChildNode(rootNode, "device");
@@ -38,7 +38,7 @@ public class ResponseHandlerDeviceList extends ResponseHandler<List<DeviceInfo>>
     }
 
     @Nullable
-    protected Node readNextNode(@NotNull final List<DeviceInfo> devices, @NotNull final Node deviceNode) {
+    protected Node readNextNode(@NonNull final List<DeviceInfo> devices, @NonNull final Node deviceNode) {
         DeviceInfo deviceInfo;
         if (isHeatController(deviceNode)) {
             deviceInfo = new HeatControllerDeviceInfo();
@@ -55,23 +55,23 @@ public class ResponseHandlerDeviceList extends ResponseHandler<List<DeviceInfo>>
         return findNextSiblingNode(deviceNode, "device");
     }
 
-    protected void getDeviceAttributes(@NotNull final Node deviceNode, @NotNull final DeviceInfo deviceInfo) {
+    protected void getDeviceAttributes(@NonNull final Node deviceNode, @NonNull final DeviceInfo deviceInfo) {
         deviceInfo.setId(getAttributeValue(deviceNode, "id", ""));
         deviceInfo.setAIN(getAttributeValue(deviceNode, "identifier", ""));
         deviceInfo.setFirmware(getAttributeValue(deviceNode, "fwversion", ""));
         deviceInfo.setProductName(getAttributeValue(deviceNode, "productname", ""));
     }
 
-    protected void getGeneralDeviceInfo(@NotNull final Node deviceNode, @NotNull final DeviceInfo device) {
+    protected void getGeneralDeviceInfo(@NonNull final Node deviceNode, @NonNull final DeviceInfo device) {
         device.setName(getNodeValue(deviceNode, "name", "<No Name>"));
         device.setPresent(convertToBoolean(getNodeValue(deviceNode, "present", "0")));
     }
 
-    protected boolean isHeatController(@NotNull final Node deviceNode) {
+    protected boolean isHeatController(@NonNull final Node deviceNode) {
         return findNode(deviceNode, "hkr") != null;
     }
 
-    protected void getSwitchInfo(@NotNull final Node deviceNode, @NotNull final SwitchDeviceInfo device) {
+    protected void getSwitchInfo(@NonNull final Node deviceNode, @NonNull final SwitchDeviceInfo device) {
         device.setOn(convertToBoolean(getNodeValue(deviceNode, "state", "0")));
         device.setVoltage(convertToInteger(getNodeValue(deviceNode, "voltage", "0")));
         device.setPower(convertToInteger(getNodeValue(deviceNode, "power", "0")));
@@ -80,7 +80,7 @@ public class ResponseHandlerDeviceList extends ResponseHandler<List<DeviceInfo>>
         device.setTemperatureOffset(convertToInteger(getNodeValue(deviceNode, "offset", "0")));
     }
 
-    protected void getHeadControllerInfo(@NotNull final Node deviceNode, @NotNull final HeatControllerDeviceInfo device) {
+    protected void getHeadControllerInfo(@NonNull final Node deviceNode, @NonNull final HeatControllerDeviceInfo device) {
         device.setBatteryLow(convertToBoolean(getNodeValue(deviceNode, "batterylow", "0")));
         device.setBatteryLevel(convertToInteger(getNodeValue(deviceNode, "battery", "0")));
         device.setComfortTemperature(convertToInteger(getNodeValue(deviceNode, "komfort", "0")));

@@ -7,12 +7,12 @@
  */
 package net.vrfun.homiecenter.fritzbox;
 
-import org.junit.*;
+import org.junit.Before;
+import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.springframework.lang.NonNull;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.w3c.dom.Document;
-
-import javax.validation.constraints.NotNull;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -129,7 +129,7 @@ public class ResponseHandlerAuthStatusTest {
         assertThat(authStatus.getRights().get("Dial")).isEqualTo("2");
     }
 
-    private AuthStatus readInput(final boolean caseSensitive, @NotNull final String inputString) throws Exception {
+    private AuthStatus readInput(final boolean caseSensitive, @NonNull final String inputString) throws Exception {
         AuthStatus authStatus = new AuthStatus();
         responseHandlerAuthStatus.setUseCaseSensitiveNames(caseSensitive);
         responseHandlerAuthStatus.read(inputString, authStatus);

@@ -8,12 +8,14 @@
 package net.vrfun.homiecenter.fritzbox;
 
 import net.vrfun.homiecenter.utils.HashGenerator;
-import org.slf4j.*;
-import org.springframework.http.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.lang.NonNull;
 
-import javax.validation.constraints.NotNull;
-import java.security.*;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * This class performs a user authentication on a FRITZ!Box.
@@ -34,31 +36,31 @@ public class FritzBoxAuthentication {
     public FritzBoxAuthentication() {
     }
 
-    public FritzBoxAuthentication(@NotNull final String fritzBoxAddress) {
+    public FritzBoxAuthentication(@NonNull final String fritzBoxAddress) {
         this.fritzBoxAddress = fritzBoxAddress;
         responseHandlerAuthStatus = new ResponseHandlerAuthStatus();
         requests = new Requests();
     }
 
-    @NotNull
-    public FritzBoxAuthentication withFritzBoxAddress(@NotNull final String fritzBoxAddress) {
+    @NonNull
+    public FritzBoxAuthentication withFritzBoxAddress(@NonNull final String fritzBoxAddress) {
         this.fritzBoxAddress = fritzBoxAddress;
         return this;
     }
 
-    @NotNull
-    public FritzBoxAuthentication withResponseHandlerAuthStatus(@NotNull ResponseHandlerAuthStatus responseHandlerAuthStatus) {
+    @NonNull
+    public FritzBoxAuthentication withResponseHandlerAuthStatus(@NonNull ResponseHandlerAuthStatus responseHandlerAuthStatus) {
         this.responseHandlerAuthStatus = responseHandlerAuthStatus;
         return this;
     }
 
-    @NotNull
-    public FritzBoxAuthentication withRequests(@NotNull Requests requests) {
+    @NonNull
+    public FritzBoxAuthentication withRequests(@NonNull Requests requests) {
         this.requests = requests;
         return this;
     }
 
-    @NotNull
+    @NonNull
     public AuthStatus getAuthStatus() throws Exception {
         ResponseEntity<String> response = getConnectionState();
         if (response.getStatusCode() == HttpStatus.FORBIDDEN) {
@@ -73,8 +75,8 @@ public class FritzBoxAuthentication {
         return authStatus;
     }
 
-    @NotNull
-    public AuthStatus login(@NotNull final String userName, @NotNull final String password) throws Exception {
+    @NonNull
+    public AuthStatus login(@NonNull final String userName, @NonNull final String password) throws Exception {
         AuthStatus authStatus = getAuthStatus();
         if (authStatus.isAuthenticated()) {
             return authStatus;
@@ -103,10 +105,10 @@ public class FritzBoxAuthentication {
         }
     }
 
-    @NotNull
-    protected AuthStatus authenticate(@NotNull final String challenge,
-                                      @NotNull final String userName,
-                                      @NotNull final String password) throws Exception {
+    @NonNull
+    protected AuthStatus authenticate(@NonNull final String challenge,
+                                      @NonNull final String userName,
+                                      @NonNull final String password) throws Exception {
 
         String url = fritzBoxAddress + "/login_sid.lua";
         Map<String, String> params = new HashMap<>();
@@ -135,7 +137,7 @@ public class FritzBoxAuthentication {
         }
     }
 
-    @NotNull
+    @NonNull
     protected ResponseEntity<String> getConnectionState() throws Exception {
         ResponseEntity<String> response;
         String url = fritzBoxAddress + "/login_sid.lua";
@@ -155,13 +157,13 @@ public class FritzBoxAuthentication {
         return response;
     }
 
-    @NotNull
-    protected String createResponse(@NotNull final String challenge, @NotNull final String password) throws Exception {
+    @NonNull
+    protected String createResponse(@NonNull final String challenge, @NonNull final String password) throws Exception {
         return challenge + "-" + HashGenerator.createMD5((challenge + "-" + preparePassword(password)).getBytes("UTF-16LE"));
     }
 
-    @NotNull
-    protected String preparePassword(@NotNull final String password) {
+    @NonNull
+    protected String preparePassword(@NonNull final String password) {
         //! NOTE all non-ascii chars have to be replaced by dots
         return password.replaceAll("[^\\x00-\\x7F]", ".");
     }

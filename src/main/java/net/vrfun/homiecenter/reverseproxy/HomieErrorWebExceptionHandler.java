@@ -15,15 +15,16 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.core.annotation.Order;
 import org.springframework.core.io.buffer.DataBuffer;
-import org.springframework.http.*;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.server.reactive.ServerHttpResponse;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Component;
-import org.springframework.web.reactive.function.server.*;
+import org.springframework.web.reactive.function.server.RouterFunction;
+import org.springframework.web.reactive.function.server.ServerResponse;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
-import javax.validation.constraints.NotNull;
 import java.nio.charset.StandardCharsets;
 
 /**
@@ -84,7 +85,7 @@ public class HomieErrorWebExceptionHandler extends AbstractErrorWebExceptionHand
         return response.writeWith(Mono.just(dataBuffer));
     }
 
-    protected byte[] createMissingResource(@NotNull final String url) {
+    protected byte[] createMissingResource(@NonNull final String url) {
         String content =
                 "<!doctype html>\n<html lang=\"en\">\n<head>\n</head>\n" +
                         "<body>\n" + getMissingResourceHint(url) + "</body>\n</html>";
@@ -92,7 +93,7 @@ public class HomieErrorWebExceptionHandler extends AbstractErrorWebExceptionHand
         return content.getBytes(StandardCharsets.UTF_8);
     }
 
-    protected String getMissingResourceHint(@NotNull final String resourceUrl) {
+    protected String getMissingResourceHint(@NonNull final String resourceUrl) {
         String hint = "<p>Requested resource with URL <i>" + resourceUrl + "</i> does not exist!</p>";
         hint += "<p><a href='/'>Return to main page.</a></p>";
         return hint;
@@ -119,7 +120,7 @@ public class HomieErrorWebExceptionHandler extends AbstractErrorWebExceptionHand
         return errorResponse;
     }
 
-    protected String createImageElement(@NotNull final byte[] data) {
+    protected String createImageElement(@NonNull final byte[] data) {
         String response =
                 "<div style='margin: auto; width: 70%; text-align: center;'>\n" +
                 "  <img style='width: 100%;' src='data:image/svg+xml;utf8,";

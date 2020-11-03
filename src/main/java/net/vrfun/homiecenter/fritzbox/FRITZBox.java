@@ -10,17 +10,21 @@ package net.vrfun.homiecenter.fritzbox;
 
 import net.vrfun.homiecenter.ApplicationProperties;
 import net.vrfun.homiecenter.model.*;
-import org.slf4j.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.*;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.data.util.Pair;
-import org.springframework.http.*;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.lang.NonNull;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
-import javax.validation.constraints.NotNull;
-import java.net.*;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.time.Instant;
 import java.util.*;
 
@@ -62,31 +66,31 @@ public class FRITZBox {
         return fritzBox;
     }
 
-    @NotNull
-    public FRITZBox withFritzBoxAuthentication(@NotNull FritzBoxAuthentication fritzBoxAuthentication) {
+    @NonNull
+    public FRITZBox withFritzBoxAuthentication(@NonNull FritzBoxAuthentication fritzBoxAuthentication) {
         this.fritzBoxAuthentication = fritzBoxAuthentication;
         return this;
     }
 
-    @NotNull
-    public FRITZBox withRequests(@NotNull Requests requests) {
+    @NonNull
+    public FRITZBox withRequests(@NonNull Requests requests) {
         this.requests = requests;
         return this;
     }
 
-    @NotNull
-    public FRITZBox withResponseHandlerDeviceList(@NotNull ResponseHandlerDeviceList responseHandlerDeviceList) {
+    @NonNull
+    public FRITZBox withResponseHandlerDeviceList(@NonNull ResponseHandlerDeviceList responseHandlerDeviceList) {
         this.responseHandlerDeviceList = responseHandlerDeviceList;
         return this;
     }
 
-    @NotNull
-    public FRITZBox withResponseHandlerDeviceStats(@NotNull ResponseHandlerDeviceStats responseHandlerDeviceStats) {
+    @NonNull
+    public FRITZBox withResponseHandlerDeviceStats(@NonNull ResponseHandlerDeviceStats responseHandlerDeviceStats) {
         this.responseHandlerDeviceStats = responseHandlerDeviceStats;
         return this;
     }
 
-    @NotNull
+    @NonNull
     public FRITZBox withApplicationProperties(ApplicationProperties applicationProperties) {
         this.applicationProperties = applicationProperties;
         return this;
@@ -96,7 +100,7 @@ public class FRITZBox {
      * In order to avoid requesting the FRITZ!Box for authentication state too often, use this method
      * which caches the state for a max time of 'AUTH_STATUS_MAX_CACHE_PERIOD_SEC'.
      */
-    @NotNull
+    @NonNull
     public AuthStatus getCachedAuthStatus() throws Exception {
         if ((cachedAuthStatus == null) ||
                 (Instant.now().isAfter(cachedAuthStatus.getFirst().plusSeconds(AUTH_STATUS_MAX_CACHE_PERIOD_SEC)))) {
@@ -107,13 +111,13 @@ public class FRITZBox {
         return cachedAuthStatus.getSecond();
     }
 
-    @NotNull
+    @NonNull
     public AuthStatus getAuthStatus() throws Exception {
         return fritzBoxAuthentication.getAuthStatus();
     }
 
-    @NotNull
-    public AuthStatus login(@NotNull final String userName, @NotNull final String password) throws Exception {
+    @NonNull
+    public AuthStatus login(@NonNull final String userName, @NonNull final String password) throws Exception {
         discardCachedAuthStatus();
 
         AuthStatus authStatus = fritzBoxAuthentication.login(userName, password);
@@ -138,7 +142,7 @@ public class FRITZBox {
         cachedAuthStatus = null;
     }
 
-    @NotNull
+    @NonNull
     public List<DeviceInfo> getDevices() throws Exception {
         AuthStatus authStatus = loginIfNeeded();
 
@@ -171,7 +175,7 @@ public class FRITZBox {
     }
 
     @Nullable
-    public DeviceStats getDeviceStats(@NotNull final String deviceAIN) throws Exception {
+    public DeviceStats getDeviceStats(@NonNull final String deviceAIN) throws Exception {
         AuthStatus authStatus = loginIfNeeded();
 
         Map<String, String> parameters = new HashMap<>();
@@ -193,7 +197,7 @@ public class FRITZBox {
         return deviceStats;
     }
 
-    public void handleDeviceCommand(long deviceId, @NotNull final String command) throws Exception {
+    public void handleDeviceCommand(long deviceId, @NonNull final String command) throws Exception {
         final String CMD_TEMPERATURE = "temperature=";
         final String CMD_ON = "on";
         final String CMD_OFF = "off";
@@ -291,7 +295,7 @@ public class FRITZBox {
         LOGGER.debug("device ({}) successfully switched {}", switchDeviceInfo.getAIN(), (on ? "on": "off"));
     }
 
-    @NotNull
+    @NonNull
     protected AuthStatus loginIfNeeded() throws Exception {
         AuthStatus authStatus = getCachedAuthStatus();
         if (!authStatus.isAuthenticated()) {
@@ -300,9 +304,9 @@ public class FRITZBox {
         return authStatus;
     }
 
-    @NotNull
-    protected ResponseEntity<String> requestHttpGET(@NotNull final String SID,
-                                                  @NotNull final String relativeUrl,
+    @NonNull
+    protected ResponseEntity<String> requestHttpGET(@NonNull final String SID,
+                                                  @NonNull final String relativeUrl,
                                                   @Nullable final Map<String, String> parameters) throws Exception {
 
         String url = getFritzBoxURL() + "/" + relativeUrl;
@@ -314,7 +318,7 @@ public class FRITZBox {
         return requests.get(url, urlParameters);
     }
 
-    @NotNull
+    @NonNull
     protected String getFritzBoxURL() {
         if (fritzBoxURL != null) {
             return fritzBoxURL;

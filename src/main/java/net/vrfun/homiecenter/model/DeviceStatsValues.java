@@ -7,8 +7,10 @@
  */
 package net.vrfun.homiecenter.model;
 
-import javax.validation.constraints.NotNull;
-import java.util.*;
+import org.springframework.lang.NonNull;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Container for holding device statistics values
@@ -23,7 +25,7 @@ public class DeviceStatsValues {
         private int grid;
         private List<Integer> values;
 
-        public Stats(int grid, @NotNull final List<Integer> values) {
+        public Stats(int grid, @NonNull final List<Integer> values) {
             this.grid = grid;
             this.values = values;
         }
@@ -32,7 +34,7 @@ public class DeviceStatsValues {
             return grid;
         }
 
-        @NotNull
+        @NonNull
         public List<Integer> getValues() {
             return values;
         }
@@ -40,16 +42,16 @@ public class DeviceStatsValues {
 
     private List<Stats> stats = new ArrayList<>();
 
-    public void setStats(@NotNull final List<Stats> stats) {
+    public void setStats(@NonNull final List<Stats> stats) {
         this.stats = stats;
     }
 
-    @NotNull
+    @NonNull
     public List<Stats> getStats() {
         return stats;
     }
 
-    public void addStats(int grid, @NotNull final List<Integer> values) {
+    public void addStats(int grid, @NonNull final List<Integer> values) {
         this.stats.add(new Stats(grid, values));
     }
 }

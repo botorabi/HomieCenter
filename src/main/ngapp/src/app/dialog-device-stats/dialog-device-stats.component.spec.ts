@@ -1,4 +1,4 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import { DialogDeviceStatsComponent } from './dialog-device-stats.component';
 import {MaterialModule} from "../material.module";
@@ -9,7 +9,7 @@ describe('DialogDeviceStatsComponent', () => {
   let component: DialogDeviceStatsComponent;
   let fixture: ComponentFixture<DialogDeviceStatsComponent>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [
         DialogDeviceStatsComponent,

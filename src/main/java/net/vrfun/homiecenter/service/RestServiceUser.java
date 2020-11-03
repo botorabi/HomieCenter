@@ -8,20 +8,24 @@
 package net.vrfun.homiecenter.service;
 
 import net.vrfun.homiecenter.ApplicationProperties;
-import net.vrfun.homiecenter.fritzbox.FRITZBox;
-import net.vrfun.homiecenter.model.*;
-import net.vrfun.homiecenter.service.comm.*;
+import net.vrfun.homiecenter.model.HomieCenterUser;
+import net.vrfun.homiecenter.model.UserRepository;
+import net.vrfun.homiecenter.service.comm.ReqUserEdit;
+import net.vrfun.homiecenter.service.comm.RespUserStatus;
 import org.h2.util.StringUtils;
-import org.slf4j.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.*;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.lang.NonNull;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
-import reactor.core.publisher.*;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
-import javax.validation.constraints.NotNull;
 import java.util.Optional;
 
 
@@ -45,10 +49,10 @@ public class RestServiceUser {
     private ApplicationProperties applicationProperties;
 
     @Autowired
-    public RestServiceUser(@NotNull UserRepository userRepository,
-                           @NotNull PasswordEncoder passwordEncoder,
-                           @NotNull AccessUtils accessUtils,
-                           @NotNull ApplicationProperties applicationProperties) {
+    public RestServiceUser(@NonNull UserRepository userRepository,
+                           @NonNull PasswordEncoder passwordEncoder,
+                           @NonNull AccessUtils accessUtils,
+                           @NonNull ApplicationProperties applicationProperties) {
 
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
@@ -82,7 +86,7 @@ public class RestServiceUser {
         return new ResponseEntity<>(newUser, HttpStatus.OK);
     }
 
-    private boolean validateNewUser(@NotNull final ReqUserEdit newUser) {
+    private boolean validateNewUser(@NonNull final ReqUserEdit newUser) {
         final String userName = StringUtils.isNullOrEmpty(newUser.getUserName()) ? "" : newUser.getUserName();
         if ((userName.length() < 5) || (!userName.toLowerCase().equals(userName))) {
             return false;
@@ -95,7 +99,7 @@ public class RestServiceUser {
         return true;
     }
 
-    private HomieCenterUser createNewUser(@NotNull final ReqUserEdit newUser) {
+    private HomieCenterUser createNewUser(@NonNull final ReqUserEdit newUser) {
         HomieCenterUser homieCenterUser = new HomieCenterUser();
         homieCenterUser.setRealName(newUser.getRealName());
         homieCenterUser.setUserName(newUser.getUserName());
