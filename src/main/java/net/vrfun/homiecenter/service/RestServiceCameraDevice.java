@@ -36,16 +36,17 @@ public class RestServiceCameraDevice {
 
     private final Logger LOGGER = LoggerFactory.getLogger(this.getClass());
 
-    private CameraInfoRepository cameraInfoRepository;
+    private final CameraInfoRepository cameraInfoRepository;
 
-    private CameraProxyRoutes cameraProxyRoutes;
+    private final CameraProxyRoutes cameraProxyRoutes;
 
-    private AccessUtils accessUtils;
+    private final AccessUtils accessUtils;
+
 
     @Autowired
-    public RestServiceCameraDevice(@NonNull CameraInfoRepository cameraInfoRepository,
-                                   @NonNull CameraProxyRoutes cameraProxyRoutes,
-                                   @NonNull AccessUtils accessUtils) {
+    public RestServiceCameraDevice(@NonNull final CameraInfoRepository cameraInfoRepository,
+                                   @NonNull final CameraProxyRoutes cameraProxyRoutes,
+                                   @NonNull final AccessUtils accessUtils) {
 
         this.cameraInfoRepository = cameraInfoRepository;
         this.cameraProxyRoutes = cameraProxyRoutes;

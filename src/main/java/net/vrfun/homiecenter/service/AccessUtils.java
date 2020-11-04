@@ -28,7 +28,7 @@ public class AccessUtils {
 
     public static final String ROLE_ADMIN = "ROLE_ADMIN";
 
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
 
     @Autowired
     public AccessUtils(UserRepository userRepository) {

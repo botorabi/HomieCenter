@@ -40,19 +40,19 @@ public class RestServiceUser {
 
     private final Logger LOGGER = LoggerFactory.getLogger(RestServiceUser.class);
 
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
 
-    private PasswordEncoder passwordEncoder;
+    private final PasswordEncoder passwordEncoder;
 
-    private AccessUtils accessUtils;
+    private final AccessUtils accessUtils;
 
-    private ApplicationProperties applicationProperties;
+    private final ApplicationProperties applicationProperties;
 
     @Autowired
-    public RestServiceUser(@NonNull UserRepository userRepository,
-                           @NonNull PasswordEncoder passwordEncoder,
-                           @NonNull AccessUtils accessUtils,
-                           @NonNull ApplicationProperties applicationProperties) {
+    public RestServiceUser(@NonNull final UserRepository userRepository,
+                           @NonNull final PasswordEncoder passwordEncoder,
+                           @NonNull final AccessUtils accessUtils,
+                           @NonNull final ApplicationProperties applicationProperties) {
 
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;

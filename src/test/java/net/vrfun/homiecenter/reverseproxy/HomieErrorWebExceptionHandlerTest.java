@@ -48,10 +48,11 @@ public class HomieErrorWebExceptionHandlerTest {
     public void setup() {
         MockitoAnnotations.initMocks(this);
 
-        homieErrorWebExceptionHandler = new HomieErrorWebExceptionHandler(
-                errorAttributes,
-                resourceProperties,
-                applicationContext);
+        homieErrorWebExceptionHandler =
+                new HomieErrorWebExceptionHandler(
+                        errorAttributes,
+                        resourceProperties,
+                        applicationContext);
     }
 
     @Test

@@ -33,6 +33,9 @@ public class FRITZBoxTest {
     private FRITZBox fritzBox;
 
     @Mock
+    private ApplicationProperties applicationProperties;
+
+    @Mock
     private FritzBoxAuthentication fritzBoxAuthentication;
 
     @Mock
@@ -42,7 +45,7 @@ public class FRITZBoxTest {
     public void setup() {
         MockitoAnnotations.initMocks(this);
 
-        fritzBox = new FRITZBox();
+        fritzBox = new FRITZBox(applicationProperties);
         fritzBox
                 .withRequests(requests)
                 .withFritzBoxAuthentication(fritzBoxAuthentication)
@@ -91,9 +94,6 @@ public class FRITZBoxTest {
         authStatus.setSID("");
         doReturn(authStatus).when(fritzBox).getCachedAuthStatus();
 
-        ApplicationProperties applicationProperties = mock(ApplicationProperties.class);
-        fritzBox.withApplicationProperties(applicationProperties);
-
         doReturn(authStatus).when(fritzBox).login(any(), any());
 
         fritzBox.loginIfNeeded();
@@ -137,9 +137,7 @@ public class FRITZBoxTest {
 
     private void mockFritzBoxWithDeviceResponse(@NonNull final String responseBody, HttpStatus status) throws Exception {
         mockFritzBoxAuthentication(true);
-        ApplicationProperties applicationProperties = mock(ApplicationProperties.class);
         mockFritzBoxUrl("http://fritz.box");
-        fritzBox.withApplicationProperties(applicationProperties);
 
         ResponseEntity<String> response = new ResponseEntity<>(responseBody, status);
         doReturn(response).when(fritzBox).requestHttpGET(anyString(), anyString(), anyMap());

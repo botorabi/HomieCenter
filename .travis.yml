@@ -12,9 +12,6 @@ node_js:
 
 before_install:
   - ./ngapp-setup.sh
-  - cd misc/spring.webflux-v5.1.8-RELEASE-patch/
-  - ./install-webflux-package.sh
-  - cd ../../
 
 before_script:
   - curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter

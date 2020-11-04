@@ -27,7 +27,7 @@ import java.util.Optional;
 @Component
 public class UserDetailsService {
 
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
 
     @Autowired
     public UserDetailsService(@NonNull final UserRepository userRepository) {
