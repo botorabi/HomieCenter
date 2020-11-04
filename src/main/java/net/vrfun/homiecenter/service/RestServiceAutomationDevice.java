@@ -32,7 +32,7 @@ public class RestServiceAutomationDevice {
 
     private final Logger LOGGER = LoggerFactory.getLogger(this.getClass());
 
-    private FRITZBox fritzBox;
+    private final FRITZBox fritzBox;
 
 
     @Autowired

@@ -12,6 +12,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
+import org.springframework.lang.NonNull;
 
 
 /**
@@ -30,7 +31,7 @@ public class Application {
     }
 
     @Autowired
-    public Application(ApplicationStartup applicationStartup) {
+    public Application(@NonNull final ApplicationStartup applicationStartup) {
         this.applicationStartup = applicationStartup;
     }
 

@@ -40,22 +40,25 @@ public class FRITZBox {
 
     private final Logger LOGGER = LoggerFactory.getLogger(FRITZBox.class);
 
+    private final ApplicationProperties applicationProperties;
+
     private FritzBoxAuthentication fritzBoxAuthentication;
     private ResponseHandlerDeviceList responseHandlerDeviceList;
     private ResponseHandlerDeviceStats responseHandlerDeviceStats;
     private Requests requests;
 
-    @Autowired
-    private ApplicationProperties applicationProperties;
-
     private Pair<Instant, AuthStatus> cachedAuthStatus;
     private final static long AUTH_STATUS_MAX_CACHE_PERIOD_SEC = 60;
     private String fritzBoxURL;
 
+    @Autowired
+    public FRITZBox(@NonNull final ApplicationProperties applicationProperties) {
+        this.applicationProperties = applicationProperties;
+    }
 
     @Bean
-    public FRITZBox fritzBox() {
-        FRITZBox fritzBox = new FRITZBox();
+    public FRITZBox fritzBox(@NonNull final ApplicationProperties applicationProperties) {
+        FRITZBox fritzBox = new FRITZBox(applicationProperties);
         fritzBox.fritzBoxAuthentication = new FritzBoxAuthentication(getFritzBoxURL());
         fritzBox.responseHandlerDeviceList = new ResponseHandlerDeviceList();
         fritzBox.responseHandlerDeviceStats = new ResponseHandlerDeviceStats();
@@ -87,12 +90,6 @@ public class FRITZBox {
     @NonNull
     public FRITZBox withResponseHandlerDeviceStats(@NonNull ResponseHandlerDeviceStats responseHandlerDeviceStats) {
         this.responseHandlerDeviceStats = responseHandlerDeviceStats;
-        return this;
-    }
-
-    @NonNull
-    public FRITZBox withApplicationProperties(ApplicationProperties applicationProperties) {
-        this.applicationProperties = applicationProperties;
         return this;
     }
 

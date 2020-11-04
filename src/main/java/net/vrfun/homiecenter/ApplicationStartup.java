@@ -11,6 +11,7 @@ import net.vrfun.homiecenter.model.*;
 import net.vrfun.homiecenter.reverseproxy.CameraProxyRoutes;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
+import org.springframework.lang.NonNull;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
@@ -24,18 +25,27 @@ import org.springframework.stereotype.Component;
 @Component
 public class ApplicationStartup {
 
-    @Autowired
-    private CameraProxyRoutes cameraProxyRoutes;
+    private final CameraProxyRoutes cameraProxyRoutes;
+
+    private final UserRepository userRepository;
+
+    private final PasswordEncoder passwordEncoder;
 
     @Autowired
-    private UserRepository userRepository;
-
-    @Autowired
-    private PasswordEncoder passwordEncoder;
+    public ApplicationStartup(@NonNull final CameraProxyRoutes cameraProxyRoutes,
+                              @NonNull final UserRepository userRepository,
+                              @NonNull final PasswordEncoder passwordEncoder) {
+        this.cameraProxyRoutes = cameraProxyRoutes;
+        this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
+    }
 
     @Bean
-    public ApplicationStartup createApplicationStartup() {
-        return new ApplicationStartup();
+    public ApplicationStartup createApplicationStartup(@NonNull final CameraProxyRoutes cameraProxyRoutes,
+                                                       @NonNull final UserRepository userRepository,
+                                                       @NonNull final PasswordEncoder passwordEncoder) {
+
+        return new ApplicationStartup(cameraProxyRoutes, userRepository, passwordEncoder);
     }
 
     public void start() {
