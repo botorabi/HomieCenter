@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018 - 2020 by Botorabi. All rights reserved.
+ * Copyright (c) 2018 - 2021 by Botorabi. All rights reserved.
  * https://github.com/botorabi/HomieCenter
  *
  * License: MIT License (MIT), read the LICENSE text in
