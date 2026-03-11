@@ -28,13 +28,13 @@
     "font-awesome": "^4.7.0",
     "ng2-charts": "^2.4.2",
     "rxjs": "~6.6.3",
-    "tar": "^4.4.18",
+    "tar": "^7.5.11",
     "tslib": "^2.0.0",
     "zone.js": "~0.10.2"
   },
   "devDependencies": {
-    "@angular-devkit/build-angular": "^15.0.0",
-    "@angular/cli": "~11.2.12",
+    "@angular-devkit/build-angular": "^21.2.1",
+    "@angular/cli": "~21.2.1",
     "@angular/compiler-cli": "^11.2.13",
     "@angular/language-service": "~11.2.13",
     "@types/jasmine": "~3.6.0",
